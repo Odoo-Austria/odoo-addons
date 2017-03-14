@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="Orderline">
+        <t t-jquery=".info-list>" t-operation="append">
+            <t t-if="line.get_product().product_ref">
+                <li class="ref">
+                    <em>Reference:</em><input class="pro_ref" type="text" name="pro_ref" t-att-value="line.get_product_reference()"/>
+                </li>
+            </t>
+        </t>
+    </t>
+    <!-- PosTicket -->
+    <t t-extend="PosTicket">
+        <t t-jquery="tr[t-foreach*='orderlines']" t-operation="append">
+            <t t-if="orderline.product_ref_text">
+                <tr>
+                    <td>
+                        Ref.: <t t-esc="orderline.product_ref_text"/>
+                    </td>
+                </tr>
+            </t>
+        </t>
+    </t>
+
+    <!-- XmlReceipt -->
+    <t t-extend="XmlReceipt">
+        <t t-jquery="t[t-foreach*='receipt.orderlines']" t-operation="append">
+            <t t-if="line.product_ref_text">
+                <line>
+                    <left>
+                        Ref.: <t t-esc="line.product_ref_text"/>
+                    </left>
+                </line>
+            </t>
+        </t>
+    </t>
+</templates>
