@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_company_form" model="ir.ui.view">
+            <field name="name">view_company_form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="BMF">
+                        <group string="Anmeldedaten Finanzonline">
+                            <field name="bmf_tid"/>
+                            <field name="bmf_benid"/>
+                            <field name="bmf_pin"/>
+                            <field name="bmf_hersteller_atu"/>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+    </data>
+</odoo>

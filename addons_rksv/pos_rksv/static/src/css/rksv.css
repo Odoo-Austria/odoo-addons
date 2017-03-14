@@ -1,0 +1,170 @@
+@media print {
+    .o_loading {
+        display: none !important;
+    }
+}
+
+.subwindow-container .modal-dialog {
+    padding: 0;
+    overflow: hidden;
+}
+.subwindow-container .popup-rksv {
+    width:100% !important;
+    height:100% !important;
+    margin: 0 auto;
+    overflow: scroll;
+}
+
+.rksvfa_image {
+    height: 8em;
+}
+
+.popup.content .message {
+    margin: 10px;
+    font-size: 0.7em;
+    color: red;
+}
+
+.popup.content label,
+.popup.content input,
+.popup.popup-rksv .clearfix label,
+.popup.popup-rksv .clearfix div,
+.popup.popup-rksv .clearfix button,
+.popup.popup-rksv .clearfix input {
+    margin: 10px;
+    padding: 5px;
+    min-height: 1em;
+    min-width: 1em;
+}
+
+.pos .popup-rksv .loading {
+    margin: 10px;
+}
+
+.pos .popup.content input,
+.pos .popup.content select {
+    width: 60%;
+    margin: 10px;
+    padding: 5px;
+}
+
+.pos .popup.popup-rksv.content {
+    height: 50%;
+}
+
+.popup.popup-rksv .clearfix label,
+.popup.popup-rksv label {
+    float: left;
+}
+
+.popup.popup-rksv .clearfix label {
+    width: 15%;
+}
+.clearfix {
+    clear: both;
+}
+
+.popup.content label,
+.popup.content input,
+.popup.popup-rksv .signature-choose label,
+.popup.popup-rksv .signature-choose input {
+    font-size: 0.7em;
+    min-height: 1.2em;
+}
+.popup.content label,
+.signature-choose label {
+    font-weight: bold;
+}
+
+.pos .popup.content .body li:before {
+    content: '';
+    position: relative;
+    font-size: 0.6em;
+    left: 0em;
+    bottom: 0em;
+}
+
+.pos-help {
+    min-width: 760px;
+    width: 50%;
+    margin: 0 auto;
+    background: white;
+    border: solid 3px black;
+    padding: 15px;
+    margin-top:30px;
+}
+
+.posbox-status-container {
+    min-width: 760px;
+    width: 50%;
+    margin: 0 auto;
+    background: white;
+    border: solid 3px black;
+    padding: 15px;
+    margin-top:30px;
+}
+
+.cashbox-status-container {
+    width: 50%;
+    margin: 0 auto;
+    background: white;
+    border: solid 3px black;
+    padding: 15px;
+    margin-top:30px;
+}
+
+.signature-provider-list-container {
+    width: 50%;
+    margin: 0 auto;
+    background: white;
+    border: solid 3px black;
+    padding: 15px;
+    margin-top:30px;
+}
+
+.sprovider {
+    margin-top: 10px;
+    border: solid 1px black;
+}
+
+.sprovider button {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.passwd_input {
+    display: inline;
+}
+
+.posbox-status-indicator{
+    text-align:left;
+}
+
+.cashbox-status-indicator{
+    text-align:left;
+}
+
+.rksv-status-indicator{
+    text-align:left;
+}
+
+.signature-provider-status-indicator{
+    text-align:left;
+}
+
+.monthproduct-status-indicator{
+    text-align:left;
+}
+
+.indicator {
+    width:10px;
+    height: 10px;
+    border: solid 2px black;
+    display: inline-block;
+    float: left;
+}
+
+.indicator-message {
+    display: inline;
+    float: left;
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Extend the PosTicket - include QRCode - and for testing the OCR Representation -->
+    <t t-extend="PosTicket">
+        <t t-jquery="t[t-esc='order.name']" t-operation="after">
+            <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+        </t>
+        <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
+            <div style='text-align:center'>
+                <img t-att-src="order.qrcode_img" width="100px;"/>
+            </div>
+            <p style="font-family: OCR-A, monospace;font-size:8px;word-wrap: break-word;"><t t-raw="order.ocrcodevalue"/></p>
+        </t>
+    </t>
+
+    <!-- Extend the XmlReceipt to include the QRCode as a direct qrcode print command -->
+    <t t-extend="XmlReceipt" >
+        <t t-jquery="t[t-esc='receipt.name']" t-operation="after">
+            <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+        </t>
+        <t t-jquery=".before-footer" t-operation="before">
+            <qrcode t-if="receipt.cashbox_mode=='active'"><t t-raw='receipt.qrcodevalue'/></qrcode>
+            <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
+        </t>
+    </t>
+
+</templates>

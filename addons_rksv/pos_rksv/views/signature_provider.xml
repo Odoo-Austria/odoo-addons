@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_signature_provider_form" model="ir.ui.view">
+            <field name="name">signature.provider.form</field>
+            <field name="model">signature.provider</field>
+            <field name="arch" type="xml">
+                <form string="Signature Provider">
+                <header>
+                    <field name="bmf_last_status" widget="statusbar" nolabel="1" />
+                </header>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="serial"/>
+                            <field name="reader"/>
+                            <field name="pos_config_id"/>
+                        </group>
+                        <group>
+                            <field name="valid_from"/>
+                            <field name="valid_until"/>
+                            <field name="provider_name"/>
+                            <field name="issuer"/>
+                            <field name="subject"/>
+                            <field name="x509"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_signature_provider_tree" model="ir.ui.view">
+            <field name="name">signature.provider.tree</field>
+            <field name="model">signature.provider</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:bmf_last_status == 'UNBEKANNT';green:bmf_last_status == 'IN_BETRIEB';red:bmf_last_status == 'AUSFALL' " string="Signaturerstellungseinheiten">
+                    <field name="bmf_last_status" invisible="1"/>
+                    <field name="subject"/>
+                    <field name="serial"/>
+                    <field name="reader"/>
+                    <field name="valid_until"/>
+                    <field name="bmf_message"/>
+                    <field name="bmf_last_update"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_signature_provider" model="ir.actions.act_window">
+            <field name="name">Signature Provider</field>
+            <field name="res_model">signature.provider</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <!-- Signature Provider Menu -->
+        <menuitem name="Signature Providers" action="action_signature_provider"
+                  parent="point_of_sale.menu_point_config_product"
+                  id="menu_signature_providers" sequence="50"/>
+    
+    </data>
+</odoo>

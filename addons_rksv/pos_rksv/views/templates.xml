@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="rksv_assets" inherit_id="point_of_sale.assets">
+          <xpath expr="." position="inside">
+              <script type="text/javascript" src="/pos_rksv/static/src/js/models.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/pos.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/rksv.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/chrome.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/popups.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/screens.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/devices.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/db.js"></script>
+              <link href="/pos_rksv/static/src/css/rksv.css" rel="stylesheet"/>
+          </xpath>
+        </template>
+
+    </data>
+</odoo>

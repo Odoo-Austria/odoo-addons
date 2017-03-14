@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="rksv_template" xml:space="preserve">
+
+    <!-- Gets used by RKSVStatusWidget - will provide a status RKSV icon on top right corner -->
+    <t t-name="RKSVStatusIndicatorWidget">
+        <div class="oe_status js_proxy">
+            <span class='js_msg oe_orange oe_hidden'></span>
+            <div class="js_connected oe_icon oe_green">
+                <i class='fa fa-fw fa-certificate'></i>
+            </div>
+            <div class="js_connecting oe_icon oe_hidden">
+                <i class='fa fa-fw fa-spin fa-spinner'></i>
+            </div>
+            <div class="js_warning oe_icon oe_orange oe_hidden">
+                <i class='fa fa-fw fa-certificate'></i>
+            </div>
+            <div class="js_disconnected oe_icon oe_red oe_hidden">
+                <i class='fa fa-fw fa-certificate'></i>
+            </div>
+            <div class="js_setup oe_icon oe_red oe_hidden">
+                <i class='fa fa-fw fa-cogs'></i>
+            </div>
+            <div class="js_failure oe_icon oe_red oe_hidden">
+                <i class='fa fa-fw fa-exclamation-circle'></i>
+            </div>
+            <div class="js_inactive oe_icon oe_red oe_hidden">
+                <i class='fa fa-fw fa-ban'></i>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="RKSVStatusScreen">
+        <div class="modal-dialog">
+            <div class="popup popup-rksv">
+                <div class='pos-help'>
+                    <p>Dies ist das primäre Statusfenster. Es erscheint zum Setup oder wenn etwaige Probleme auftauchen.</p>
+                    <p>Den allgemeinen Status können Sie links oben am Indikator erkennen. Um das System benutzen zu können müssen alle 5 einen grünen Indikator zeigen.</p>
+                </div>
+                <button class="close_pos">Beenden</button>
+                <div class='posbox-status-container'>
+                    <div class="posbox-status-indicator clearfix">
+                        <div class="indicator" style="background: red;"/>
+                        <label>PosBox:</label>
+                        <div class="indicator-message">Keine Verbindung!</div>
+                    </div>
+                    <div class="rksv-status-indicator clearfix">
+                        <div class="indicator" style="background: red;"/>
+                        <label>RKSV:</label>
+                        <div class="indicator-message">Status kann nicht ermittelt werden</div>
+                        <button class="register_cashbox" style="display:none;">-> Kasse mit PosBox verknüpfen</button>
+                    </div>
+                    <div class="cashbox-status-indicator clearfix">
+                        <div class="indicator" style="background: red;"/>
+                        <label>BMF (Kasse):</label>
+                        <div class="indicator-message ">Status kann nicht ermittelt werden</div>
+                        <button class="activate_cashbox" style="display:none;">-> Kasse beim BMF anmelden</button>
+                    </div>
+                    <div class="signature-provider-status-indicator clearfix">
+                        <div class="indicator" style="background:red;"/>
+                        <label>BMF (Signature):</label>
+                        <div class="indicator-message">Status kann nicht ermittelt werden</div>
+                    </div>
+                    <div class="monthproduct-status-indicator clearfix">
+                        <div class="indicator" style="background: red;"/>
+                        <label>Konfiguration:</label>
+                        <div class="indicator-message">Status kann nicht ermittelt werden</div>
+                    </div>
+                    <div class="signature-choose">
+                        <p class="signature-provider-help">Bitte wählen Sie einen Signatur Provider aus der Liste. Der Button "Verwenden" setzt den aktiven Signatur Provider.</p>
+                        <div class="signature-pass">
+                            <label for="pass_input_signature">Password (PoS Admin)</label>
+                            <input id="pass_input_signature" class="pos_admin_passwd" type="password" />
+                        </div>
+                        <div class="provider-message-box"></div>
+                        <div class="provider-container" />
+                    </div>
+                </div>
+                <button class="close_rksv">Close</button>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="SignatureProvider">
+        <div class="sprovider">
+            <p><b><t t-esc="card.get('reader')"/></b></p>
+            <p><t t-esc="card.get('subject')"/></p>
+            <p>Seriennummer: <t t-esc="card.get('serial')"/></p>
+            <t t-if="valid_vat">
+                <button class="sprovider-btn" t-att-value="card.get('serial')">Verwenden</button>
+            </t>
+            <t t-if="valid_vat">
+                <button class="sprovider-status-btn" t-att-serial="card.get('serial')">Status</button>
+            </t>
+            <t t-if="valid_vat">
+                <button class="sprovider-bmf-btn" t-att-serial="card.get('serial')">Beim BMF anmelden</button>
+            </t>
+            <t t-if="valid_vat">
+                <button class="sprovider-bmf-ausfall-btn" t-att-serial="card.get('serial')">Ausfall melden</button>
+            </t>
+            <t t-if="valid_vat">
+                <button class="sprovider-bmf-wiederinbetriebnahme-btn" t-att-serial="card.get('serial')">Betrieb melden</button>
+            </t>
+            <t t-if="!valid_vat">
+                <p style="color:red;">UID stimmt nicht mit der UID Ihres Unternehmens überein</p>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="CurrentSignature">
+        <div class="sprovider" t-if="pos.get('cashbox_mode') == 'active'">
+            <h1>Aktuelle Signatur</h1>
+            <h2><t t-esc="signature.get('serial')"/></h2>
+            <p><t t-esc="signature.get('subject')"/></p>
+            <t t-if="card  == null">
+                <h2 style="color:red;">Nicht verfügbar!</h2>
+                <button class="rk-ausfall-se">Ausfall Modus aktivieren !</button>
+                <p style="color:red;">Ausfälle über 48 Stunden müssen dem BMF gemeldet werden !</p>
+                <p>Sie können bei vorhandener Internet Verbindung den Ausfall der Signatureinheit hier direkt dem BMF melden</p>
+                <button class="sprovider-bmf-ausfall-btn" t-att-serial="signature.get('serial')">Ausfall an BMF melden</button>
+            </t>
+        </div>
+        <div class="sprovider" t-if="pos.get('cashbox_mode') == 'signature_failed'">
+            <h1 style="color:red;">Signatureinheit Ausgefallen Modus !</h1>
+        </div>
+    </t>
+
+    <t t-extend="DebugWidget" >
+        <t t-jquery=".content" t-operation="append">
+            <p class="category">RKSV</p>
+            <ul>
+                <li class="button rksv_firstreport">Daten für FA</li>
+                <li class="button rksv_status">RKSV Status</li>
+                <li class="button rksv_kasse_registrieren">BMF RK Anmeldung</li>
+                <li class="button bmf_status_rk">BMF RK Status</li>
+                <li class="button bmf_register_start_receipt">BMF Startbeleg übermitteln</li>
+                <li class="button rksv_reset_dep">DEP Zurücksetzen</li>
+                <li class="button rksv_export_dep_crypt">DEP/Crypt Export</li>
+            </ul>
+        </t>
+    </t>
+
+    <t t-name="RKSVFAPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-rksv content">
+                <p class="title">RKSV FA Anmeldung</p>
+                <div class="message" />
+                <div class="data">
+                    <ul class="body" style="text-align:left;">
+                        <li class="clearfix">
+                            <label for="rksvfa_atu">UID: </label>
+                            <input id="rksvfa_atu" type="text" readonly="readonly" class="rksvfa_atu" />
+                        </li>
+                        <li class="clearfix">
+                            <label for="rksvfa_cashregisterid">KassenID: </label>
+                            <input id="rksvfa_cashregisterid" type="text" readonly="readonly" class="rksvfa_cashregisterid" />
+                        </li>
+                        <li class="clearfix">
+                            <label for="rksvfa_serial">Serial: </label>
+                            <input id="rksvfa_serial" type="text" readonly="readonly" class="rksvfa_serial" />
+                        </li>
+                        <li class="clearfix">
+                            <label for="rksvfa_aes_key">AES Key: </label>
+                            <input id="rksvfa_aes_key" type="text" readonly="readonly" class="rksvfa_aes_key" />
+                        </li>
+                    </ul>
+                    <div>
+                        <h2>Startbeleg</h2>
+                        <img class="rksvfa_image" />
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="button cancel close_button">Ok</div>
+                </div>
+            </div>
+            <div class="popup popup-rksv oe_hidden loading">Bitte warten...</div>
+        </div>
+    </t>
+
+    <t t-name="RKSVOperationPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-rksv content">
+                <p class="title">Titel</p>
+                <div class="message" />
+                <div class="passwd_input">
+                    <label for="pass_input_operation">Password (PoS Admin)</label>
+                    <input id="pass_input_operation" class="pos_admin_passwd" type="password"/>
+                </div>
+                <div class="kundeninfo_div" style="display:none;">
+                    <h2>Info an BMF</h2>
+                    <textarea class="kundeninfo" cols="40" rows="5"></textarea>
+                </div>
+                <div class="footer">
+                    <div class="button authorize authorize_button">Prüfen</div>
+                    <div class="button execute execute_button" style="display:none;">Ausführen</div>
+                    <div class="button cancel close_button">Schließen</div>
+                </div>
+            </div>
+            <div class="popup popup-rksv oe_hidden loading">Bitte warten...</div>
+        </div>
+    </t>
+
+    <t t-name="RKSVSProviderRegistrationPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-rksv content">
+                <p class="title">Titel</p>
+                <div class="message" />
+                <div class="passwd_input">
+                    <label for="pass_input_registration">Password (PoS Admin)</label>
+                    <input id="pass_input_registration" type="password"/>
+                </div>
+                <div class="footer">
+                    <div class="button authorize authorize_button">Prüfen</div>
+                    <div class="button execute" id="rksvsprovider_execute_button" style="display:none;">Execute</div>
+                    <div class="button cancel" id="rksvsprovider_close_button">Close</div>
+                </div>
+            </div>
+            <div class="popup popup-rksv oe_hidden loading">Bitte warten...</div>
+        </div>
+    </t>
+
+    <t t-name="RKSVSProviderAusfallPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-rksv content">
+                <p class="title">Titel</p>
+                <div class="message" />
+                <div class="passwd_input">
+                    <label for="pass_input_ausfall">Password (PoS Admin)</label>
+                    <input id="pass_input_ausfall" class="pos_admin_passwd" type="password"/>
+                </div>
+                <div class="begruendung_div clearfix" style="display:none;">
+                    <label>Begründung:</label>
+                    <select class="ausfall-begruendung">
+                        <option value="1">Diebstahl oder sonstiger Verlust</option>
+                        <option value="2">Signatur- bzw. Siegelerstellung unmöglich oder fehlerhaft</option>
+                        <option value="6">Planmäßige Außerbetriebnahme</option>
+                        <option value="7">Außerbetriebnahme aufgrund eines irreparablen Ausfalls</option>
+                        <option value="99">Sonstiger Grund</option>
+                    </select>
+                </div>
+                <div class="kundeninfo_div clearfix" style="display:none;">
+                    <label>Zusatzinfo:</label>
+                    <textarea class="ausfall-kundeninfo" style="width: 56%;"></textarea>
+                </div>
+                <div class="footer">
+                    <div class="button authorize authorize_button">Prüfen</div>
+                    <div class="button execute execute_button" style="display:none;">Ausführen</div>
+                    <div class="button cancel close_button">Schließen</div>
+                </div>
+            </div>
+            <div class="popup popup-rksv oe_hidden loading">Bitte warten...</div>
+        </div>
+    </t>
+
+    <t t-name="RKSVSProviderWiederinbetriebnahmePopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-rksv content">
+                <p class="title">Titel</p>
+                <div class="message" />
+                <div class="passwd_input">
+                    <label for="pass_input_reactivate">Password (PoS Admin)</label>
+                    <input id="pass_input_reactivate" class="pos_admin_passwd" type="password"/>
+                    <div class="button authorize authorize_button">Prüfen</div>
+                </div>
+                <h2>Info an BMF</h2>
+                <textarea class="wiederinbetriebnahme-kundeninfo" cols="40" rows="5"></textarea>
+                <div class="footer">
+                    <div class="button authorize authorize_button">Prüfen</div>
+                    <div class="button execute execute_button" style="display:none;">Betrieb melden</div>
+                    <div class="button cancel close_button">Schließen</div>
+                </div>
+            </div>
+            <div class="popup popup-rksv oe_hidden loading">Bitte warten...</div>
+        </div>
+    </t>
+
+    <t t-name="RKSVSProviderStatusPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup content">
+                <p class="title">Titel</p>
+                <div class="message" />
+                <div class="passwd_input">
+                    <label for="pass_input_status">Password (PoS Admin)</label>
+                    <input id="pass_input_status" type="password"/>
+                </div>
+                <div class="footer">
+                    <div class="button authorize authorize_button">Prüfen</div>
+                    <div class="button execute" id="rksvsprovider_status_execute_button" style="display:none;">Execute</div>
+                    <div class="button cancel" id="rksvsprovider_status_close_button">Close</div>
+                </div>
+            </div>
+            <div class="popup popup-rksv oe_hidden loading">Bitte warten...</div>
+        </div>
+    </t>
+
+</templates>

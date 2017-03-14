@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_tax_form" model="ir.ui.view">
+            <field name="name">Point of Sale Tax Form (Form)</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form" />
+            <field name="arch" type="xml">
+                <field name="price_include" position="before">
+                    <field name="rksv_tax" />
+                    <field name="rksv_tax_category" attrs="{'invisible': [('rksv_tax', '=', False)], 'required': [('rksv_tax', '!=', False)]}" />
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
