@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from openerp import models, fields, api, _
 import logging
 import uuid
 try:
@@ -100,3 +100,5 @@ class pos_config(models.Model):
     @api.multi
     def set_active(self):
         self.state = 'active'
+        # Do generate a cashregisterid if there is not id attached already
+        self._calc_cashregisterid()

@@ -6,16 +6,16 @@
             <field name="model">pos.config</field>
             <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//form//sheet" position="before">
-                    <header>
-                        <button string="Failure" name="set_failure" type="object" states="active,inactive" />
-                        <button string="ID erzeugen" name="create_cashregisterid" type="object" attrs="{'invisible': [('cashregisterid', '>', '')]}"/>
-                        <button string="Set to Active" name="set_active" type="object" states="inactive,deprecated,setup,failure"/>
-                        <button string="Set to Inactive" name="set_inactive" type="object" states="active" />
-                        <field name="state" statusbar_visible="setup,active,inactive,deprecated,failure"/>
-                        <field name="state" widget="statusbar" statusbar_visible="setup,active,inactive,deprecated,failure" statusbar_colors='{"failure" : "red"}' nolabel="1"/>
-                    </header>
-                </xpath>
+                <button name="set_active" position="attributes">
+                    <attribute name="states">inactive,deprecated,setup,signature_failed,posbox_failed</attribute>
+                </button>
+                <button name="set_deprecate" position="replace">
+                    <button string="Failure" name="set_failure" type="object" states="active,inactive" />
+                    <button string="ID erzeugen" name="create_cashregisterid" type="object" attrs="{'invisible': [('cashregisterid', '>', '')]}"/>
+                </button>
+                <field name="state" position="attributes">
+                    <attribute name="statusbar_visible">setup,active,inactive,deprecated,failure</attribute>
+                </field>
                 <field name="iface_cashdrawer" position="after">
                     <field name="iface_rksv" />
                 </field>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from openerp import models, fields, api, _
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -21,8 +21,8 @@ class ProductTemplate(models.Model):
             template.rksv_tax_mapping_correct = rksv_tax
 
     rksv_product_type = fields.Selection([
-        ('product', 'Produkt'),
-        ('coupon', 'Gutschein'),
+        ('product', 'Produkt / Leistungs Gutschein'),
+        ('coupon', 'Wert Gutschein'),
         ('startreceipt', 'Start Beleg'),
         ('yearreceipt', 'Jahres Beleg'),
         ('monthreceipt', 'Monats Beleg'),

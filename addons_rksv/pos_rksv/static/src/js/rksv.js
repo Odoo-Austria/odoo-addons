@@ -1,11 +1,12 @@
 odoo.define('pos_rksv.rksv', function (require) {
-    "use strict";
+"use strict";
 
     var core = require('web.core');
     // We do require the signature model and collection
     require('pos_rksv.models');
     var models = require('point_of_sale.models');
     var QWeb = core.qweb;
+    var _t = core._t;
 
     /* RKSV Core Extension */
 
@@ -73,6 +74,10 @@ odoo.define('pos_rksv.rksv', function (require) {
                             self.statuses['rksv'] = false;
                         }
                     } else {
+                        self.statuses['rksv'] = false;
+                    }
+                    // Extra check here for a valid cashregisterid
+                    if ((!self.pos.config.cashregisterid) || (self.pos.config.cashregisterid.trim() == "")) {
                         self.statuses['rksv'] = false;
                     }
                     // Check for month product
@@ -187,6 +192,44 @@ odoo.define('pos_rksv.rksv', function (require) {
                 self.pos.gui.show_screen('receipt')
             }
         },
+        rksv_reprint_special_receipt: function(type, title) {
+            var self = this;
+            if (!self.check_proxy_connection()) {
+                self.pos.gui.show_popup('error',{
+                    'message': _t("Fehler"),
+                    'comment': "PosBox Verbindung wird für diese Funktion benötigt !"
+                });
+                return;
+            }
+            // Get minimal data needed for printing from the posbox
+            self.proxy_rpc_call(
+                '/hw_proxy/get_'+type+'_receipt',
+                self.get_rksv_info(),
+                self.timeout
+            ).then(
+                function done(response) {
+                    if (response.success == false) {
+                        self.pos.gui.show_popup('error',{
+                            'message': _t("Fehler"),
+                            'comment': response.message
+                        });
+                    } else {
+                        // in response we should have the needed data to reprint - we assume to have a pos printer here
+                        var env = {
+                            'title': title,
+                            'receipt': response.receipt
+                        };
+                        self.pos.proxy.print_receipt(QWeb.render('RKSVReceipt',env));
+                    }
+                },
+                function failed() {
+                    self.pos.gui.show_popup('error',{
+                        'message': _t("Fehler"),
+                        'comment': "Fehler bei der Kommunikation mit der PosBox!"
+                    });
+                }
+            );
+        },
         create_dummy_order: function(product_id, reference) {
             // Get current order
             var order = this.pos.get_order();
@@ -266,6 +309,21 @@ odoo.define('pos_rksv.rksv', function (require) {
                 },
                 function failed() {
                     self.month_receipt_in_progress = false;
+                }
+            );
+        },
+        rksv_create_null_receipt: function() {
+            var self = this;
+            // Create a new dummy order with no product
+            var order = this.create_dummy_order(null);
+            // Sign Order
+            this.pos.push_order(order).then(
+                function done() {
+                    self.print_order(order);
+                    order.finalize();
+                },
+                function failed() {
+                    console.log('Failed to generate null receipt !');
                 }
             );
         },

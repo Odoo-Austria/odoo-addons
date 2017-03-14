@@ -104,6 +104,18 @@ odoo.define('pos_rksv.chrome', function (require) {
             this.$('.button.rksv_export_dep_crypt').click(function(){
                 self.pos.rksv.rksv_write_dep_crypt_container();
             });
+            this.$('.button.rksv_reprint_start_receipt').click(function(){
+                self.pos.rksv.rksv_reprint_special_receipt('start', 'Startbeleg');
+            });
+            this.$('.button.rksv_reprint_month_receipt').click(function(){
+                self.pos.rksv.rksv_reprint_special_receipt('month', 'Monatsbeleg');
+            });
+            this.$('.button.rksv_reprint_year_receipt').click(function(){
+                self.pos.rksv.rksv_reprint_special_receipt('year', 'Jahresbeleg');
+            });
+            this.$('.button.rksv_create_null_receipt').click(function(){
+                self.pos.rksv.rksv_create_null_receipt();
+            });
         }
     });
     chrome.Chrome.prototype.replace_widget('debug', {
