@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="Orderline">
+        <t t-jquery="ul.info-list" t-operation="replace">
+            <ul class="info-list">
+                <t t-esc="line.get_product_reference()"/>
+                <t t-if="line.get_unit() &amp;&amp; line.get_quantity_str() !== '1' || line.selected ">
+                    <li class="info">
+                        <em>
+                            <t t-esc="line.get_quantity_str()" />
+                        </em>
+                        <t t-esc="line.get_unit().name" />
+                        at
+                        <t t-esc="widget.format_currency(line.get_unit_price(),'Product Price')" />
+                        /
+                        <t t-esc="line.get_unit().name" />
+                    </li>
+                </t>
+                <t t-if="line.get_discount_str() !== '0'">
+                    <li class="info">
+                        With a
+                        <em>
+                            <t t-esc="line.get_discount_str()" />%
+                        </em>
+                        discount
+                    </li>
+                </t>
+                <t t-if="line.get_product().product_ref">
+                    <li class="ref">
+                        <em>Reference:</em><input class="pro_ref" type="text" name="pro_ref" t-att-value="line.get_product_reference()"/>
+                    </li>
+                </t>
+            </ul>
+        </t>
+    </t>
+    <!-- PosTicket -->
+    <t t-extend="PosTicket">
+        <t t-jquery="tr[t-foreach*='orderlines']" t-operation="append">
+            <t t-if="orderline.product_ref_text">
+                <tr>
+                    <td>
+                        Ref.: <t t-esc="orderline.product_ref_text"/>
+                    </td>
+                </tr>
+            </t>
+        </t>
+    </t>
+
+    <!-- XmlReceipt -->
+    <t t-extend="XmlReceipt">
+        <t t-jquery="t[t-foreach*='receipt.orderlines']" t-operation="append">
+            <t t-if="line.product_ref_text">
+                <line>
+                    <left>
+                        Ref.: <t t-esc="line.product_ref_text"/>
+                    </left>
+                </line>
+            </t>
+        </t>
+    </t>
+</templates>
