@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="MPDStatusWidget">
+        <div class="oe_status js_proxy">
+            <div class="js_Open oe_icon oe_green oe_hidden">
+                <i class='fa fa-fw fa-credit-card'></i>
+            </div>
+            <div class="js_connecting oe_icon oe_hidden">
+                <i class='fa fa-fw fa-spin fa-spinner'></i>
+            </div>
+            <div class="js_Closed oe_icon oe_red">
+                <i class='fa fa-fw fa-credit-card'></i>
+            </div>
+            <div class="js_warning oe_icon oe_orange">
+                <i class='fa fa-fw fa-credit-card'></i>
+            </div>
+            <span class='js_msg oe_orange oe_hidden'></span>
+        </div>
+    </t>
+
+    <t t-name="MPDPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup content">
+                <p class="title">Payment Terminal</p>
+                <ul class='body'>
+                    <li>Schicht Status: <b><span class="mpd_shift_state_text">Unbekannt</span></b></li>
+                    <li>Terminal Status: <b><span class="mpd_device_status_text">Unbekannt</span></b></li>
+                </ul>
+                <div id="mpd_last_receipt" class="oe_hidden" style="white-space: pre;font-size:10px;font-face:ocr-a;text-align:left;font-family: OCR-A, monospace;margin:10px;padding:2px;border-style:solid;border-width:1px;margin-left:auto;margin-right:auto;width:250px;">
+
+                </div>
+                <div class="footer">
+                    <div class="button cancel" id="mpd_close_button">
+                        Ok
+                    </div>
+                    <div class="button oe_hidden" id="mpd_open_shift">
+                        Öffnen
+                    </div>
+                    <div class="button oe_hidden" id="mpd_close_shift">
+                        Schließen
+                    </div>
+                    <div class="button" id="mpd_balance_button">
+                        Abschluss
+                    </div>
+                </div>
+            </div>
+            <div class="popup oe_hidden loading">
+                Laden...
+            </div>
+        </div>
+    </t>
+
+    <t t-name="MPDRefWidget">
+        <div class="modal-dialog">
+            <div class="popup content">
+                <div class='body'>
+                    Bitte geben Sie die Referenz der Zahlung ein. Diese finden Sie im Feld EFT Ref-No. Bitte mit den führenden Nullen eingeben !<br/>
+                    <div>
+                        <input class="paymentline-input mpd_refund_ref" step="1" type="number" value="0000" pattern="[0-9]+?"/>
+                    </div>
+                    <div class="numpad">
+                        <button class="input-button number-char">1</button>
+                        <button class="input-button number-char">2</button>
+                        <button class="input-button number-char">3</button>
+                        <br />
+                        <button class="input-button number-char">4</button>
+                        <button class="input-button number-char">5</button>
+                        <button class="input-button number-char">6</button>
+                        <br />
+                        <button class="input-button number-char">7</button>
+                        <button class="input-button number-char">8</button>
+                        <button class="input-button number-char">9</button>
+                        <br />
+                        <button class="input-button numpad-clear">
+                            <img src="/pos_six/static/src/img/clear.png" width="24" height="21" />
+                        </button>
+                        <button class="input-button number-char">0</button>
+                        <button class="input-button numpad-backspace">
+                            <img src="/point_of_sale/static/src/img/backspace.png" width="24" height="21" />
+                        </button>
+                        <br />
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="button" id="mpd_refok_button">
+                        Ok
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-extend="Paymentline" >
+        <t t-jquery=".paymentline-name" t-operation="append">
+            <t t-if="line.cashregister.journal.is_sixx_terminal">
+                <button class="payment-terminal-transaction-start"  t-att-data-cid='line.cid' style="float:right;">Terminal</button>
+                <button class="payment-terminal-transaction-abort oe_hidden"  t-att-data-cid='line.cid' style="float:right;">Abbrechen</button>
+                <button class="payment-terminal-transaction-reversal oe_hidden"  t-att-data-cid='line.cid' style="float:right;">Terminal Storno</button>
+            </t>
+        </t>
+    </t>
+
+    <t t-extend="PosTicket" >
+        <t t-jquery=".receipt-change" t-operation="after">
+            <h4>Terminal</h4>
+            <t t-foreach="paymentlines" t-as="line">
+                <div style="white-space: pre;" t-if="line.receipt"><t t-raw="line.receipt"/></div>
+            </t>
+        </t>
+    </t>
+
+    <t t-extend="XmlReceipt" >
+        <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
+            <t t-foreach="receipt.paymentlines" t-as="line">
+                <pre t-if="line.six_receipt"><t t-raw="line.six_receipt"/></pre>
+            </t>
+        </t>
+    </t>
+
+    <t t-name="RawReceipt">
+        <receipt align='center' width='40' value-thousands-separator='' cut="true">
+            <pre t-if="receipt"><t t-raw="receipt"/></pre>
+        </receipt>
+    </t>
+
+    <t t-extend="DebugWidget" >
+        <t t-jquery=".content" t-operation="append">
+            <p class="category">Terminal</p>
+            <ul>
+                <li class="button terminal_setup">Setup</li>
+                <li class="button terminal_initialize">Initialisieren</li>
+                <li class="button terminal_reboot">Neustarten</li>
+                <li class="button terminal_reconnect">Neu Verbinden</li>
+                <li class="button terminal_status">Status Abfrage</li>
+            </ul>
+        </t>
+    </t>
+</templates>
