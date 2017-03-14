@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="pos_product_template_only_form_view_frabac" model="ir.ui.view">
+            <field name="name">product.template.product.form.frabac.pos</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <group name="sale" position="inside">
+                    <field string="Referenz in POS" name="product_ref"></field>
+                </group>
+            </field>
+        </record>
+
+    </data>
+</openerp>
