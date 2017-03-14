@@ -75,15 +75,3 @@ class signature_provider(models.Model):
         signature.bmf_last_update = signaturedata['bmf_last_update'] if 'bmf_last_update' in signaturedata else None
         signature.bmf_message = signaturedata['bmf_message'] if 'bmf_message' in signaturedata else ''
         return True
-
-    @api.model
-    def set_provider(self, password, cid, pos_config_id):
-        sprovider = self.env['signature.provider'].search([('public_key', '=', cid)])
-        config = self.env['pos.config'].search([('id', '=', pos_config_id['pos_config_id'])])
-        if not config or (config.pos_admin_passwd != password):
-            return {'success': False, 'message': "Invalid POS config or Invalid Password."}
-        if sprovider:
-            config.signature_provider_id = sprovider.id
-            return {'success': True, 'message': "Signature Provider set."}
-        else:
-            return {'success': False, 'message': "Invalid POS config or Signature Provider."}

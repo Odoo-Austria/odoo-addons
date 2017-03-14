@@ -6,7 +6,7 @@
         <t t-jquery="t[t-esc='order.name']" t-operation="after">
             <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
         </t>
-        <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
+        <t t-jquery="t[t-if='widget.pos.config.receipt_footer']" t-operation="before">
             <div style='text-align:center'>
                 <img t-att-src="order.qrcode_img" width="100px;"/>
             </div>
@@ -19,7 +19,7 @@
         <t t-jquery="t[t-esc='receipt.name']" t-operation="after">
             <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
         </t>
-        <t t-jquery=".before-footer" t-operation="before">
+        <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
             <qrcode t-if="receipt.cashbox_mode=='active'"><t t-raw='receipt.qrcodevalue'/></qrcode>
             <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
         </t>

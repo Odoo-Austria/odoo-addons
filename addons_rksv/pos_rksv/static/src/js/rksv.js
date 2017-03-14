@@ -1,13 +1,9 @@
-odoo.define('pos_rksv.rksv', function (require) {
-"use strict";
-
-    var core = require('web.core');
-    // We do require the signature model and collection
-    require('pos_rksv.models');
-    var models = require('point_of_sale.models');
-    var QWeb = core.qweb;
+function openerp_rksv_rksv(instance, module) {
+    var core = instance.web;
+    var models = module;
+    var QWeb = instance.web.qweb;
+    var Model = instance.web.Model;
     var _t = core._t;
-
     /* RKSV Core Extension */
 
     var RKSV = core.Class.extend({
@@ -263,11 +259,11 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
-                    self.month_receipt_in_progress = false;
+                    self.pos.get('selectedOrder').destroy({'reason':'system'});
+                    self.start_receipt_in_progress = false;
                 },
                 function failed() {
-                    self.month_receipt_in_progress = false;
+                    self.start_receipt_in_progress = false;
                 }
             );
         },
@@ -283,7 +279,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
+                    self.pos.get('selectedOrder').destroy({'reason':'system'});
                     self.year_receipt_in_progress = false;
                 },
                 function failed() {
@@ -304,7 +300,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
+                    self.pos.get('selectedOrder').destroy({'reason':'system'});
                     self.month_receipt_in_progress = false;
                 },
                 function failed() {
@@ -352,6 +348,19 @@ odoo.define('pos_rksv.rksv', function (require) {
                         // Set and signal active mode
                         self.pos.set('cashbox_mode', 'active');
                     }
+                    var config = new Model('pos.config');
+                    config.call('set_provider', [serial, self.pos.config.id]).then(
+                        function done(result) {
+                            if (!result['success']) {
+                                self.pos.gui.show_popup('error',{
+                                    'message': _t("RKSV Fehler"),
+                                    'comment': result['message']
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    );
                 },
                 function failed(message) {
                     self.inform_running = false;
@@ -872,8 +881,5 @@ odoo.define('pos_rksv.rksv', function (require) {
             console.log('RKSV disconnect from proxy got called !');
         }
     });
-
-    return {
-        RKSV: RKSV,
-    };
-});
+    module.RKSV = RKSV;
+}

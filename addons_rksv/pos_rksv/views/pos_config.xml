@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<openerp>
     <data>
         <record model="ir.ui.view" id="view_pos_config_form">
             <field name="name">pos.config.form.view</field>
@@ -19,7 +19,7 @@
                 <field name="iface_cashdrawer" position="after">
                     <field name="iface_rksv" />
                 </field>
-                <xpath expr="//group[@name='receipt']" position="before">
+                <xpath expr="//field[@name='journal_ids']" position="after">
                     <group string="Registrierkassenverordnung (Österreich)">
                         <group>
                             <field name="cashregisterid"/>
@@ -41,4 +41,4 @@
             </field>
         </record>
     </data>
-</odoo>
+</openerp>

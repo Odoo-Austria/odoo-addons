@@ -1,20 +1,16 @@
-/*
- Do extend the main pos Model here !
- */
-odoo.define('pos_rksv.pos', function (require) {
-    "use strict";
+openerp.pos_rksv = function (instance) {
+    var module = instance.point_of_sale;
+    var models = module;
+    var Model = instance.web.Model;
 
-    var chrome = require('point_of_sale.chrome');
-    var models = require('point_of_sale.models');
-    // We do require the signature model and collection
-    require('pos_rksv.models');
-    // Get reference to my RKSV Popup Widgets - you get the reference by using the gui popup handler functions !
-    require('pos_rksv.popups');
-    var Model = require('web.DataModel');
-    var rksv = require('pos_rksv.rksv');
-
-    var core = require('web.core');
-    var _t = core._t;
+    openerp_rksv_compat(instance, module);            // Compatibility Functions
+    openerp_rksv_popups(instance, module);            // Import popup widgets
+    openerp_rksv_models(instance, module);            // Import models
+    openerp_rksv_rksv(instance, module);              // RKSV Object
+    openerp_rksv_chrome(instance, module);            // Debug Widget, Status Indicator
+    openerp_rksv_devices(instance, module);           // Overwrite the status json request
+    openerp_rksv_screens(instance, module);           // Define the Status Screen, extend existing screens
+    openerp_rksv_db(instance, module);                // PosDB Extensions
 
     /*
     PosModel ist the main pos Model - which does get referenced everywhere with pos
@@ -41,7 +37,7 @@ odoo.define('pos_rksv.pos', function (require) {
             PosModelSuper.prototype.initialize.call(this, session, attributes);
             var self = this;
             // Do initialize the main RKSV Handler Object !
-            this.rksv = new rksv.RKSV({'pos': this, proxy: this.proxy});
+            this.rksv = new module.RKSV({'pos': this, proxy: this.proxy});
 
             // The PosModel does handle the communication back to odoo
             this.signatures.on('add remove', function (signature, signatures) {
@@ -152,4 +148,4 @@ odoo.define('pos_rksv.pos', function (require) {
         }
     });
 
-});
+};

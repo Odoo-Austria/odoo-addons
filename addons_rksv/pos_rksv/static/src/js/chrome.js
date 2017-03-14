@@ -1,24 +1,8 @@
-odoo.define('pos_rksv.chrome', function (require) {
-    "use strict";
+function openerp_rksv_chrome(instance, module){
 
-    var chrome = require('point_of_sale.chrome');
-    var gui = require('point_of_sale.gui');
-    var core = require('web.core');
+    var gui = module.PosWidget;
 
-    //var QWeb = core.qweb;
-    var _t = core._t;
-
-    chrome.Chrome.include({
-        replace_widget: function(name, widget_config) {
-            for (var i=0; i < this.widgets.length; i++) {
-                if (this.widgets[i]['name'] == name) {
-                    this.widgets[i] = widget_config;
-                }
-            }
-
-        }
-    });
-    var RKSVStatusWidget = chrome.StatusWidget.extend({
+    var RKSVStatusWidget = module.StatusWidget.extend({
         template: 'RKSVStatusIndicatorWidget',
         // Possible status values
         status: ['connected','connecting','disconnected','warning'],
@@ -68,7 +52,7 @@ odoo.define('pos_rksv.chrome', function (require) {
     /*
     We do regsiter the RKSV Status Widget
      */
-    chrome.Chrome.prototype.widgets.unshift({
+    gui.prototype.extrawidgets.unshift({
         'name':   'signature',
         'widget': RKSVStatusWidget,
         'append':  '.pos-rightheader'
@@ -77,7 +61,7 @@ odoo.define('pos_rksv.chrome', function (require) {
     /*
     Lets extend the Debug Widget - so we can add our own functions here
      */
-    var DebugWidget = chrome.DebugWidget.extend({
+    module.DebugWidget = module.DebugWidget.extend({
         start: function () {
             // Supercall using prototype
             this._super();
@@ -118,10 +102,5 @@ odoo.define('pos_rksv.chrome', function (require) {
             });
         }
     });
-    chrome.Chrome.prototype.replace_widget('debug', {
-        'name':   'debug',
-        'widget': DebugWidget,
-        'append':  '.pos-content'
-    });
-});
+}
 

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<openerp>
     <data>
-        <template id="rksv_assets" inherit_id="point_of_sale.assets">
+
+        <template id="rksv_assets_css" name="pos_rksv_css" inherit_id="point_of_sale.index">
+            <xpath expr="//link[@id='pos-stylesheet']" position="after">
+                <link href="/pos_rksv/static/src/css/rksv.css" rel="stylesheet"/>
+                <link href="/pos_rksv/static/src/css/rksv8.css" rel="stylesheet"/>
+            </xpath>
+        </template>
+
+        <template id="rksv_assets" inherit_id="point_of_sale.assets_backend">
           <xpath expr="." position="inside">
+              <script type="text/javascript" src="/pos_rksv/static/src/js/compat.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/models.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/pos.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/rksv.js"></script>
@@ -16,4 +25,4 @@
         </template>
 
     </data>
-</odoo>
+</openerp>

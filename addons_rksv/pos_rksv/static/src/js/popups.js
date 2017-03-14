@@ -1,16 +1,11 @@
-odoo.define('pos_rksv.popups', function (require) {
-    "use strict";
-
+function openerp_rksv_popups(instance, module){
     // This file contains the Popups.
-    // Popups must be loaded and named in chrome.js. 
+    // Popups must be loaded and named in chrome.js.
     // They are instanciated / destroyed with the .gui.show_popup()
     // and .gui.close_popup() methods.
 
-    var PopupWidget = require('point_of_sale.popups');
-    var gui = require('point_of_sale.gui');
-    var chrome = require('point_of_sale.chrome');
-    var core = require('web.core');
-    var _t = core._t;
+    var PopupWidget = module.PopUpWidget;
+    var gui = module.PosWidget.prototype;
 
     /*
     RKSV Generic Popup Widget
@@ -200,4 +195,4 @@ odoo.define('pos_rksv.popups', function (require) {
         },
     });
     gui.define_popup({name:'rksv_fa_widget', widget: RKSVFAPopupWidget});
-});
+}

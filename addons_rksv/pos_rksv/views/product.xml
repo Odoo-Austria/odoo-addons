@@ -9,11 +9,11 @@
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
 
-                <group name="group_general" position="inside">
+                <field name="type" position="after">
                     <field name="rksv_product_type"/>
                     <field name="rksv_tax_mapping_correct"/>
                     <field name="pos_product_invisible"/>
-                </group>
+                </field>
 
             </field>
         </record>

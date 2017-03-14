@@ -1,10 +1,5 @@
-/*
- A Base Object for RKSV - does not depend on any other RKSV Object
- */
-odoo.define('pos_rksv.models', function (require) {
-    "use strict";
-    var models = require('point_of_sale.models');
-    var core = require('web.core');
+function openerp_rksv_models(instance, module) {
+    var models = module;
 
     models.append_domain = function(modelname, domain) {
         var pmodels = models.PosModel.prototype.models;
@@ -250,4 +245,4 @@ odoo.define('pos_rksv.models', function (require) {
             return res;
         }
     });
-});
+}

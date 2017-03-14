@@ -1,9 +1,6 @@
-odoo.define('pos_rksv.db', function (require) {
-    "use strict";
+function openerp_rksv_db(instance, module){
 
-    var PosDB = require("point_of_sale.DB");
-
-    PosDB.include({
+    module.PosDB.include({
         invisible_filtered: function(products) {
             if (products instanceof Array) {
                 return _.filter(products, function (product) {
@@ -31,4 +28,4 @@ odoo.define('pos_rksv.db', function (require) {
             return this.invisible_filtered(products);
         }
     });
-});
+}

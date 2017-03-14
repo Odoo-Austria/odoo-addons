@@ -1,13 +1,6 @@
-odoo.define('pos_rksv.devices', function (require) {
-    "use strict";
+function openerp_rksv_devices(instance, module){
 
-    var devices = require('point_of_sale.devices');
-    var core = require('web.core');
-
-    //var QWeb = core.qweb;
-    var _t = core._t;
-
-    devices.ProxyDevice.include({
+    module.ProxyDevice.include({
         // sorry - we have to complete overwrite this function
         keepalive: function () {
             var self = this;
@@ -35,4 +28,4 @@ odoo.define('pos_rksv.devices', function (require) {
             }
         },
     });
-});
+}

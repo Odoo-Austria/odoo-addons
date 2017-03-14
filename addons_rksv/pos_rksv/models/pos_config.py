@@ -102,3 +102,15 @@ class pos_config(models.Model):
         self.state = 'active'
         # Do generate a cashregisterid if there is not id attached already
         self._calc_cashregisterid()
+
+    @api.model
+    def set_provider(self, serial, pos_config_id):
+        sprovider = self.env['signature.provider'].search([('serial', '=', serial)])
+        config = self.search([('id', '=', pos_config_id)])
+        if not config:
+            return {'success': False, 'message': "Invalid POS config."}
+        if sprovider:
+            config.signature_provider_id = sprovider.id
+            return {'success': True, 'message': "Signature Provider set."}
+        else:
+            return {'success': False, 'message': "Invalid POS config or Signature Provider."}
