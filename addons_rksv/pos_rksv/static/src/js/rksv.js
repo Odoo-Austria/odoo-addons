@@ -188,6 +188,44 @@ odoo.define('pos_rksv.rksv', function (require) {
                 self.pos.gui.show_screen('receipt')
             }
         },
+        rksv_reprint_special_receipt: function(type, title) {
+            var self = this;
+            if (!self.check_proxy_connection()) {
+                self.pos.gui.show_popup('error',{
+                    'message': _t("Fehler"),
+                    'comment': "PosBox Verbindung wird für diese Funktion benötigt !"
+                });
+                return;
+            }
+            // Get minimal data needed for printing from the posbox
+            self.proxy_rpc_call(
+                '/hw_proxy/get_'+type+'_receipt',
+                self.get_rksv_info(),
+                self.timeout
+            ).then(
+                function done(response) {
+                    if (response.success == false) {
+                        self.pos.gui.show_popup('error',{
+                            'message': _t("Fehler"),
+                            'comment': response.message
+                        });
+                    } else {
+                        // in response we should have the needed data to reprint - we assume to have a pos printer here
+                        var env = {
+                            'title': title,
+                            'receipt': response.receipt
+                        };
+                        self.pos.proxy.print_receipt(QWeb.render('RKSVReceipt',env));
+                    }
+                },
+                function failed() {
+                    self.pos.gui.show_popup('error',{
+                        'message': _t("Fehler"),
+                        'comment': "Fehler bei der Kommunikation mit der PosBox!"
+                    });
+                }
+            );
+        },
         create_dummy_order: function(product_id, reference) {
             // Get current order
             var order = this.pos.get_order();
@@ -294,6 +332,19 @@ odoo.define('pos_rksv.rksv', function (require) {
                     if (mode == "signature_failed") {
                         // Set and signal active mode
                         self.pos.set('cashbox_mode', 'active');
+                        var config = new Model('pos.config');
+                        config.call('set_provider', [serial, self.pos.config.id]).then(
+                            function done(result) {
+                                if (!result['success']) {
+                                    self.pos.gui.show_popup('error',{
+                                        'message': _t("RKSV Fehler"),
+                                        'comment': result['message']
+                                    });
+                                } else {
+                                    location.reload();
+                                }
+                            }
+                        );
                     }
                 },
                 function failed(message) {
