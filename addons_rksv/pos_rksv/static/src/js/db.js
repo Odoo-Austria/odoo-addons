@@ -10,7 +10,7 @@ odoo.define('pos_rksv.db', function (require) {
                     return !product['pos_product_invisible'];
                 }, this);
             } else {
-                if (products['pos_product_invisible'] === true) {
+                if (products === undefined || products['pos_product_invisible'] === true) {
                     return undefined;
                 } else {
                     return products;

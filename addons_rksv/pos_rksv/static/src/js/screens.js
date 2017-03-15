@@ -394,7 +394,7 @@ odoo.define('pos_rksv.screens', function (require) {
                     var rksvstatus = status.newValue.drivers.rksv ? status.newValue.drivers.rksv.status : false;
                     var rksvmessage = status.newValue.drivers.rksv && status.newValue.drivers.rksv.message ? status.newValue.drivers.rksv.message : false;
                     if (!rksvmessage) {
-                        rksvmessage = "Status: " + status.newValue.drivers.rksv && status.newValue.drivers.rksv.status ? status.newValue.drivers.rksv.status : '?';
+                        rksvmessage = "Status: " + status.newValue.drivers && status.newValue.drivers.rksv && status.newValue.drivers.rksv.status ? status.newValue.drivers.rksv.status : '?';
                     }
                     if (!rksvstatus) {
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
