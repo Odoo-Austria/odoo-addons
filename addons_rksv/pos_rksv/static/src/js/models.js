@@ -170,6 +170,7 @@ odoo.define('pos_rksv.models', function (require) {
             this.qrcode_img = result.qrcodeImage;
             this.ocrcodevalue = result.ocrcodeValue;
             this.receipt_id = result.receipt_id;
+            this.cashbox_mode = result.cashbox_mode;
             Object.assign(this, result);
         },
         set_sign_failed: function () {
@@ -201,6 +202,7 @@ odoo.define('pos_rksv.models', function (require) {
                 'qrcode_img': this.qrcode_img,
                 'receipt_id': this.receipt_id,
                 'ocrcodevalue': this.ocrcodevalue,
+                'cashbox_mode': this.cashbox_mode,
                 'typeOfReceipt': this.typeOfReceipt,
                 'signatureSerial': this.signatureSerial,
                 'encryptedTurnOverValue': this.encryptedTurnOverValue,

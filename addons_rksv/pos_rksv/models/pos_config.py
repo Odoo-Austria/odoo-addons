@@ -22,6 +22,18 @@ class pos_config(models.Model):
             if not config.cashregisterid or config.cashregisterid == '':
                 config.cashregisterid = uuid.uuid1()
 
+    @api.model
+    def set_provider(self, serial, pos_config_id):
+        sprovider = self.env['signature.provider'].search([('serial', '=', serial)])
+        config = self.search([('id', '=', pos_config_id)])
+        if not config:
+            return {'success': False, 'message': "Invalid POS config."}
+        if sprovider:
+            config.signature_provider_id = sprovider.id
+            return {'success': True, 'message': "Signature Provider set."}
+        else:
+            return {'success': False, 'message': "Invalid POS config or Signature Provider."}
+
     cashregisterid = fields.Char(
         string='KassenID', size=36,
         compute='_calc_cashregisterid',
@@ -96,7 +108,7 @@ class pos_config(models.Model):
 
     @api.multi
     def set_failure(self):
-        self.state = 'failure'
+        self.state = 'posbox_failed'
 
     @api.multi
     def set_active(self):

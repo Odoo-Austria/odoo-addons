@@ -16,9 +16,9 @@
                             </group>
                             <group>
                                 <field name="typeOfReceipt"/>
-                                <field name="receipt_id"/>
-                                <field name="receipt_id"/>
-                                <field name="signatureSerial"/>
+                                 <field name="receipt_id"/>
+                                 <field name="cashbox_mode"/>
+                                 <field name="signatureSerial"/>
                             </group>
                         </group>
                         <label for="qr_code_value" />
