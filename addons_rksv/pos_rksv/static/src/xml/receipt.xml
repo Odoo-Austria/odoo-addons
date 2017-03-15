@@ -10,6 +10,7 @@
             <div t-if="receipt.cashbox_mode=='active'" style='text-align:center'>
                 <img t-att-src="receipt.qrcode_img" width="100px;"/>
             </div>
+            <div t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</div>
             <p style="font-family: OCR-A, monospace;font-size:8px;word-wrap: break-word;"><t t-raw="order.ocrcodevalue"/></p>
         </t>
     </t>
