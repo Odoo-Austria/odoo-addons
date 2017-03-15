@@ -73,6 +73,10 @@ odoo.define('pos_rksv.rksv', function (require) {
                         } else {
                             self.statuses['rksv'] = false;
                         }
+                        // Extra check here for a valid cashregisterid
+                        if ((!self.pos.config.cashregisterid) || (self.pos.config.cashregisterid.trim() == "")) {
+                            self.statuses['rksv'] = false;
+                        }
                     } else {
                         self.statuses['rksv'] = false;
                     }

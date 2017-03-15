@@ -25,6 +25,30 @@
             <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
         </t>
     </t>
+    <t t-name="RKSVReceipt">
+        <receipt align='center' width='40' value-thousands-separator='' cut="true">
+            <h1><t t-raw='title'/></h1>
+            <br/>
+            <line>
+                <left>Datum</left>
+                <right><t t-raw='receipt.receiptDate'/></right>
+            </line>
+            <line>
+                <left>Ref</left>
+                <right><t t-raw='receipt.ref'/></right>
+            </line>
+            <line>
+                <left>Bon Nr</left>
+                <right><t t-raw='receipt.receiptId'/></right>
+            </line>
+            <line>
+                <left>Signature Serial</left>
+                <right><t t-raw='receipt.signatureSerial'/></right>
+            </line>
+            <br/>
+            <qrcode><t t-raw='receipt.qrcodeValue'/></qrcode>
+        </receipt>
+    </t>
 
     <t t-name="RKSVReceipt">
         <receipt align='center' width='40' value-thousands-separator='' cut="true">
