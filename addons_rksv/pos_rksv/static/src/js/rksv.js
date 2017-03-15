@@ -6,6 +6,7 @@ odoo.define('pos_rksv.rksv', function (require) {
     require('pos_rksv.models');
     var models = require('point_of_sale.models');
     var QWeb = core.qweb;
+    var Model = instance.web.Model;
     var _t = core._t;
 
     /* RKSV Core Extension */
@@ -264,10 +265,10 @@ odoo.define('pos_rksv.rksv', function (require) {
                 function done() {
                     self.print_order(order);
                     order.finalize();
-                    self.month_receipt_in_progress = false;
+                    self.start_receipt_in_progress = false;
                 },
                 function failed() {
-                    self.month_receipt_in_progress = false;
+                    self.start_receipt_in_progress = false;
                 }
             );
         },

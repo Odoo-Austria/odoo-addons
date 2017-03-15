@@ -104,6 +104,9 @@ odoo.define('pos_rksv.chrome', function (require) {
 	        this.$('.button.rksv_reprint_year_receipt').click(function(){
 	            self.pos.rksv.rksv_reprint_special_receipt('year', 'Jahresbeleg');
 	        });
+            this.$('.button.rksv_create_null_receipt').click(function(){
+                self.pos.rksv.rksv_create_null_receipt();
+            });
             this.$('.button.rksv_reset_dep').click(function(){
                 self.pos.rksv.rksv_reset_dep();
             });
