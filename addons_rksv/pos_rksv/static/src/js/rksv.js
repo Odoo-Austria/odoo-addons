@@ -6,6 +6,7 @@ odoo.define('pos_rksv.rksv', function (require) {
     require('pos_rksv.models');
     var models = require('point_of_sale.models');
     var QWeb = core.qweb;
+    var _t = core._t;
 
     /* RKSV Core Extension */
 

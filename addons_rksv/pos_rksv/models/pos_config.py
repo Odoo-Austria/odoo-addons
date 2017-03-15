@@ -30,7 +30,8 @@ class pos_config(models.Model):
     )
     signature_provider_id = fields.Many2one(
         comodel_name='signature.provider',
-        string='Signature Provider'
+        string='Signature Provider',
+        readonly=True
     )
     available_signature_provider_ids = fields.One2many(
         comodel_name='signature.provider',
