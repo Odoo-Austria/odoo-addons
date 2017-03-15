@@ -15,6 +15,17 @@ odoo.define('pos_rksv.models', function (require) {
             }
         }
     };
+    models.overwrite_loaded_callback = function(modelname, callback) {
+        var pmodels = models.PosModel.prototype.models;
+        for (var i = 0; i < pmodels.length; i++) {
+            if (pmodels[i].model === modelname) {
+                // Store pointer to original callback
+                pmodels[i]['original'] = pmodels[i]['loaded'];
+                // Set new one
+                pmodels[i]['loaded'] = callback;
+            }
+        }
+    };
     /*
     Here we do add the fields and the models we need to load from the server
      */
@@ -44,6 +55,13 @@ odoo.define('pos_rksv.models', function (require) {
     });
     models.load_fields("account.tax", ['rksv_tax', 'rksv_tax_category']);
     models.load_fields("product.product", ['rksv_product_type', 'pos_product_invisible']);
+    models.overwrite_loaded_callback("pos.config", function(self, configs) {
+        this.original.call(this, self, configs);
+        if (self.config.iface_rksv) {
+            self.config.use_proxy = true;
+        }
+	
+    });
 
     /*
     Define Signature Model - in global models namespace

@@ -73,6 +73,10 @@ odoo.define('pos_rksv.rksv', function (require) {
                         } else {
                             self.statuses['rksv'] = false;
                         }
+                        // Extra check here for a valid cashregisterid
+                        if ((!self.pos.config.cashregisterid) || (self.pos.config.cashregisterid.trim() == "")) {
+                            self.statuses['rksv'] = false;
+                        }
                     } else {
                         self.statuses['rksv'] = false;
                     }
@@ -305,6 +309,21 @@ odoo.define('pos_rksv.rksv', function (require) {
                 },
                 function failed() {
                     self.month_receipt_in_progress = false;
+                }
+            );
+        },
+        rksv_create_null_receipt: function() {
+            var self = this;
+            // Create a new dummy order with no product
+            var order = this.create_dummy_order(null);
+            // Sign Order
+            this.pos.push_order(order).then(
+                function done() {
+                    self.print_order(order);
+                    order.finalize();
+                },
+                function failed() {
+                    console.log('Failed to generate null receipt !');
                 }
             );
         },
