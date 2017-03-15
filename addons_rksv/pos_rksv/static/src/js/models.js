@@ -152,6 +152,7 @@ odoo.define('pos_rksv.models', function (require) {
             this.ocrcodevalue = result.ocrcodeValue;
             this.receipt_id = result.receipt_id;
             this.cashbox_mode = result.cashbox_mode;
+            Object.assign(this, result);
         },
         set_sign_failed: function () {
             this.sign_result = true;
@@ -182,7 +183,18 @@ odoo.define('pos_rksv.models', function (require) {
                 'qrcode_img': this.qrcode_img,
                 'receipt_id': this.receipt_id,
                 'ocrcodevalue': this.ocrcodevalue,
-                'cashbox_mode': this.cashbox_mode
+                'cashbox_mode': this.cashbox_mode,
+                'typeOfReceipt': this.typeOfReceipt,
+                'signatureSerial': this.signatureSerial,
+                'encryptedTurnOverValue': this.encryptedTurnOverValue,
+                'chainValue': this.chainValue,
+                'signedJWSCompactRep': this.signedJWSCompactRep,
+                'taxSetNormal': this.taxSetNormal,
+                'taxSetErmaessigt1': this.taxSetErmaessigt1,
+                'taxSetErmaessigt2': this.taxSetErmaessigt2,
+                'taxSetNull': this.taxSetNull,
+                'taxSetBesonders': this.taxSetBesonders,
+                'turnOverValue': this.turnOverValue
             };
             return Object.assign(rksv_data, data);
         },
@@ -194,6 +206,17 @@ odoo.define('pos_rksv.models', function (require) {
             this.ocrcodevalue = json.ocrcodevalue;
             this.receipt_id = json.receipt_id;
             this.cashbox_mode = json.cashbox_mode;
+            this.typeOfReceipt = json.typeOfReceipt;
+            this.signatureSerial = json.signatureSerial;
+            this.encryptedTurnOverValue = json.encryptedTurnOverValue;
+            this.chainValue = json.chainValue;
+            this.signedJWSCompactRep = json.signedJWSCompactRep;
+            this.taxSetNormal = json.taxSetNormal;
+            this.taxSetErmaessigt1 = json.taxSetErmaessigt1;
+            this.taxSetErmaessigt2 = json.taxSetErmaessigt2;
+            this.taxSetNull = json.taxSetNull;
+            this.taxSetBesonders = json.taxSetBesonders;
+            this.turnOverValue = json.turnOverValue;
         }
     });
 

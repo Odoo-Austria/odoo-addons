@@ -15,14 +15,31 @@
                                 <field name="qr_code_image" widget="image" options="{'preview_image': 'qr_code_image', 'size': [150, 150]}"/>
                             </group>
                             <group>
-                                <field name="receipt_id"/>
-                                <field name="cashbox_mode"/>
+                                <field name="typeOfReceipt"/>
+                                 <field name="receipt_id"/>
+                                 <field name="cashbox_mode"/>
+                                 <field name="signatureSerial"/>
                             </group>
                         </group>
                         <label for="qr_code_value" />
                         <field name="qr_code_value" style="word-wrap: break-word;" />
                         <label for="ocr_code_value" />
                         <field name="ocr_code_value" style="word-wrap: break-word;" />
+                        <group name="receipt_data">
+                            <group name="cents" String="Werte in Cent">
+                                <field name="taxSetNormal"/>
+                                <field name="taxSetErmaessigt1"/>
+                                <field name="taxSetErmaessigt2"/>
+                                <field name="taxSetNull"/>
+                                <field name="taxSetBesonders"/>
+                                <field name="turnOverValue"/>
+                            </group>
+                            <group name="crypt" string="Kryptographische Werte">
+                                <field name="encryptedTurnOverValue" style="word-wrap: break-word;"/>
+                                <field name="chainValue" style="word-wrap: break-word;"/>
+                                <field name="signedJWSCompactRep" style="word-wrap: break-word;"/>
+                            </group>
+                        </group>
                     </page>
                 </xpath>
             </field>

@@ -135,6 +135,10 @@
                 <li class="button bmf_register_start_receipt">BMF Startbeleg übermitteln</li>
                 <li class="button rksv_reset_dep">DEP Zurücksetzen</li>
                 <li class="button rksv_export_dep_crypt">DEP/Crypt Export</li>
+                <li class="button rksv_reprint_start_receipt">Startbeleg nochmals drucken</li>
+                <li class="button rksv_reprint_year_receipt">Jahresbeleg nochmals drucken</li>
+                <li class="button rksv_reprint_month_receipt">Monatsbeleg nochmals drucken</li>
+                <li class="button rksv_create_null_receipt">Nullbeleg erzeugen</li>
             </ul>
         </t>
     </t>
