@@ -290,7 +290,11 @@ odoo.define('pos_rksv.screens', function (require) {
             self.pos.bind('change:bmf_status_rk', function(pos, status) {
                 self.$('.cashbox-message-box').html(status.message);
                 //check rk  -needs to be registered with bmf
-                if (status.success) {
+                if ((!self.pos.config.cashregisterid) || (self.pos.config.cashregisterid.trim() == "")) {
+                    self.$('.cashbox-status-indicator .indicator').css('background', 'orange');
+                    self.$('.cashbox-status-indicator .indicator-message').html("Keine gültige KassenID ist gesetzt !");
+                    self.$('.cashbox-status-indicator .activate_cashbox').hide();
+                } else if (status.success) {
                     self.$('.cashbox-status-indicator .indicator').css('background', 'green');
                     self.$('.cashbox-status-indicator .indicator-message').html(status.message);
                     self.$('.cashbox-status-indicator .activate_cashbox').hide();

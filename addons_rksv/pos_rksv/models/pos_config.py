@@ -113,3 +113,5 @@ class pos_config(models.Model):
     @api.multi
     def set_active(self):
         self.state = 'active'
+        # Do generate a cashregisterid if there is not id attached already
+        self._calc_cashregisterid()
