@@ -395,29 +395,40 @@ odoo.define('pos_rksv.screens', function (require) {
                 if (status.newValue.status === 'connected' && (!(self.pos.config.state === "setup" || self.pos.config.state === "failure" || self.pos.config.state === "inactive"))) {
                     var rksvstatus = status.newValue.drivers.rksv ? status.newValue.drivers.rksv.status : false;
                     var rksvmessage = status.newValue.drivers.rksv && status.newValue.drivers.rksv.message ? status.newValue.drivers.rksv.message : false;
-                    if (!rksvmessage) {
-                        rksvmessage = "Status: " + status.newValue.drivers && status.newValue.drivers.rksv && status.newValue.drivers.rksv.status ? status.newValue.drivers.rksv.status : '?';
-                    }
                     if (!rksvstatus) {
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
-                        self.$('.rksv-status-indicator .indicator-message').html("Status unbekannt");
+                        rksvmessage = "Status unbekannt";
                         self.$('.rksv-status-indicator .register_cashbox').hide();
                     } else if (rksvstatus == 'connected') {
                         // Everything is correct
                         self.$('.rksv-status-indicator .indicator').css('background', 'green');
-                        self.$('.rksv-status-indicator .indicator-message').html("PosBox Modul verbunden");
+                        rksvmessage = "PosBox Modul verbunden";
                         self.$('.rksv-status-indicator .register_cashbox').hide();
                     } else if (rksvstatus == 'doesnotexists') {
                         // Cashbox is not registered on this posbox !
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
-                        self.$('.rksv-status-indicator .indicator-message').html("KassenID nicht auf dieser PosBox registriert !");
+                        rksvmessage = "KassenID nicht auf dieser PosBox registriert!";
                         self.$('.rksv-status-indicator .register_cashbox').show();
                     } else {
                         // Only show it if it is not already in state visible !
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
-                        self.$('.rksv-status-indicator .indicator-message').html(rksvmessage);
                         self.$('.rksv-status-indicator .register_cashbox').hide();
                     }
+                    if (!rksvmessage) {
+                        rksvmessage = "Status: " + status.newValue.drivers && status.newValue.drivers.rksv && status.newValue.drivers.rksv.status ? status.newValue.drivers.rksv.status : '?';
+                    }
+                    if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.messages){
+                        var container = $('<div />')
+                        container.append(rksvmessage + ' (' + rksvstatus + ') <br /><br />');
+                        var messages = $('<ul />');
+                        status.newValue.drivers.rksv.messages.forEach(function(message) {
+                            messages.append('<li>' + message + '</li>');
+                        });
+                        container.append(messages);
+                        rksvmessage = container.html();
+                    }
+                    self.$('.rksv-status-indicator .indicator-message').html(rksvmessage);
+                    
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "setup")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse befindet sich im Status Setup !");
