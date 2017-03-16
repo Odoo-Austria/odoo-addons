@@ -419,8 +419,8 @@ odoo.define('pos_rksv.screens', function (require) {
                         'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
-                /*
                 var provider_obj = new Model('signature.provider');
+                debugger;
                 var result = provider_obj.call('set_provider', [self.$el.find('#pass_input_signature').val(), event.target.value, {'pos_config_id': self.pos.config.id}]).then(
                     function done(result) {
                         if (!result['success']) {
@@ -433,7 +433,6 @@ odoo.define('pos_rksv.screens', function (require) {
                         }
                     }
                 );
-                */
             });
             self.$el.find('.rk-ausfall-se').click(self, function (event) {
                 self.stay_open = false;

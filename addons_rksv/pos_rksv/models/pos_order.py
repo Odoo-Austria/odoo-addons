@@ -38,6 +38,16 @@ class POSOrder(models.Model):
     taxSetBesonders = fields.Integer("19% in Cent")
     turnOverValue = fields.Integer("Summenspeicher")
 
+    def test_paid(self):
+        """A Point of Sale is paid when the sum
+        @return: True
+        """
+        self.ensure_one()
+        res = super(POSOrder, self).test_paid()
+        if not self.lines:
+            res = True
+        return res
+
     @api.model
     def _order_fields(self, ui_order):
         '''

@@ -77,8 +77,8 @@ class signature_provider(models.Model):
         return True
 
     @api.model
-    def set_provider(self, password, cid, pos_config_id):
-        sprovider = self.env['signature.provider'].search([('public_key', '=', cid)])
+    def set_provider(self, password, cid, pos_config_id=pos_config_id):
+        sprovider = self.env['signature.provider'].search([('serial', '=', cid)])
         config = self.env['pos.config'].search([('id', '=', pos_config_id['pos_config_id'])])
         if not config or (config.pos_admin_passwd != password):
             return {'success': False, 'message': "Invalid POS config or Invalid Password."}
