@@ -13,7 +13,6 @@
                         <button string="Set to Active" name="set_active" type="object" states="inactive,deprecated,setup,failure"/>
                         <button string="Set to Inactive" name="set_inactive" type="object" states="active" />
                         <button string="Detect signature providers" name="button_detect_signature_providers" type="object" />
-                        
                         <field name="state" statusbar_visible="setup,active,inactive,deprecated,failure"/>
                         <field name="state" widget="statusbar" statusbar_visible="setup,active,inactive,deprecated,failure" statusbar_colors='{"failure" : "red"}' nolabel="1"/>
                     </header>
