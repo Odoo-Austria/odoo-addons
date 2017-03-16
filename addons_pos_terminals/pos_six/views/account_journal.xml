@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Add Open Cashdrawer, and Six Payment Fields to account.journal Form - it is in the POS Tab -->
+        <record id="view_account_journal_pos_user_form" model="ir.ui.view">
+            <field name="name">Sixx Payment Erweiterung</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='journal_user']" position="after">
+                    <field name="is_sixx_terminal"/>
+                    <field name="auto_validate"/>
+                    <field name="open_cashdrawer"/>
+                    <field name="sixx_terminal_id" attrs="{'invisible': [('is_sixx_terminal', '!=', True)]}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_pos_pos_form" model="ir.ui.view">
+            <field name="name">view_pos_pos_form</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='statement_ids']/tree/field[@name='statement_id']" position="after">
+                    <field name="six_ref_number"/>
+                    <field name="six_receipt"/>
+                    <field name="six_receipt_merchant"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>
