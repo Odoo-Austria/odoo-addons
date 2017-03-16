@@ -181,7 +181,7 @@ odoo.define('pos_rksv.screens', function (require) {
         },
         hide: function() {
             // We avoid to hide here if not everything is ok - or emergency mode
-            if ((!this.pos.rksv.all_ok()) && (!this.emergency_mode()))
+            if (this.pos.rksv === undefined || (!this.pos.rksv.all_ok()) && (!this.emergency_mode()))
                 return;
             var self = this;
             self._super();
@@ -223,6 +223,7 @@ odoo.define('pos_rksv.screens', function (require) {
             return (mode=='signature_failed' || mode=='posbox_failed');
         },
         auto_open_close: function() {
+            if (this.pos.rksv === undefined) return;
             if ((!this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
                 this.pos.gui.show_screen('rksv_status');
             } else if ((this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
@@ -266,6 +267,7 @@ odoo.define('pos_rksv.screens', function (require) {
         },
         se_status_handler: function() {
             var self = this;
+            if (self.pos.signatures === undefined) return;
             // Listen on status update for signaturs - display the change here
             this.pos.signatures.bind('add remove change', function(signature) {
                 // Do rerender the sprovider view
