@@ -421,6 +421,7 @@ odoo.define('pos_rksv.screens', function (require) {
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "setup")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse befindet sich im Status Setup !");
+                    self.$('.rksv-status-indicator .register_cashbox').show();
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "failure")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse ist markiert als ausgefallen !");

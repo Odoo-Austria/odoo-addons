@@ -454,6 +454,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                                 self.pos.rksv.update_bmf_rk_status();
                             } else {
                                 op_popup.success(response.message);
+                                self.pos.set('cashbox_mode', 'active');
                                 // Request a status update here
                                 self.pos.rksv.update_bmf_rk_status();
                             }
