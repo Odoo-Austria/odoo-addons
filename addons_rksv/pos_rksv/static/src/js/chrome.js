@@ -96,16 +96,7 @@ odoo.define('pos_rksv.chrome', function (require) {
                 self.pos.rksv.bmf_status_rk();
             });
             this.$('.button.bmf_register_start_receipt').click(function(){
-            	self.pos.rksv.rksv_reprint_special_receipt('start', 'Startbeleg');
-	        });
-	        this.$('.button.rksv_reprint_month_receipt').click(function(){
-	            self.pos.rksv.rksv_reprint_special_receipt('month', 'Monatsbeleg');
-	        });
-	        this.$('.button.rksv_reprint_year_receipt').click(function(){
-	            self.pos.rksv.rksv_reprint_special_receipt('year', 'Jahresbeleg');
-	        });
-            this.$('.button.rksv_create_null_receipt').click(function(){
-                self.pos.rksv.rksv_create_null_receipt();
+                self.pos.rksv.bmf_register_start_receipt();
             });
             this.$('.button.rksv_reset_dep').click(function(){
                 self.pos.rksv.rksv_reset_dep();
