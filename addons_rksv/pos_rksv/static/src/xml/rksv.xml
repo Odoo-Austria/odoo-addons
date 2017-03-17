@@ -31,7 +31,7 @@
 
     <t t-name="RKSVStatusScreen">
         <div class="modal-dialog">
-            <div class="popup popup-rksv-status">
+            <div class="popup popup-rksv">
                 <div class='pos-help'>
                     <p>Dies ist das primäre Statusfenster. Es erscheint zum Setup oder wenn etwaige Probleme auftauchen.</p>
                     <p>Den allgemeinen Status können Sie links oben am Indikator erkennen. Um das System benutzen zu können müssen alle 5 einen grünen Indikator zeigen.</p>
