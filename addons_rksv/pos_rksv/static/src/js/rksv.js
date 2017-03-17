@@ -858,7 +858,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                             if (response.success == false) {
                                 op_popup.failure(response.message);
                             } else {
-                                op_popup.success("Startbeleg wurde eingericht !!!");
+                                op_popup.success("Startbeleg wurde eingereicht!!!");
                             }
                         },
                         function failed() {
