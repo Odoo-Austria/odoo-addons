@@ -352,20 +352,20 @@ odoo.define('pos_rksv.rksv', function (require) {
                     if (mode == "signature_failed") {
                         // Set and signal active mode
                         self.pos.set('cashbox_mode', 'active');
-                        var config = new Model('pos.config');
-                        config.call('set_provider', [serial, self.pos.config.id]).then(
-                            function done(result) {
-                                if (!result['success']) {
-                                    self.pos.gui.show_popup('error',{
-                                        'message': _t("RKSV Fehler"),
-                                        'comment': result['message']
-                                    });
-                                } else {
-                                    location.reload();
-                                }
-                            }
-                        );
                     }
+                    var config = new Model('pos.config');
+                    config.call('set_provider', [serial, self.pos.config.id]).then(
+                        function done(result) {
+                            if (!result['success']) {
+                                self.pos.gui.show_popup('error',{
+                                    'message': _t("RKSV Fehler"),
+                                    'comment': result['message']
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    );
                 },
                 function failed(message) {
                     self.inform_running = false;
@@ -854,7 +854,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                             if (response.success == false) {
                                 op_popup.failure(response.message);
                             } else {
-                                op_popup.success("Startbeleg wurde eingericht !!!");
+                                op_popup.success("Startbeleg wurde eingereicht!!!");
                             }
                         },
                         function failed() {
