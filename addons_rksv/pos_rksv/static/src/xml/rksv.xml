@@ -33,15 +33,20 @@
         <div class="modal-dialog">
             <div class="popup popup-rksv">
                 <div class='pos-help'>
-                    <p>Dies ist das primäre Statusfenster. Es erscheint zum Setup oder wenn etwaige Probleme auftauchen.</p>
-                    <p>Den allgemeinen Status können Sie links oben am Indikator erkennen. Um das System benutzen zu können müssen alle 5 einen grünen Indikator zeigen.</p>
+                    <p>
+                        Dies ist das primäre Statusfenster. Es erscheint zum Setup oder wenn etwaige Probleme auftauchen.
+                    </p>
+                    <p>
+                        Den allgemeinen Status können Sie rechts oben am RKSV Indikator erkennen.<br />
+                        Um das System benutzen zu können müssen unterhalb alle 5 Boxen einen grünen Indikator zeigen.
+                    </p>
+                    <button class="close_pos">Session beenden</button>
                 </div>
-                <button class="close_pos">Beenden</button>
                 <div class='posbox-status-container'>
                     <div class="posbox-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>
                         <label>PosBox:</label>
-                        <div class="indicator-message">Keine Verbindung!</div>
+                        <div class="indicator-message">PosBox getrennt</div>
                     </div>
                     <div class="rksv-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>
@@ -65,6 +70,9 @@
                         <label>Konfiguration:</label>
                         <div class="indicator-message">Status kann nicht ermittelt werden</div>
                     </div>
+                    <button class="close_rksv">Close</button>
+                </div>
+                <div class='posbox-status-container'>
                     <div class="signature-choose">
                         <p class="signature-provider-help">Bitte wählen Sie einen Signatur Provider aus der Liste. Der Button "Verwenden" setzt den aktiven Signatur Provider.</p>
                         <div class="signature-pass">
@@ -75,7 +83,6 @@
                         <div class="provider-container" />
                     </div>
                 </div>
-                <button class="close_rksv">Close</button>
             </div>
         </div>
     </t>

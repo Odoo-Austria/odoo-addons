@@ -1,5 +1,5 @@
 odoo.define('pos_rksv.rksv', function (require) {
-"use strict";
+    "use strict";
 
     var core = require('web.core');
     // We do require the signature model and collection
