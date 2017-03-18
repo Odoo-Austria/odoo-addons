@@ -60,7 +60,6 @@ odoo.define('pos_rksv.models', function (require) {
         if (self.config.iface_rksv) {
             self.config.use_proxy = true;
         }
-	
     });
 
     /*

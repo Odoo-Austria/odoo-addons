@@ -22,12 +22,12 @@ class ProductTemplate(models.Model):
 
     rksv_product_type = fields.Selection(
         selection=[
-            ('product', 'Produkt'),
-            ('coupon', 'Gutschein'),
-            ('startreceipt', 'Start Beleg'),
-            ('yearreceipt', 'Jahres Beleg'),
-            ('monthreceipt', 'Monats Beleg'),
-            ('nullreceipt', 'Null Beleg'),
+            ('product', 'Produkt / Leistungsgutschein'),
+            ('coupon', 'Wertgutschein'),
+            ('startreceipt', 'Startbeleg'),
+            ('yearreceipt', 'Jahresbeleg'),
+            ('monthreceipt', 'Monatsbeleg'),
+            ('nullreceipt', 'Nullbeleg'),
         ],
         string='RKSV Produkt Art', required=True, default='product')
     rksv_tax_mapping_correct = fields.Boolean(

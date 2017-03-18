@@ -49,5 +49,4 @@
             <qrcode><t t-raw='receipt.qrcodeValue'/></qrcode>
         </receipt>
     </t>
-
 </templates>

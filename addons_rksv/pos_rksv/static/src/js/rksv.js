@@ -1,5 +1,5 @@
 odoo.define('pos_rksv.rksv', function (require) {
-    "use strict";
+"use strict";
 
     var core = require('web.core');
     // We do require the signature model and collection
@@ -80,6 +80,10 @@ odoo.define('pos_rksv.rksv', function (require) {
                             self.statuses['rksv'] = false;
                         }
                     } else {
+                        self.statuses['rksv'] = false;
+                    }
+                    // Extra check here for a valid cashregisterid
+                    if ((!self.pos.config.cashregisterid) || (self.pos.config.cashregisterid.trim() == "")) {
                         self.statuses['rksv'] = false;
                     }
                     // Check for month product

@@ -2,7 +2,6 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-import urllib2
 import logging
 import uuid
 try:
@@ -24,7 +23,6 @@ class pos_config(models.Model):
             if not config.cashregisterid or config.cashregisterid == '':
                 config.cashregisterid = uuid.uuid1()
 
-    # NOT YET USED
     @api.model
     def set_provider(self, serial, pos_config_id):
         sprovider = self.env['signature.provider'].search([('serial', '=', serial)])
@@ -118,37 +116,3 @@ class pos_config(models.Model):
         self.state = 'active'
         # Do generate a cashregisterid if there is not id attached already
         self._calc_cashregisterid()
-
-    @api.multi
-    def button_detect_signature_providers(self):
-        if (self.proxy_ip is False) or (self.proxy_ip == ''):
-            raise UserError(_('Missing Proxy IP\n\nPlease provide ip address of hardware proxy !'))
-        url = 'http://%s/hw_proxy/cashbox/providers/' % (self.proxy_ip,)
-        _logger.info('Do search for signature providers on %s', url)
-        request_data = json.dumps({'dummy': True})
-        req = urllib2.Request(url, request_data, {'Content-Type': 'application/json'})
-        response_data = json.load(urllib2.urlopen(req))
-        _logger.info('got data %r', response_data)
-        if 'result' not in response_data:
-            raise UserError(_('Proxy failed\n\nHardware proxy did failed to get list of signature providers'))
-        for provider in response_data['result']:
-            if not provider:
-                continue
-            _logger.debug('got provider %r', provider)
-            _logger.info('do search for existing provider with serial=%s', provider['serial'])
-            sprovider = self.env['signature.provider'].search([('serial', '=', provider['serial'])], limit=1)
-            if len(sprovider) > 0:
-                _logger.info('found registered signature provider - skip it')
-                continue
-            new_provider = {
-                'state': 'new',
-                'serial': provider['serial'],
-                'name': '%s, Serial: %s' % (provider['reader'], provider['cin'],),
-                'valid_until': provider['valid_until'],
-                'valid_from': provider['valid_from'],
-                'issuer': provider['issuer'],
-                'subject': provider['subject'],
-                'x509': provider['x509'],
-                'pos_config_id': self.id,
-            }
-            self.env['signature.provider'].create(new_provider)
