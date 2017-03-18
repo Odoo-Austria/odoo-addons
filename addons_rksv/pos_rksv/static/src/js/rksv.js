@@ -16,6 +16,7 @@ odoo.define('pos_rksv.rksv', function (require) {
         proxy_informed: true,
         inform_running: false,
         start_receipt_in_progress: false,
+        start_receipt_failed: false,
         year_receipt_in_progress: false,
         month_receipt_in_progress: false,
         statuses: {
@@ -106,28 +107,61 @@ odoo.define('pos_rksv.rksv', function (require) {
                         self.pos.signatures.set(signatures);
                     }
                     // Here do check for the start receipt flag - if it is set - then generate the start receipt for this cash register !
+                    
                     if ((self.start_receipt_in_progress === false) &&
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
-                        (status.newValue.drivers.rksv.start_receipt_needed) &&
+                        (status.newValue.drivers.rksv.start_receipt_needed !== undefined) &&
                         (status.newValue.drivers.rksv.start_receipt_needed === true)) {
                         self.create_start_receipt();
                     }
-                    // Here do check for the year receipt flag - if it is set - then generate the year receipt for this cash register !
-                    if ((self.year_receipt_in_progress === false) &&
+                    if ((self.start_receipt_in_progress === false) &&
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
-                        (status.newValue.drivers.rksv.year_receipt_needed) &&
-                        (status.newValue.drivers.rksv.year_receipt_needed === true)) {
-                        self.create_year_receipt();
-                    }
-                    // Here do check for the month receipt flag - if it is set - then generate the month receipt for this cash register !
-                    if ((self.month_receipt_in_progress === false) &&
+                        (status.newValue.drivers.rksv.start_receipt_needed !== undefined) &&
+                        (status.newValue.drivers.rksv.start_receipt_needed === false) &&
+                        (status.newValue.drivers.rksv.has_valid_start_receipt !== undefined) &&
+                        (status.newValue.drivers.rksv.has_valid_start_receipt === false)) {
+                        self.start_receipt_in_progress = true;
+                        self.bmf_register_start_receipt_rpc().then(
+                            function done(response) {
+                                if (response.success == false) {
+                                    self.start_receipt_in_progress = false;
+                                    self.pos.set('cashbox_mode', 'inactive');
+                                    console.log(response.message);
+                                } else {
+                                    self.start_receipt_in_progress = false;
+                                    console.log("Startbeleg wurde erfolgreich eingereicht!");
+                                }
+                            },
+                            function failed(message) {
+                                self.start_receipt_in_progress = false;
+                                console.log(message);
+                            }
+                        )
+                    } 
+                    if (
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
-                        (status.newValue.drivers.rksv.month_receipt_needed) &&
-                        (status.newValue.drivers.rksv.month_receipt_needed === true)) {
-                        self.create_month_receipt();
+                        (status.newValue.drivers.rksv.start_receipt_needed !== undefined) &&
+                        (status.newValue.drivers.rksv.start_receipt_needed === false)
+                    ){
+                        // Here do check for the year receipt flag - if it is set - then generate the year receipt for this cash register !
+                        if ((self.year_receipt_in_progress === false) &&
+                            (self.all_ok()) &&
+                            (status.newValue.drivers.rksv) &&
+                            (status.newValue.drivers.rksv.year_receipt_needed) &&
+                            (status.newValue.drivers.rksv.year_receipt_needed === true)) {
+                            self.create_year_receipt();
+                        }
+                        // Here do check for the month receipt flag - if it is set - then generate the month receipt for this cash register !
+                        if ((self.month_receipt_in_progress === false) &&
+                            (self.all_ok()) &&
+                            (status.newValue.drivers.rksv) &&
+                            (status.newValue.drivers.rksv.month_receipt_needed) &&
+                            (status.newValue.drivers.rksv.month_receipt_needed === true)) {
+                            self.create_month_receipt();
+                        }
                     }
                 });
             }
@@ -838,34 +872,51 @@ odoo.define('pos_rksv.rksv', function (require) {
                 sprovider_status_popup.$('.close_button').show();
             });
         },
+        bmf_register_start_receipt_rpc: function(){
+            var self = this;
+            var proxyDeferred = $.Deferred();
+            if (!self.check_proxy_connection()) {
+                proxyDeferred.reject("Keine Verbindung zur PosBox, Status kann nicht abgefragt werden !");
+                return proxyDeferred;
+            }
+            self.proxy_rpc_call(
+                '/hw_proxy/rksv_startbeleg_registrieren',
+                Object.assign(self.get_rksv_info(), self.get_bmf_credentials()),
+                self.timeout
+            ).then(
+                    function done(response) {
+                        proxyDeferred.resolve(response);
+                    },
+                    function failed() {
+                        proxyDeferred.reject("Fehler bei der Kommunikation mit der PosBox!");
+                    }
+            );
+            return proxyDeferred;
+        },
         bmf_register_start_receipt: function() {
             var self = this;
             var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
             op_popup.$('.execute_button').off();
             op_popup.show({}, 'Startbeleg an BMF senden', 'Senden');
             op_popup.$('.execute_button').click(function() {
-                if (self.check_proxy_connection()){
-                    self.proxy_rpc_call(
-                        '/hw_proxy/rksv_startbeleg_registrieren',
-                        Object.assign(self.get_rksv_info(), self.get_bmf_credentials()),
-                        self.timeout
-                    ).then(
-                        function done(response) {
-                            if (response.success == false) {
-                                op_popup.failure(response.message);
-                            } else {
-                                op_popup.success("Startbeleg wurde eingereicht!!!");
-                            }
-                        },
-                        function failed() {
-                            op_popup.failure("Fehler bei der Kommunikation mit der PosBox!");
+                self.bmf_register_start_receipt_rpc().then(
+                    function done(response) {
+                        if (response.success == false) {
+                            op_popup.success(response.message);
+                        } else {
+                            op_popup.success("Startbeleg wurde erfolgreich eingereicht!");
                         }
-                    );
-                } else {
-                    op_popup.failure("Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!");
-                }
+                        op_popup.$('.close_button').show();
+                    },
+                    function failed(message) {
+                        op_popup.failed(message);
+                        op_popup.$('.close_button').show();
+                    }
+                        
+                )
+                op_popup.success("Startbeleg wurde übermittelt und wird gerade überprüft!!!");
                 op_popup.$('.execute_button').hide();
-                op_popup.$('.close_button').show();
+                op_popup.$('.close_button').hide();
             });
         },
         // starts catching keyboard events and tries to interpret codebar
