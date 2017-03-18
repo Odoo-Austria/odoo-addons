@@ -46,6 +46,28 @@ class signature_provider(models.Model):
     bmf_message = fields.Char(string="BMF Status Text")
 
     @api.model
+    def set_providers(self, providers, pos_config_id):
+        _logger.info("Providers: %r", providers)
+        _logger.info("POS Config: %r", pos_config_id)
+        for provider in providers:
+            existing_provider = self.env['signature.provider'].search([('public_key', '=', provider['cin'])])
+            vals = {
+                'public_key': provider['cin'],
+                'reader': provider['reader'],
+                'subject': provider['subject'],
+                'serial': provider['serial'],
+                'valid_from': provider['valid_from'],
+                'valid_until': provider['valid_until'],
+                'x509': provider['x509'],
+                'name': provider['cin'],
+                'pos_config_id': pos_config_id['pos_config_id'],
+            }
+            if existing_provider:
+                existing_provider.update(vals)
+            else:
+                self.env['signature.provider'].create(vals)
+
+    @api.model
     def update_status(self, signaturedata):
         _logger.info("Got data to update: %r", signaturedata)
         signature = self.search([('serial', '=', signaturedata['serial'])], limit=1)
