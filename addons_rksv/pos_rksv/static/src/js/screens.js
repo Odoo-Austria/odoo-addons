@@ -36,11 +36,12 @@ odoo.define('pos_rksv.screens', function (require) {
     var _t = core._t;
 
     screens.PaymentScreenWidget.include({
+        // TODO: Implement this by splitting up and contributing to Odoo Core
         validate_order: function(force_validation) {
             var self = this;
-
             var order = this.pos.get_order();
-
+            
+            // Copied from finalize_validation
             // FIXME: this check is there because the backend is unable to
             // process empty orders. This is not the right place to fix it.
             if (order.get_orderlines().length === 0) {
@@ -102,7 +103,6 @@ odoo.define('pos_rksv.screens', function (require) {
             }
 
             if (order.is_paid_with_cash() && this.pos.config.iface_cashdrawer) {
-
                     this.pos.proxy.open_cashbox();
             }
 
@@ -217,19 +217,6 @@ odoo.define('pos_rksv.screens', function (require) {
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').hide();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').hide();
 
-            /*
-            Better Solution is needed
-             */
-            /*
-            this.pos.gui.chrome.widget.username.hide();
-            this.pos.gui.chrome.widget.close_button.hide();
-            this.pos.gui.chrome.widget.notification.hide();
-            this.pos.gui.chrome.widget.proxy_status.hide();
-            this.pos.gui.chrome.widget.sale_details.hide();
-            this.pos.gui.chrome.widget.signature.hide();
-            if (this.pos.debug)
-                this.pos.gui.chrome.widget.debug.hide();
-            */
             // Do request new status from BMF on show
             var signature = self.pos.get('signature');
             // This will signal us the new status as soon as we get it
@@ -254,20 +241,6 @@ odoo.define('pos_rksv.screens', function (require) {
             this.pos.gui.chrome.widget.order_selector.$('.orders').show();
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').show();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').show();
-            /*
-            Better Solution is needed
-             */
-            /*
-            this.pos.gui.chrome.widget.order_selector.show();
-            this.pos.gui.chrome.widget.username.show();
-            this.pos.gui.chrome.widget.close_button.show();
-            this.pos.gui.chrome.widget.notification.show();
-            this.pos.gui.chrome.widget.proxy_status.show();
-            this.pos.gui.chrome.widget.sale_details.show();
-            this.pos.gui.chrome.widget.signature.show();
-            if (this.pos.debug)
-                this.pos.gui.chrome.widget.debug.show();
-            */
         },
         activate_cashbox: function() {
             this.pos.rksv.bmf_kasse_registrieren();
@@ -298,7 +271,7 @@ odoo.define('pos_rksv.screens', function (require) {
         try_to_close: function() {
             if (!this.active)
                 return;
-            // Is our current signature available ?
+            // Is our current signature available?
             if ((this.pos.rksv.all_ok() || this.emergency_mode()) && (!this.stay_open) && (!(this.pos.config.state === "setup" || this.pos.config.state === "failure" || this.pos.config.state === "inactive"))) {
                 var order = this.pos.get_order();
                 var previous = '';
@@ -318,13 +291,29 @@ odoo.define('pos_rksv.screens', function (require) {
         close_pos: function(){
             this.pos.gui.close();
         },
+        get_rksv_product: function(ul, tuple, type){
+            var self = this;
+            var product = false;
+            if (tuple && (self.pos.db.get_product_by_id(tuple[0]))){
+                product = self.pos.db.get_product_by_id(tuple[0]);
+                ul.append('<li>Produkt (' + type + '): ' + product.display_name + ' (' + product.id + ')</li>');
+            }
+            return ul;
+        },
         render_month_product: function() {
+            var self = this;
+            var container = $('<div />');
+            var ul = $('<ul style="font-size: 0.7em;margin: 10px 0;line-height: 1.5em;" />');
+            ul = self.get_rksv_product(ul, self.pos.config.start_product_id, 'Startbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
+            container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
-                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte gefunden");
+                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte vollständig! <br />" + container.html());
             } else {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'red');
-                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte nicht gefunden !");
+                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte unvollständig! <br />" + container.html());
             }
         },
         se_status_handler: function() {
@@ -340,7 +329,7 @@ odoo.define('pos_rksv.screens', function (require) {
                     return;
                 if ((signature.get('bmf_status')) && (signature.get('bmf_last_status')=='IN_BETRIEB')) {
                     self.$('.signature-provider-status-indicator .indicator').css('background', 'green');
-                    self.$('.signature-provider-status-indicator .indicator-message').html("Angemeldet");
+                    self.$('.signature-provider-status-indicator .indicator-message').html("Signatureinheit registriert und aktiv");
                 } else {
                     self.$('.signature-provider-status-indicator .indicator').css('background', 'red');
                     self.$('.signature-provider-status-indicator .indicator-message').html(signature.get('bmf_last_status')+ ', ' + (signature.get('bmf_message')?signature.get('bmf_message'):''));
@@ -386,10 +375,10 @@ odoo.define('pos_rksv.screens', function (require) {
                 //this.pos.posbox_status = status.newValue.status;
                 if (status.newValue.status == "connected") {
                     self.$('.posbox-status-indicator .indicator').css('background', 'green');
-                    self.$('.posbox-status-indicator .indicator-message').html(status.newValue.status);
+                    self.$('.posbox-status-indicator .indicator-message').html('PosBox verbunden (' + status.newValue.status + ')');
                 } else {
                     self.$('.posbox-status-indicator .indicator').css('background', 'red');
-                    self.$('.posbox-status-indicator .indicator-message').html(status.newValue.status);
+                    self.$('.posbox-status-indicator .indicator-message').html('PosBox getrennt (' + status.newValue.status + ')');
                 }
                 // Check if we have to activate ourself
                 if (status.newValue.status === 'connected' && (!(self.pos.config.state === "setup" || self.pos.config.state === "failure" || self.pos.config.state === "inactive"))) {
@@ -419,8 +408,8 @@ odoo.define('pos_rksv.screens', function (require) {
                     }
                     if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.messages){
                         var container = $('<div />')
-                        container.append(rksvmessage + ' (' + rksvstatus + ') <br /><br />');
-                        var messages = $('<ul />');
+                        container.append(rksvmessage + ' (' + rksvstatus + ')');
+                        var messages = $('<ul style="font-size: 0.7em;margin: 10px 0;line-height: 1.5em;" />');
                         status.newValue.drivers.rksv.messages.forEach(function(message) {
                             messages.append('<li>' + message + '</li>');
                         });
@@ -492,8 +481,7 @@ odoo.define('pos_rksv.screens', function (require) {
                         'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
-                /*
-                var provider_obj = new Model('signature.provider');
+                var provider_obj = new Model('pos.config');
                 var result = provider_obj.call('set_provider', [self.$el.find('#pass_input_signature').val(), event.target.value, {'pos_config_id': self.pos.config.id}]).then(
                     function done(result) {
                         if (!result['success']) {
@@ -506,7 +494,6 @@ odoo.define('pos_rksv.screens', function (require) {
                         }
                     }
                 );
-                */
             });
             self.$el.find('.rk-ausfall-se').click(self, function (event) {
                 self.stay_open = false;

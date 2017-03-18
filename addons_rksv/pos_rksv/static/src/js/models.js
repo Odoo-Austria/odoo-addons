@@ -15,7 +15,6 @@ odoo.define('pos_rksv.models', function (require) {
             }
         }
     };
-
     models.overwrite_loaded_callback = function(modelname, callback) {
         var pmodels = models.PosModel.prototype.models;
         for (var i = 0; i < pmodels.length; i++) {
@@ -27,7 +26,6 @@ odoo.define('pos_rksv.models', function (require) {
             }
         }
     };
-
     /*
     Here we do add the fields and the models we need to load from the server
      */
@@ -170,6 +168,7 @@ odoo.define('pos_rksv.models', function (require) {
             this.qrcode_img = result.qrcodeImage;
             this.ocrcodevalue = result.ocrcodeValue;
             this.receipt_id = result.receipt_id;
+            this.cashbox_mode = result.cashbox_mode;
             Object.assign(this, result);
         },
         set_sign_failed: function () {
