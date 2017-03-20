@@ -65,6 +65,7 @@ class pos_config(models.Model):
             ('inactive', 'Inactive'),
             ('setup', 'Setup'),
             ('active', 'Active'),
+            ('failure', 'Fehler'),
             ('signature_failed', 'Fehler Signatureinheit'),
             ('posbox_failed', 'Fehler PosBox')
         ],
