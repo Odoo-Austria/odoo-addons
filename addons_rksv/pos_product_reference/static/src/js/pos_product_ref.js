@@ -38,7 +38,6 @@ openerp.pos_product_reference = function(instance) {
         },
         set_product_reference: function(ref){
             this.product_ref_text = ref;
-            //this.trigger('change',this);
         },
         get_product_reference: function(){
             return this.product_ref_text;
@@ -52,7 +51,7 @@ openerp.pos_product_reference = function(instance) {
             var data = OrderlineSuper.prototype.export_for_printing.call(this);
             data.product_ref_text = this.get_product_reference();
             return data;
-        },
+        }
     });
 
     module.OrderWidget = module.OrderWidget.extend({
@@ -65,24 +64,16 @@ openerp.pos_product_reference = function(instance) {
                 var order = self.pos.get('selectedOrder');
                 order.getSelectedLine().set_product_reference(ref_text);
             };
-            this.client_change_handler = function(event){
-                self.update_summary();
-            }
             this.bind_order_events();
         },
         render_orderline: function(orderline){
-            var el_str  = openerp.qweb.render('Orderline',{widget:this, line:orderline});
-            var el_node = document.createElement('div');
-                el_node.innerHTML = _.str.trim(el_str);
-                el_node = el_node.childNodes[0];
-                el_node.orderline = orderline;
-                el_node.addEventListener('click',this.line_click_handler);
+            var el_node = this._super(orderline);
             var input_ref = $(el_node).find('li input');
             if (input_ref.length > 0)
                 $(el_node).find('input')[0].addEventListener('keyup',this.line_keyup_handler);
 
             orderline.node = el_node;
             return el_node;
-        },
+        }
     });
 }

@@ -10,7 +10,6 @@ function openerp_rksv_models(instance, module) {
             }
         }
     };
-
     models.overwrite_loaded_callback = function(modelname, callback) {
         var pmodels = models.PosModel.prototype.models;
         for (var i = 0; i < pmodels.length; i++) {
@@ -22,7 +21,6 @@ function openerp_rksv_models(instance, module) {
             }
         }
     };
-
     /*
     Here we do add the fields and the models we need to load from the server
      */
@@ -165,6 +163,7 @@ function openerp_rksv_models(instance, module) {
             this.qrcode_img = result.qrcodeImage;
             this.ocrcodevalue = result.ocrcodeValue;
             this.receipt_id = result.receipt_id;
+            this.cashbox_mode = result.cashbox_mode;
             Object.assign(this, result);
         },
         set_sign_failed: function () {
@@ -196,6 +195,7 @@ function openerp_rksv_models(instance, module) {
                 'qrcode_img': this.qrcode_img,
                 'receipt_id': this.receipt_id,
                 'ocrcodevalue': this.ocrcodevalue,
+                'cashbox_mode': this.cashbox_mode,
                 'typeOfReceipt': this.typeOfReceipt,
                 'signatureSerial': this.signatureSerial,
                 'encryptedTurnOverValue': this.encryptedTurnOverValue,

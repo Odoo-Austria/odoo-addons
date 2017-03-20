@@ -181,6 +181,10 @@ function openerp_rksv_screens(instance, module) {
             this.events['click .close_rksv'] = 'manual_close';
             this.events['click .activate_cashbox'] = 'activate_cashbox';
             this.events['click .register_cashbox'] = 'register_cashbox';
+            this.events['click .revalidate_startreceipt'] = 'revalidate_startreceipt';
+            this.events['click .delete_startreceipt'] = 'delete_startreceipt';
+            this.events['click .export_crypt'] = 'export_crypt';
+            this.events['click .start_receipt_set_valid'] = 'start_receipt_set_valid';
         },
         start: function() {
             var self = this;
@@ -210,19 +214,6 @@ function openerp_rksv_screens(instance, module) {
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').hide();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').hide();
 
-            /*
-            Better Solution is needed
-             */
-            /*
-            this.pos.gui.chrome.widget.username.hide();
-            this.pos.gui.chrome.widget.close_button.hide();
-            this.pos.gui.chrome.widget.notification.hide();
-            this.pos.gui.chrome.widget.proxy_status.hide();
-            this.pos.gui.chrome.widget.sale_details.hide();
-            this.pos.gui.chrome.widget.signature.hide();
-            if (this.pos.debug)
-                this.pos.gui.chrome.widget.debug.hide();
-            */
             // Do request new status from BMF on show
             var signature = self.pos.get('signature');
             // This will signal us the new status as soon as we get it
@@ -236,7 +227,7 @@ function openerp_rksv_screens(instance, module) {
         },
         hide: function() {
             // We avoid to hide here if not everything is ok - or emergency mode
-            if ((!this.pos.rksv.all_ok()) && (!this.emergency_mode()))
+            if (this.pos.rksv === undefined || (!this.pos.rksv.all_ok()) && (!this.emergency_mode()))
                 return;
             var self = this;
             self._super();
@@ -247,26 +238,24 @@ function openerp_rksv_screens(instance, module) {
             this.pos.gui.chrome.widget.order_selector.$('.orders').show();
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').show();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').show();
-            /*
-            Better Solution is needed
-             */
-            /*
-            this.pos.gui.chrome.widget.order_selector.show();
-            this.pos.gui.chrome.widget.username.show();
-            this.pos.gui.chrome.widget.close_button.show();
-            this.pos.gui.chrome.widget.notification.show();
-            this.pos.gui.chrome.widget.proxy_status.show();
-            this.pos.gui.chrome.widget.sale_details.show();
-            this.pos.gui.chrome.widget.signature.show();
-            if (this.pos.debug)
-                this.pos.gui.chrome.widget.debug.show();
-            */
         },
         activate_cashbox: function() {
             this.pos.rksv.bmf_kasse_registrieren();
         },
         register_cashbox: function() {
             this.pos.rksv.register_cashbox();
+        },
+        revalidate_startreceipt: function() {
+            this.pos.rksv.bmf_register_start_receipt();
+        },
+        export_crypt: function() {
+            this.pos.rksv.rksv_write_dep_crypt_container();
+        },
+        delete_startreceipt: function() {
+            this.pos.rksv.delete_start_receipt();
+        },
+        start_receipt_set_valid: function() {
+            this.pos.rksv.start_receipt_set_valid();
         },
         manual_close: function() {
             // Clear the stay open flag
@@ -278,11 +267,12 @@ function openerp_rksv_screens(instance, module) {
             return (mode=='signature_failed' || mode=='posbox_failed');
         },
         auto_open_close: function() {
-            if ((!this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
+            if (this.pos.rksv === undefined) return;
+            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
                 this.pos.gui.show_screen('rksv_status');
             } else if ((this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
                 // Already active - ok - stay active
-            } else if ((this.active) && ((this.pos.rksv.all_ok()) || (this.emergency_mode()))) {
+            } else if ((this.active) && ((this.pos.rksv.all_ok()) || (this.emergency_mode())) && (!this.pos.rksv.auto_receipt_needed())) {
                 // Active and everything is ok - or emergency mode - man - do try to close here
                 this.try_to_close();
             }
@@ -290,7 +280,7 @@ function openerp_rksv_screens(instance, module) {
         try_to_close: function() {
             if (!this.active)
                 return;
-            // Is our current signature available ?
+            // Is our current signature available?
             if ((this.pos.rksv.all_ok() || this.emergency_mode()) && (!this.stay_open) && (!(this.pos.config.state === "setup" || this.pos.config.state === "failure" || this.pos.config.state === "inactive"))) {
                 var order = this.pos.get_order();
                 var previous = '';
@@ -310,17 +300,34 @@ function openerp_rksv_screens(instance, module) {
         close_pos: function(){
             this.pos.gui.close();
         },
+        get_rksv_product: function(ul, tuple, type){
+            var self = this;
+            var product = false;
+            if (tuple && (self.pos.db.get_product_by_id(tuple[0]))){
+                product = self.pos.db.get_product_by_id(tuple[0]);
+                ul.append('<li>Produkt (' + type + '): ' + product.display_name + ' (' + product.id + ')</li>');
+            }
+            return ul;
+        },
         render_month_product: function() {
+            var self = this;
+            var container = $('<div />');
+            var ul = $('<ul style="font-size: 0.7em;margin: 10px 0;line-height: 1.5em;" />');
+            ul = self.get_rksv_product(ul, self.pos.config.start_product_id, 'Startbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
+            container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
-                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte gefunden");
+                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte vollständig! <br />" + container.html());
             } else {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'red');
-                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte nicht gefunden !");
+                self.$('.monthproduct-status-indicator .indicator-message').html("RKSV Produkte unvollständig! <br />" + container.html());
             }
         },
         se_status_handler: function() {
             var self = this;
+            if (self.pos.signatures === undefined) return;
             // Listen on status update for signaturs - display the change here
             this.pos.signatures.bind('add remove change', function(signature) {
                 // Do rerender the sprovider view
@@ -329,9 +336,9 @@ function openerp_rksv_screens(instance, module) {
                 if (!signature.isActive(self.pos))
                     // Ignore this update if it does not belong to the active signature
                     return;
-                if ((signature.get('bmf_status')) && (signature.get('bmf_last_status')=='IN_BETRIEB')) {
+                if (signature.get('bmf_last_status')=='IN_BETRIEB') {
                     self.$('.signature-provider-status-indicator .indicator').css('background', 'green');
-                    self.$('.signature-provider-status-indicator .indicator-message').html("Angemeldet");
+                    self.$('.signature-provider-status-indicator .indicator-message').html("Signatureinheit registriert und aktiv");
                 } else {
                     self.$('.signature-provider-status-indicator .indicator').css('background', 'red');
                     self.$('.signature-provider-status-indicator .indicator-message').html(signature.get('bmf_last_status')+ ', ' + (signature.get('bmf_message')?signature.get('bmf_message'):''));
@@ -377,41 +384,69 @@ function openerp_rksv_screens(instance, module) {
                 //this.pos.posbox_status = status.newValue.status;
                 if (status.newValue.status == "connected") {
                     self.$('.posbox-status-indicator .indicator').css('background', 'green');
-                    self.$('.posbox-status-indicator .indicator-message').html(status.newValue.status);
+                    self.$('.posbox-status-indicator .indicator-message').html('PosBox verbunden (' + status.newValue.status + ')');
                 } else {
                     self.$('.posbox-status-indicator .indicator').css('background', 'red');
-                    self.$('.posbox-status-indicator .indicator-message').html(status.newValue.status);
+                    self.$('.posbox-status-indicator .indicator-message').html('PosBox getrennt (' + status.newValue.status + ')');
                 }
                 // Check if we have to activate ourself
-                if (status.newValue.status === 'connected' && (!(self.pos.config.state === "setup" || self.pos.config.state === "failure" || self.pos.config.state === "inactive"))) {
+                if (status.newValue.status === 'connected' && (!(self.pos.config.state === "failure" || self.pos.config.state === "inactive"))) {
                     var rksvstatus = status.newValue.drivers.rksv ? status.newValue.drivers.rksv.status : false;
                     var rksvmessage = status.newValue.drivers.rksv && status.newValue.drivers.rksv.message ? status.newValue.drivers.rksv.message : false;
-                    if (!rksvmessage) {
-                        rksvmessage = "Status: " + status.newValue.drivers.rksv && status.newValue.drivers.rksv.status ? status.newValue.drivers.rksv.status : '?';
-                    }
                     if (!rksvstatus) {
-                        self.$('.rksv-status-indicator .indicator').css('background', 'red');
-                        self.$('.rksv-status-indicator .indicator-message').html("Status unbekannt");
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
                         self.$('.rksv-status-indicator .register_cashbox').hide();
+                        self.$('.rksv-status-indicator .indicator').css('background', 'red');
+                        rksvmessage = "Status unbekannt";
                     } else if (rksvstatus == 'connected') {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').hide();
                         // Everything is correct
                         self.$('.rksv-status-indicator .indicator').css('background', 'green');
-                        self.$('.rksv-status-indicator .indicator-message').html("PosBox Modul verbunden");
+                        rksvmessage = "PosBox Modul verbunden";
+                    } else if (rksvstatus == 'invalidstartreceipt') {
+                        self.$('.rksv-status-indicator .register_startreceipt').show();
                         self.$('.rksv-status-indicator .register_cashbox').hide();
+                        // Validation of start receipt failed - activate the try again button
+                        self.$('.rksv-status-indicator .indicator').css('background', 'orange');
+                        rksvmessage = "Validierungsfehler !";
+                    } else if (rksvstatus == 'failure') {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').hide();
+                        self.$('.rksv-status-indicator .indicator').css('background', 'red');
+                        rksvmessage = "Fehler";
                     } else if (rksvstatus == 'doesnotexists') {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').show();
                         // Cashbox is not registered on this posbox !
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
-                        self.$('.rksv-status-indicator .indicator-message').html("KassenID nicht auf dieser PosBox registriert !");
-                        self.$('.rksv-status-indicator .register_cashbox').show();
+                        rksvmessage = "KassenID nicht auf dieser PosBox registriert!";
                     } else {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').hide();
                         // Only show it if it is not already in state visible !
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
-                        self.$('.rksv-status-indicator .indicator-message').html(rksvmessage);
                         self.$('.rksv-status-indicator .register_cashbox').hide();
                     }
+                    if (!rksvmessage) {
+                        rksvmessage = "Status: " + status.newValue.drivers && status.newValue.drivers.rksv && status.newValue.drivers.rksv.status ? status.newValue.drivers.rksv.status : '?';
+                    }
+                    if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.messages){
+                        var container = $('<div />')
+                        container.append(rksvmessage + ' (' + rksvstatus + ')');
+                        var messages = $('<ul style="font-size: 0.7em;margin: 10px 0;line-height: 1.5em;" />');
+                        status.newValue.drivers.rksv.messages.forEach(function(message) {
+                            messages.append('<li>' + message + '</li>');
+                        });
+                        container.append(messages);
+                        rksvmessage = container.html();
+                    }
+                    self.$('.rksv-status-indicator .indicator-message').html(rksvmessage);
+
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "setup")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse befindet sich im Status Setup !");
+                    self.$('.rksv-status-indicator .register_cashbox').show();
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "failure")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse ist markiert als ausgefallen !");
@@ -464,28 +499,22 @@ function openerp_rksv_screens(instance, module) {
             self.$el.find('.sprovider-btn').click(self, function (event) {
                 var password = self.$el.find('#pass_input_signature').val();
                 if (password == self.pos.config.pos_admin_passwd) {
-                    self.pos.rksv.set_signature(event.target.value);
+                    self.pos.rksv.set_signature(event.target.value).then(
+                        function done() {
+                            self.$('.provider-message-box').empty();
+                            self.$('.provider-message-box').append('<p style="color:green;">Signatur Provider wurde gesetzt.</p>');
+                        },
+                        function failed(message) {
+                            self.$('.provider-message-box').empty();
+                            self.$('.provider-message-box').append('<p style="color:red;">' + message + '</p>');
+                        }
+                    );
                 } else {
                     self.pos.gui.show_popup('error',{
                         'message': _t("Passwort falsch"),
                         'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
-                /*
-                var provider_obj = new Model('signature.provider');
-                var result = provider_obj.call('set_provider', [self.$el.find('#pass_input_signature').val(), event.target.value, {'pos_config_id': self.pos.config.id}]).then(
-                    function done(result) {
-                        if (!result['success']) {
-                            self.$('.provider-message-box').empty();
-                            self.$('.provider-message-box').append('<p style="color:red;">' + result['message'] + '</p>');
-                        } else {
-                            self.$('.provider-message-box').empty();
-                            self.$('.provider-message-box').append('<p style="color:green;">' + result['message'] + '</p>');
-                            location.reload();
-                        }
-                    }
-                );
-                */
             });
             self.$el.find('.rk-ausfall-se').click(self, function (event) {
                 self.stay_open = false;
