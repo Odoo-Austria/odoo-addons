@@ -5,7 +5,7 @@ function openerp_rksv_chrome(instance, module){
     var RKSVStatusWidget = module.StatusWidget.extend({
         template: 'RKSVStatusIndicatorWidget',
         // Possible status values
-        status: ['connected','connecting','disconnected','warning'],
+        status: ['connected','connecting','disconnected','warning','failure','setup','inactive'],
         set_smart_status: function (status) {
             var self = this;
             var mode = self.pos.get('cashbox_mode');

@@ -12,6 +12,12 @@ class POSOrder(models.Model):
 
     ocr_code_value = fields.Text(string="OCR Code Value", readonly=True)
     qr_code_value = fields.Text(string="QR Code Value", readonly=True)
+    cashbox_mode = fields.Selection([
+        ('active', 'Normal'),
+        ('signature_failed', 'Signatureinheit Ausgefallen'),
+        ('posbox_failed', 'PosBox Ausgefallen')
+    ], string="Signatur Modus", readonly=True)
+    qr_code_image = fields.Binary(string="QR Code", attachment=True, readonly=True)
     receipt_id = fields.Integer(string='Receipt ID', readonly=True)
     typeOfReceipt = fields.Selection([
         ('STANDARD_BELEG', 'Normaler Beleg'),
@@ -31,18 +37,23 @@ class POSOrder(models.Model):
     taxSetNull = fields.Integer("0% in Cent")
     taxSetBesonders = fields.Integer("19% in Cent")
     turnOverValue = fields.Integer("Summenspeicher")
-    cashbox_mode = fields.Selection([
-        ('active', 'Normal'),
-        ('signature_failed', 'Signatureinheit Ausgefallen'),
-        ('posbox_failed', 'PosBox Ausgefallen')
-    ], string="Signatur Modus", readonly=True)
-    qr_code_image = fields.Binary(string="QR Code", attachment=True, readonly=True)
 
-    def _order_fields(self, cr, uid, ui_order, context=None):
+    def test_paid(self):
+        """A Point of Sale is paid when the sum
+        @return: True
+        """
+        self.ensure_one()
+        res = super(POSOrder, self).test_paid()
+        if not self.lines:
+            res = True
+        return res
+
+    @api.model
+    def _order_fields(self, ui_order):
         '''
         We do extend the order fields here to also store our rksv data !
         '''
-        order_values = super(POSOrder, self)._order_fields(cr, uid, ui_order, context)
+        order_values = super(POSOrder, self)._order_fields(ui_order)
         order_values['ocr_code_value'] = ui_order['ocrcodevalue'] if 'ocrcodevalue' in ui_order else None
         order_values['qr_code_value'] = ui_order['qrcodevalue'] if 'qrcodevalue' in ui_order else None
         order_values['receipt_id'] = ui_order['receipt_id'] if 'receipt_id' in ui_order else None

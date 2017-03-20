@@ -12,7 +12,7 @@
     width:100% !important;
     height:100% !important;
     margin: 0 auto;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .rksvfa_image {
@@ -37,7 +37,8 @@
     min-width: 1em;
 }
 
-.pos .popup-rksv .loading {
+.pos .popup-rksv .loading,
+.pos .popup-rksv .close_rksv {
     margin: 10px;
 }
 
@@ -58,7 +59,7 @@
 }
 
 .popup.popup-rksv .clearfix label {
-    width: 15%;
+    min-width: 160px;
 }
 .clearfix {
     clear: both;
@@ -97,7 +98,7 @@
 .posbox-status-container {
     min-width: 760px;
     width: 50%;
-    margin: 0 auto;
+    margin: 40px auto;
     background: white;
     border: solid 3px black;
     padding: 15px;

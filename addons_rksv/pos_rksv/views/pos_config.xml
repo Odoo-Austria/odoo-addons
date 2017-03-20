@@ -20,23 +20,19 @@
                     <field name="iface_rksv" />
                 </field>
                 <xpath expr="//field[@name='journal_ids']" position="after">
-                    <group string="Registrierkassenverordnung (Österreich)">
+                    <group string="Registrierkassenverordnung (Österreich)" attrs="{'invisible': [('iface_rksv', '=', False)]}">
                         <group>
                             <field name="cashregisterid"/>
-                            <field name="pos_admin_passwd" groups="base.group_system" />
+                            <field name="signature_provider_id"/>
                         </group>
                         <group>
                             <field name="bmf_test_mode"/>
-                            <field name="start_product_id"/>
-                            <field name="month_product_id"/>
-                            <field name="year_product_id"/>
+                            <field name="pos_admin_passwd" password="True" groups="base.group_system" />
+                            <field name="start_product_id" />
+                            <field name="month_product_id" />
+                            <field name="year_product_id" />
                          </group>
                     </group>
-                    <group string="Signature Providers">
-                        <field name="signature_provider_id"/>
-                    </group>
-                    <separator string="Available Providers" colspan="4"/>
-                    <field name="available_signature_provider_ids" colspan="4" nolabel="1" context="{'default_pos_config_id': id}"/>
                 </xpath>
             </field>
         </record>

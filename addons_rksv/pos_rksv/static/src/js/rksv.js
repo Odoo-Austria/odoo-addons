@@ -11,6 +11,7 @@ function openerp_rksv_rksv(instance, module) {
         proxy_informed: true,
         inform_running: false,
         start_receipt_in_progress: false,
+        start_receipt_failed: false,
         year_receipt_in_progress: false,
         month_receipt_in_progress: false,
         statuses: {
@@ -25,6 +26,7 @@ function openerp_rksv_rksv(instance, module) {
             this.pos = attributes.pos;
             this.proxy = attributes.proxy;
             this.signature = null;
+            this.last_proxy_status = null;
             var self = this;
             this.pos.bind('change:signature', function(pos, signature) {
                 if (signature) {
@@ -37,7 +39,7 @@ function openerp_rksv_rksv(instance, module) {
                     if (!signature.isActive(self.pos))
                     // Ignore this update if it does not belong to the active signature
                         return;
-                    if ((signature.get('bmf_status')) && (signature.get('bmf_last_status') == 'IN_BETRIEB')) {
+                    if (signature.get('bmf_last_status') == 'IN_BETRIEB') {
                         self.statuses['signatureinheit'] = true;
                     } else {
                         self.statuses['signatureinheit'] = false;
@@ -55,6 +57,7 @@ function openerp_rksv_rksv(instance, module) {
 
             if (this.proxy){
                 this.proxy.on('change:status', this, function (eh, status) {
+                    self.last_proxy_status = status.newValue;
                     // Do check posbox and rksv status
                     if (status.newValue.status == "connected") {
                         self.statuses['posbox'] = true;
@@ -62,11 +65,16 @@ function openerp_rksv_rksv(instance, module) {
                         self.statuses['posbox'] = false;
                     }
                     // Check RKSV Status
-                    if (status.newValue.status === 'connected' && (!(self.pos.config.state === "setup" || self.pos.config.state === "failure"  || self.pos.config.state === "inactive"))) {
+                    if (status.newValue.status === 'connected' && (!(self.pos.config.state === "failure"  || self.pos.config.state === "inactive"))) {
                         var rksvstatus = status.newValue.drivers.rksv ? status.newValue.drivers.rksv.status : false;
-                        if (rksvstatus == 'connected') {
+                        // Connected or setup are ok - setup means we are connected - but we need some additional love...
+                        if ((rksvstatus == 'connected') || (rksvstatus == 'setup')) {
                             self.statuses['rksv'] = true;
                         } else {
+                            self.statuses['rksv'] = false;
+                        }
+                        // Extra check here for a valid cashregisterid
+                        if ((!self.pos.config.cashregisterid) || (self.pos.config.cashregisterid.trim() == "")) {
                             self.statuses['rksv'] = false;
                         }
                     } else {
@@ -104,28 +112,74 @@ function openerp_rksv_rksv(instance, module) {
                     if ((self.start_receipt_in_progress === false) &&
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
-                        (status.newValue.drivers.rksv.start_receipt_needed) &&
+                        (status.newValue.drivers.rksv.start_receipt_needed !== undefined) &&
                         (status.newValue.drivers.rksv.start_receipt_needed === true)) {
                         self.create_start_receipt();
                     }
-                    // Here do check for the year receipt flag - if it is set - then generate the year receipt for this cash register !
-                    if ((self.year_receipt_in_progress === false) &&
+                    if ((self.start_receipt_in_progress === false) &&
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
-                        (status.newValue.drivers.rksv.year_receipt_needed) &&
-                        (status.newValue.drivers.rksv.year_receipt_needed === true)) {
-                        self.create_year_receipt();
+                        (status.newValue.drivers.rksv.start_receipt_needed !== undefined) &&
+                        (status.newValue.drivers.rksv.start_receipt_needed === false) &&
+                        (status.newValue.drivers.rksv.has_valid_start_receipt !== undefined) &&
+                        (status.newValue.drivers.rksv.has_valid_start_receipt === false)) {
+                        self.start_receipt_in_progress = true;
+                        self.bmf_register_start_receipt_rpc().then(
+                            function done() {
+                                self.start_receipt_in_progress = false;
+                                console.log("Startbeleg wurde erfolgreich eingereicht!");
+                            },
+                            function failed(message) {
+                                self.start_receipt_in_progress = false;
+                                // Set setup state
+                                self.pos.set('cashbox_mode', 'setup');
+                                // Display error popup for user
+                                self.pos.gui.show_popup('error',{
+                                    'message': _t("Fehler"),
+                                    'comment': message
+                                });
+                            }
+                        )
                     }
-                    // Here do check for the month receipt flag - if it is set - then generate the month receipt for this cash register !
-                    if ((self.month_receipt_in_progress === false) &&
+                    if (
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
-                        (status.newValue.drivers.rksv.month_receipt_needed) &&
-                        (status.newValue.drivers.rksv.month_receipt_needed === true)) {
-                        self.create_month_receipt();
+                        (status.newValue.drivers.rksv.start_receipt_needed !== undefined) &&
+                        (status.newValue.drivers.rksv.start_receipt_needed === false)
+                    ){
+                        // Here do check for the year receipt flag - if it is set - then generate the year receipt for this cash register !
+                        if ((self.year_receipt_in_progress === false) &&
+                            (self.all_ok()) &&
+                            (status.newValue.drivers.rksv) &&
+                            (status.newValue.drivers.rksv.year_receipt_needed) &&
+                            (status.newValue.drivers.rksv.year_receipt_needed === true)) {
+                            self.create_year_receipt();
+                        }
+                        // Here do check for the month receipt flag - if it is set - then generate the month receipt for this cash register !
+                        if ((self.month_receipt_in_progress === false) &&
+                            (self.all_ok()) &&
+                            (status.newValue.drivers.rksv) &&
+                            (status.newValue.drivers.rksv.month_receipt_needed) &&
+                            (status.newValue.drivers.rksv.month_receipt_needed === true)) {
+                            self.create_month_receipt();
+                        }
                     }
                 });
             }
+        },
+        auto_receipt_needed: function() {
+            // If we miss rksv status - then something else is already problematic - no need to check further
+            if ((!this.last_proxy_status) || (!this.last_proxy_status.drivers) || (!this.last_proxy_status.drivers.rksv))
+                return false;
+            if ((this.last_proxy_status.drivers.rksv.start_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.start_receipt_needed === true))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.has_valid_start_receipt !== undefined) && (this.last_proxy_status.drivers.rksv.has_valid_start_receipt === false))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.year_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.year_receipt_needed === true))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.month_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.month_receipt_needed === true))
+                return true;
+            return false;
         },
         check_proxy_connection: function(){
             if (this.pos.proxy.connection === null) {
@@ -325,10 +379,13 @@ function openerp_rksv_rksv(instance, module) {
         },
         set_signature: function (serial) {
             var self = this;
+            // We also do provide a deferred here for the caller
+            var deferred = $.Deferred();
             console.log('RKSV set signature got called !');
             if (!self.check_proxy_connection()) {
                 console.log('we cannot set the signature without proxy connection !');
-                return;
+                deferred.reject(_t('Keine Verbindung mit der PosBox ist möglich'));
+                return deferred;
             }
             this.inform_running = true;
             // We do generate a dummy order, to signal the cashbox the new signature
@@ -356,9 +413,19 @@ function openerp_rksv_rksv(instance, module) {
                                     'message': _t("RKSV Fehler"),
                                     'comment': result['message']
                                 });
+                                deferred.reject(result['message']);
                             } else {
+                                // To be correct - we do resolve the deferred here - even if we do reload
+                                deferred.resolve();
                                 location.reload();
                             }
+                        },
+                        function failed(message) {
+                            self.pos.gui.show_popup('error',{
+                                'title': _t("Fehler"),
+                                'body': _t("Fehler bei der Kommunikation mit Odoo, keine Internet Verbindung vorhhanden ?")
+                            });
+                            deferred.reject(_t("Fehler bei der Kommunikation mit Odoo, keine Internet Verbindung vorhhanden ?"));
                         }
                     );
                 },
@@ -368,8 +435,10 @@ function openerp_rksv_rksv(instance, module) {
                         'message': _t("RKSV Fehler"),
                         'comment':  message
                     });
+                    deferred.reject(message);
                 }
             );
+            return deferred;
         },
         inform_proxy: function (signature) {
             var self = this;
@@ -384,6 +453,83 @@ function openerp_rksv_rksv(instance, module) {
         },
         fa_first_report: function() {
             this.pos.gui.show_popup('rksv_fa_widget');
+        },
+        delete_start_receipt: function() {
+            var self = this;
+            var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
+            op_popup.show({}, 'Start Beleg löschen', 'Löschen');
+            // First - do disable old event handlers
+            op_popup.$('.execute_button').off();
+            // Then install new click handler
+            op_popup.$('.execute_button').click(function() {
+                op_popup.loading('Löschen des Startbeleges');
+                if (self.check_proxy_connection()){
+                    self.proxy_rpc_call(
+                        '/hw_proxy/delete_start_receipt',
+                        Object.assign(self.get_rksv_info()),
+                        self.timeout
+                    ).then(
+                        function done(response) {
+                            if (response.success == false) {
+                                op_popup.failure(response.message);
+                            } else {
+                                op_popup.success(response.message);
+                                // Do set the cashbox_mode to setup
+                                self.pos.set('cashbox_mode', 'setup');
+                            }
+                        },
+                        function failed() {
+                            op_popup.failure("Fehler bei der Kommunikation mit der PosBox!");
+                        }
+                    );
+                } else {
+                    op_popup.failure("Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!");
+                }
+                op_popup.$('.execute_button').hide();
+                op_popup.$('.close_button').show();
+            });
+        },
+        start_receipt_set_valid: function() {
+            if (!this.pos.config.bmf_test_mode) {
+                this.pos.gui.show_popup('error',{
+                    'title': _t("Fehler"),
+                    'body': _t("Manuelles validieren des Start Beleges ist nur im Test Modus erlaubt")
+                });
+                return;
+            }
+            var self = this;
+            var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
+            op_popup.show({}, 'Start Beleg valid setzen', 'Valid');
+            // First - do disable old event handlers
+            op_popup.$('.execute_button').off();
+            // Then install new click handler
+            op_popup.$('.execute_button').click(function() {
+                op_popup.loading('Setze Valid Flag für Start Beleg');
+                if (self.check_proxy_connection()){
+                    self.proxy_rpc_call(
+                        '/hw_proxy/valid_start_receipt',
+                        Object.assign(self.get_rksv_info()),
+                        self.timeout
+                    ).then(
+                        function done(response) {
+                            if (response.success == false) {
+                                op_popup.failure(response.message);
+                            } else {
+                                op_popup.success(response.message);
+                                // Do set the cashbox_mode to active
+                                self.pos.set('cashbox_mode', 'active');
+                            }
+                        },
+                        function failed() {
+                            op_popup.failure("Fehler bei der Kommunikation mit der PosBox!");
+                        }
+                    );
+                } else {
+                    op_popup.failure("Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!");
+                }
+                op_popup.$('.execute_button').hide();
+                op_popup.$('.close_button').show();
+            });
         },
         rk_ausfalls_modus: function() {
             var self = this;
@@ -445,6 +591,7 @@ function openerp_rksv_rksv(instance, module) {
                                 self.pos.rksv.update_bmf_rk_status();
                             } else {
                                 op_popup.success(response.message);
+                                self.pos.set('cashbox_mode', 'active');
                                 // Request a status update here
                                 self.pos.rksv.update_bmf_rk_status();
                             }
@@ -832,34 +979,50 @@ function openerp_rksv_rksv(instance, module) {
                 sprovider_status_popup.$('.close_button').show();
             });
         },
+        bmf_register_start_receipt_rpc: function(){
+            var self = this;
+            var proxyDeferred = $.Deferred();
+            if (!self.check_proxy_connection()) {
+                proxyDeferred.reject("Keine Verbindung zur PosBox, Status kann nicht abgefragt werden !");
+                return proxyDeferred;
+            }
+            self.proxy_rpc_call(
+                '/hw_proxy/rksv_startbeleg_registrieren',
+                Object.assign(self.get_rksv_info(), self.get_bmf_credentials()),
+                self.timeout
+            ).then(
+                    function done(response) {
+                        if (response.success === true) {
+                            proxyDeferred.resolve(response);
+                        } else {
+                            proxyDeferred.reject(response.message);
+                        }
+                    },
+                    function failed() {
+                        proxyDeferred.reject("Fehler bei der Kommunikation mit der PosBox!");
+                    }
+            );
+            return proxyDeferred;
+        },
         bmf_register_start_receipt: function() {
             var self = this;
             var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
             op_popup.$('.execute_button').off();
             op_popup.show({}, 'Startbeleg an BMF senden', 'Senden');
             op_popup.$('.execute_button').click(function() {
-                if (self.check_proxy_connection()){
-                    self.proxy_rpc_call(
-                        '/hw_proxy/rksv_startbeleg_registrieren',
-                        Object.assign(self.get_rksv_info(), self.get_bmf_credentials()),
-                        self.timeout
-                    ).then(
-                        function done(response) {
-                            if (response.success == false) {
-                                op_popup.failure(response.message);
-                            } else {
-                                op_popup.success("Startbeleg wurde eingericht !!!");
-                            }
-                        },
-                        function failed() {
-                            op_popup.failure("Fehler bei der Kommunikation mit der PosBox!");
-                        }
-                    );
-                } else {
-                    op_popup.failure("Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!");
-                }
+                self.bmf_register_start_receipt_rpc().then(
+                    function done() {
+                        op_popup.success("Startbeleg wurde erfolgreich eingereicht!");
+                        op_popup.$('.close_button').show();
+                    },
+                    function failed(message) {
+                        op_popup.failure(message);
+                        op_popup.$('.close_button').show();
+                    }
+                );
+                op_popup.success("Startbeleg wurde übermittelt und wird gerade überprüft!!!");
                 op_popup.$('.execute_button').hide();
-                op_popup.$('.close_button').show();
+                op_popup.$('.close_button').hide();
             });
         },
         // starts catching keyboard events and tries to interpret codebar

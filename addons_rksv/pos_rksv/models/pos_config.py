@@ -22,6 +22,18 @@ class pos_config(models.Model):
             if not config.cashregisterid or config.cashregisterid == '':
                 config.cashregisterid = uuid.uuid1()
 
+    @api.model
+    def set_provider(self, serial, pos_config_id):
+        sprovider = self.env['signature.provider'].search([('serial', '=', serial)])
+        config = self.search([('id', '=', pos_config_id)])
+        if not config:
+            return {'success': False, 'message': "Invalid POS config."}
+        if sprovider:
+            config.signature_provider_id = sprovider.id
+            return {'success': True, 'message': "Signature Provider set."}
+        else:
+            return {'success': False, 'message': "Invalid POS config or Signature Provider."}
+
     cashregisterid = fields.Char(
         string='KassenID', size=36,
         compute='_calc_cashregisterid',
@@ -30,7 +42,8 @@ class pos_config(models.Model):
     )
     signature_provider_id = fields.Many2one(
         comodel_name='signature.provider',
-        string='Signature Provider'
+        string='Signature Provider',
+        readonly=True
     )
     available_signature_provider_ids = fields.One2many(
         comodel_name='signature.provider',
@@ -52,6 +65,7 @@ class pos_config(models.Model):
             ('inactive', 'Inactive'),
             ('setup', 'Setup'),
             ('active', 'Active'),
+            ('failure', 'Fehler'),
             ('signature_failed', 'Fehler Signatureinheit'),
             ('posbox_failed', 'Fehler PosBox')
         ],
@@ -95,22 +109,10 @@ class pos_config(models.Model):
 
     @api.multi
     def set_failure(self):
-        self.state = 'failure'
+        self.state = 'posbox_failed'
 
     @api.multi
     def set_active(self):
         self.state = 'active'
         # Do generate a cashregisterid if there is not id attached already
         self._calc_cashregisterid()
-
-    @api.model
-    def set_provider(self, serial, pos_config_id):
-        sprovider = self.env['signature.provider'].search([('serial', '=', serial)])
-        config = self.search([('id', '=', pos_config_id)])
-        if not config:
-            return {'success': False, 'message': "Invalid POS config."}
-        if sprovider:
-            config.signature_provider_id = sprovider.id
-            return {'success': True, 'message': "Signature Provider set."}
-        else:
-            return {'success': False, 'message': "Invalid POS config or Signature Provider."}

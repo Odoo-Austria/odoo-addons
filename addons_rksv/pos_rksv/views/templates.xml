@@ -20,7 +20,6 @@
               <script type="text/javascript" src="/pos_rksv/static/src/js/screens.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/devices.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/db.js"></script>
-              <link href="/pos_rksv/static/src/css/rksv.css" rel="stylesheet"/>
           </xpath>
         </template>
 

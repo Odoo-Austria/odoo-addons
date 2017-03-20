@@ -114,6 +114,9 @@ openerp.pos_rksv = function (instance) {
             // Handly the dummy case - this can happen
             if (!order)
                 return PosModelSuper.prototype.push_order.call(this, order);
+            if(!order.get_client()){
+                return PosModelSuper.prototype.push_and_invoice_order.call(self, order);
+            }
             // This is my all - and really all deferred object
             var alldeferred = new $.Deferred(); // holds the global mutex
             // This is my signature deferred object

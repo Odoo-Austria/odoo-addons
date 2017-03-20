@@ -7,9 +7,10 @@
             <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
         </t>
         <t t-jquery="t[t-if='widget.pos.config.receipt_footer']" t-operation="before">
-            <div style='text-align:center'>
+            <div t-if="receipt.cashbox_mode=='active'" style='text-align:center'>
                 <img t-att-src="order.qrcode_img" width="100px;"/>
             </div>
+            <div t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</div>
             <p style="font-family: OCR-A, monospace;font-size:8px;word-wrap: break-word;"><t t-raw="order.ocrcodevalue"/></p>
         </t>
     </t>
@@ -24,7 +25,6 @@
             <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
         </t>
     </t>
-
     <t t-name="RKSVReceipt">
         <receipt align='center' width='40' value-thousands-separator='' cut="true">
             <h1><t t-raw='title'/></h1>
@@ -49,5 +49,4 @@
             <qrcode><t t-raw='receipt.qrcodeValue'/></qrcode>
         </receipt>
     </t>
-
 </templates>
