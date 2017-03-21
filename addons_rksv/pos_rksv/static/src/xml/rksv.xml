@@ -179,7 +179,7 @@
                         </li>
                     </ul>
                     <div>
-                        <h2>Startbeleg</h2>
+                        <h2 id="rksvfa_startbeleg">Startbeleg</h2>
                         <img class="rksvfa_image" />
                     </div>
                 </div>
