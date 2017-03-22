@@ -72,7 +72,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                     // Check RKSV Status
                     if (status.newValue.status === 'connected' && (!(self.pos.config.state === "failure"  || self.pos.config.state === "inactive"))) {
                         var rksvstatus = status.newValue.drivers.rksv ? status.newValue.drivers.rksv.status : false;
-                        if (rksvstatus == 'connected') {
+                        // Connected or setup are ok - setup means we are connected - but we need some additional love...
+                        if ((rksvstatus == 'connected') || (rksvstatus == 'setup')) {
                             self.statuses['rksv'] = true;
                         } else {
                             self.statuses['rksv'] = false;
@@ -170,6 +171,20 @@ odoo.define('pos_rksv.rksv', function (require) {
                     }
                 });
             }
+        },
+        auto_receipt_needed: function() {
+            // If we miss rksv status - then something else is already problematic - no need to check further
+            if ((!this.last_proxy_status) || (!this.last_proxy_status.drivers) || (!this.last_proxy_status.drivers.rksv))
+                return false;
+            if ((this.last_proxy_status.drivers.rksv.start_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.start_receipt_needed === true))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.has_valid_start_receipt !== undefined) && (this.last_proxy_status.drivers.rksv.has_valid_start_receipt === false))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.year_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.year_receipt_needed === true))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.month_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.month_receipt_needed === true))
+                return true;
+            return false;
         },
         check_proxy_connection: function(){
             if (this.pos.proxy.connection === null) {

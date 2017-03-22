@@ -448,7 +448,7 @@ odoo.define('pos_rksv.screens', function (require) {
                         rksvmessage = container.html();
                     }
                     self.$('.rksv-status-indicator .indicator-message').html(rksvmessage);
-                    
+
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "setup")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse befindet sich im Status Setup !");
