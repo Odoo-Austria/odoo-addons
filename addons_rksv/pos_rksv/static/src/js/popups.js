@@ -61,6 +61,8 @@ odoo.define('pos_rksv.popups', function (require) {
             this.$('.pos_admin_passwd').val('');
         },
         loading: function(message) {
+            // Do hide execute button here - it got already clicked
+            this.$('.execute_button').hide();
             this.$('.content').addClass('oe_hidden');
             this.$('.loading').removeClass('oe_hidden');
             this.$('.loading').html(message);
@@ -79,7 +81,7 @@ odoo.define('pos_rksv.popups', function (require) {
             this.$('.message').html('<p style="color: red;">' + message + '</p>');
         },
         check_passwd: function() {
-            var pos_admin_passwd = self.posmodel.config.pos_admin_passwd;
+            var pos_admin_passwd = this.pos.config.pos_admin_passwd;
             var entered_passwd = this.$('.pos_admin_passwd').val();
             if (pos_admin_passwd === entered_passwd) {
                 this.$('.message').html("Authorized");

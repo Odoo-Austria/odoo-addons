@@ -6,6 +6,7 @@
     'sequence': 6,
     'summary': 'MPD Six Payment Terminal Integration Odoo POS',
     'website': 'https://www.callino.at/page/mpd',
+    "license": 'Other proprietary',
     'description': """
 MPD Integration Six Payment
 ===========================
