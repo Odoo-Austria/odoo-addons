@@ -31,7 +31,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos = attributes.pos;
             this.proxy = attributes.proxy;
             this.signature = null;
-            this.internal_auto_receipt_needed = false;
+            this.last_proxy_status = null;
             var self = this;
             this.pos.bind('change:signature', function(pos, signature) {
                 if (signature) {
@@ -62,6 +62,7 @@ odoo.define('pos_rksv.rksv', function (require) {
 
             if (this.proxy){
                 this.proxy.on('change:status', this, function (eh, status) {
+                    self.last_proxy_status = status.newValue;
                     // Do check posbox and rksv status
                     if (status.newValue.status == "connected") {
                         self.statuses['posbox'] = true;
@@ -112,13 +113,11 @@ odoo.define('pos_rksv.rksv', function (require) {
                         self.pos.signatures.set(signatures);
                     }
                     // Here do check for the start receipt flag - if it is set - then generate the start receipt for this cash register !
-                    var auto_receipt = false;
                     if ((self.start_receipt_in_progress === false) &&
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
                         (status.newValue.drivers.rksv.start_receipt_needed !== undefined) &&
                         (status.newValue.drivers.rksv.start_receipt_needed === true)) {
-                        auto_receipt = true;
                         self.create_start_receipt();
                     }
                     if ((self.start_receipt_in_progress === false) &&
@@ -129,7 +128,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                         (status.newValue.drivers.rksv.has_valid_start_receipt !== undefined) &&
                         (status.newValue.drivers.rksv.has_valid_start_receipt === false)) {
                         self.start_receipt_in_progress = true;
-                        auto_receipt = true;
                         self.bmf_register_start_receipt_rpc().then(
                             function done() {
                                 self.start_receipt_in_progress = false;
@@ -146,7 +144,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                                 });
                             }
                         )
-                    } 
+                    }
                     if (
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
@@ -159,7 +157,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                             (status.newValue.drivers.rksv) &&
                             (status.newValue.drivers.rksv.year_receipt_needed) &&
                             (status.newValue.drivers.rksv.year_receipt_needed === true)) {
-                            auto_receipt = true;
                             self.create_year_receipt();
                         }
                         // Here do check for the month receipt flag - if it is set - then generate the month receipt for this cash register !
@@ -168,11 +165,9 @@ odoo.define('pos_rksv.rksv', function (require) {
                             (status.newValue.drivers.rksv) &&
                             (status.newValue.drivers.rksv.month_receipt_needed) &&
                             (status.newValue.drivers.rksv.month_receipt_needed === true)) {
-                            auto_receipt = true;
                             self.create_month_receipt();
                         }
                     }
-                    self.internal_auto_receipt_needed = auto_receipt;
                 });
             }
         },
@@ -207,10 +202,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                 'atu': this.pos.company.vat,
                 'hersteller_atu': this.pos.company.bmf_hersteller_atu
             }
-        },
-        // Do check if any auto receipt is needed - if one is needed then return true
-        auto_receipt_needed: function() {
-            return this.internal_auto_receipt_needed;
         },
         all_ok: function() {
             var combined_status = true;
