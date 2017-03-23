@@ -336,13 +336,27 @@ function openerp_rksv_screens(instance, module) {
                 if (!signature.isActive(self.pos))
                     // Ignore this update if it does not belong to the active signature
                     return;
-                if (signature.get('bmf_last_status')=='IN_BETRIEB') {
-                    self.$('.signature-provider-status-indicator .indicator').css('background', 'green');
-                    self.$('.signature-provider-status-indicator .indicator-message').html("Signatureinheit registriert und aktiv");
+                var color = 'red';
+                var message = 'Signatur registriert und inaktiv';
+                if (signature.get('bmf_last_status') == 'IN_BETRIEB' && self.pos.get('cashbox_mode') == 'active') {
+                    color = 'green';
+                    message = 'Signatureinheit registriert und aktiv';
+                    self.$('.sprovider-bmf-btn').hide();
+                    self.$('.sprovider-bmf-ausfall-btn').hide();
+                    self.$('.sprovider-bmf-wiederinbetriebnahme-btn').hide();
+                } else if (signature.get('bmf_last_status') == 'AUSFALL') {
+                    message = signature.get('bmf_last_status')+ ', ' + (signature.get('bmf_message')?signature.get('bmf_message'):'');
+                    self.$('.sprovider-bmf-btn').hide();
+                    self.$('.sprovider-bmf-ausfall-btn').hide();
+                    self.$('.sprovider-bmf-wiederinbetriebnahme-btn').show();
                 } else {
-                    self.$('.signature-provider-status-indicator .indicator').css('background', 'red');
-                    self.$('.signature-provider-status-indicator .indicator-message').html(signature.get('bmf_last_status')+ ', ' + (signature.get('bmf_message')?signature.get('bmf_message'):''));
+                    message = signature.get('bmf_last_status')+ ', ' + (signature.get('bmf_message')?signature.get('bmf_message'):'');
+                    self.$('.sprovider-bmf-btn').show();
+                    self.$('.sprovider-bmf-ausfall-btn').show();
+                    self.$('.sprovider-bmf-wiederinbetriebnahme-show').show();
                 }
+                self.$('.signature-provider-status-indicator .indicator').css('background', color);
+                self.$('.signature-provider-status-indicator .indicator-message').html(message);
                 self.auto_open_close();
             });
         },
@@ -453,6 +467,15 @@ function openerp_rksv_screens(instance, module) {
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "inactive")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse ist deaktviert !");
+                }
+                if (self.pos.get('cashbox_mode') == 'active'){
+                    self.$el.find('.sprovider-btn').hide()
+                }
+                if (self.pos.get('cashbox_mode') == 'signature_failed'){
+                	self.$el.find('.sprovider-btn').show()
+                }
+                if (self.pos.get('cashbox_mode') == 'posbox_failed'){
+                    
                 }
                 self.auto_open_close();
             });
