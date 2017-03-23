@@ -5,9 +5,6 @@ odoo.define('pos_rksv.chrome', function (require) {
     var gui = require('point_of_sale.gui');
     var core = require('web.core');
 
-    //var QWeb = core.qweb;
-    var _t = core._t;
-
     chrome.Chrome.include({
         replace_widget: function(name, widget_config) {
             for (var i=0; i < this.widgets.length; i++) {
@@ -21,7 +18,7 @@ odoo.define('pos_rksv.chrome', function (require) {
     var RKSVStatusWidget = chrome.StatusWidget.extend({
         template: 'RKSVStatusIndicatorWidget',
         // Possible status values
-        status: ['connected','connecting','disconnected','warning'],
+        status: ['connected','connecting','disconnected','warning','setup','failure','inactive'],
         set_smart_status: function (status) {
             var self = this;
             var mode = self.pos.get('cashbox_mode');

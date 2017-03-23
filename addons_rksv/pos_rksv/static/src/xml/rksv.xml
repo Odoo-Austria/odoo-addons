@@ -53,6 +53,10 @@
                         <label>RKSV:</label>
                         <div class="indicator-message">Status kann nicht ermittelt werden</div>
                         <button class="register_cashbox" style="display:none;">-> Kasse mit PosBox verknüpfen</button>
+                        <button class="register_startreceipt revalidate_startreceipt" style="display:none;">-> Startbeleg validieren</button>
+                        <button class="register_startreceipt delete_startreceipt" style="display:none;">-> Startbeleg löschen</button>
+                        <button class="register_startreceipt export_crypt" style="display:none;">-> Crypt Export</button>
+                        <button class="register_startreceipt start_receipt_set_valid" style="display:none;">-> Startbeleg valid setzen</button>
                     </div>
                     <div class="cashbox-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>
@@ -175,7 +179,7 @@
                         </li>
                     </ul>
                     <div>
-                        <h2>Startbeleg</h2>
+                        <h2 id="rksvfa_startbeleg">Startbeleg</h2>
                         <img class="rksvfa_image" />
                     </div>
                 </div>

@@ -170,7 +170,12 @@ odoo.define('pos_rksv.popups', function (require) {
                 ).then(
                 function done(response) {
                     self.$('.rksvfa_aes_key').val(response.aes_key);
-                    self.$('.rksvfa_image').attr('src', response.start_receipt.qrcodeImage);
+                    if (response.start_receipt && response.start_receipt.qrcodeImage){
+                        self.$('.rksvfa_image').attr('src', response.start_receipt.qrcodeImage);
+                    } else {
+                        self.$('#rksvfa_startbeleg').html('Kein Startbeleg vorhanden!');
+                        self.$('.rksvfa_image').hide();
+                    }
                     self.loading_done();
                 },
                 function failed() {
