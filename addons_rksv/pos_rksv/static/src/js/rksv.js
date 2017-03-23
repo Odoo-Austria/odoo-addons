@@ -534,7 +534,7 @@ function openerp_rksv_rksv(instance, module) {
         rk_ausfalls_modus: function() {
             var self = this;
             var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
-            op_popup.show({}, 'Kasse Signatur Ausfall Modus aktivieren', 'Ausfallmodus');
+            op_popup.show({}, 'Signatureinheit Ausfallmodus aktivieren', 'Ausfallmodus');
             // First - do disable old event handlers
             op_popup.$('.execute_button').off();
             // Then install new click handler
@@ -924,6 +924,7 @@ function openerp_rksv_rksv(instance, module) {
                                     'bmf_message': 'Wiederinbetriebnahme erfolgreich gemeldet',
                                     'bmf_last_status': 'IN_BETRIEB'
                                 });
+                                self.pos.set('cashbox_mode', 'active');
                             }
                         },
                         function failed() {
