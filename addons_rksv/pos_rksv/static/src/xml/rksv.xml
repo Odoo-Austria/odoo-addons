@@ -126,18 +126,15 @@
                 <h2 style="color:red;">Nicht verfügbar!</h2>
                 <button class="rk-ausfall-se">Ausfallmodus aktivieren!</button>
                 <p style="color:red;">Ausfälle über 48 Stunden müssen dem BMF gemeldet werden!</p>
-                <p>Sie können bei vorhandener Interneverbindung den Ausfall der Signatureinheit hier direkt dem BMF melden</p>
+                <p>Sie können bei vorhandener Internet Verbindung den Ausfall der Signatureinheit hier direkt dem BMF melden</p>
                 <button class="sprovider-bmf-ausfall-btn" t-att-serial="signature.get('serial')">Ausfall an BMF melden</button>
             </t>
         </div>
         <div class="sprovider" t-if="pos.get('cashbox_mode') == 'signature_failed'">
             <h1 style="color:red;">Signatureinheit temporärer Ausfallmodus!</h1>
-
-            <div name="sprovider_bmf_report">
-                <p style="color:red;">Ausfälle über 48 Stunden müssen dem BMF gemeldet werden!</p>
-                <p>Sie können bei vorhandener Internetverbindung den Ausfall der Signatureinheit hier direkt dem BMF melden</p>
-                <button class="sprovider-bmf-ausfall-btn" t-att-serial="signature.get('serial')">Ausfall an BMF melden</button>
-            </div>
+            <p style="color:red;">Ausfälle über 48 Stunden müssen dem BMF gemeldet werden!</p>
+            <p>Sie können bei vorhandener Internetverbindung den Ausfall der Signatureinheit hier direkt dem BMF melden</p>
+            <button class="sprovider-bmf-ausfall-btn" t-att-serial="signature.get('serial')">Ausfall an BMF melden</button>
         </div>
     </t>
 
