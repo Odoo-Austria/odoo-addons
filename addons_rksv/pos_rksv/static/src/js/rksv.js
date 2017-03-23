@@ -957,7 +957,6 @@ function openerp_rksv_rksv(instance) {
                                     'bmf_message': 'Wiederinbetriebnahme erfolgreich gemeldet',
                                     'bmf_last_status': 'IN_BETRIEB'
                                 });
-                                self.pos.set('cashbox_mode', 'active');
                             }
                         },
                         function failed() {

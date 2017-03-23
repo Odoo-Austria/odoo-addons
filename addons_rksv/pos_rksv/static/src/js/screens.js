@@ -342,8 +342,7 @@ function openerp_rksv_screens(instance, module) {
                     return;
                 var color = 'red';
                 var message = 'Signatur registriert und inaktiv';
-                var cashbox_mode = self.pos.get('cashbox_mode');
-                if (signature.get('bmf_last_status') == 'IN_BETRIEB' && (cashbox_mode == 'active' || cashbox_mode == 'setup')) {
+                if (signature.get('bmf_last_status') == 'IN_BETRIEB' && self.pos.get('cashbox_mode') == 'active') {
                     color = 'green';
                     message = 'Signatureinheit registriert und aktiv';
                     self.$('.sprovider-bmf-btn').hide();
@@ -473,15 +472,11 @@ function openerp_rksv_screens(instance, module) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse ist deaktviert !");
                 }
-                /*
-                It should always be possible to use an other signature provider
-
                 if (self.pos.get('cashbox_mode') == 'active'){
                     self.$el.find('.sprovider-btn').hide()
                 }
-                */
                 if (self.pos.get('cashbox_mode') == 'signature_failed'){
-                    self.$el.find('.sprovider-btn').show()
+                	self.$el.find('.sprovider-btn').show()
                 }
                 if (self.pos.get('cashbox_mode') == 'posbox_failed'){
                     
