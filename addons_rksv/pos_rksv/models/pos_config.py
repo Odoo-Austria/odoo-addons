@@ -92,6 +92,12 @@ class pos_config(models.Model):
         domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
         required=True
     )
+    null_product_id = fields.Many2one(
+        comodel_name='product.product',
+        string='Nullbeleg (Produkt)',
+        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
+        required=True
+    )
     _sql_constraints = [('cashregisterid_unique', 'unique(cashregisterid)', 'Cashregister ID must be unique.')]
 
     @api.model

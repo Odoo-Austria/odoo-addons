@@ -31,7 +31,6 @@ odoo.define('pos_rksv.screens', function (require) {
     var screens = require('point_of_sale.screens');
     var core = require('web.core');
     var QWeb = core.qweb;
-    var Model = require('web.DataModel');
     var gui = require('point_of_sale.gui');
     var _t = core._t;
 
@@ -323,6 +322,7 @@ odoo.define('pos_rksv.screens', function (require) {
             ul = self.get_rksv_product(ul, self.pos.config.start_product_id, 'Startbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.null_product_id, 'Nullbeleg');
             container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
@@ -518,8 +518,8 @@ odoo.define('pos_rksv.screens', function (require) {
                     );
                 } else {
                     self.pos.gui.show_popup('error',{
-                        'message': _t("Passwort falsch"),
-                        'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
+                        'title': _t("Passwort falsch"),
+                        'body': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
             });
