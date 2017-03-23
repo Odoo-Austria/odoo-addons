@@ -31,6 +31,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos = attributes.pos;
             this.proxy = attributes.proxy;
             this.signature = null;
+            this.last_proxy_status = null;
             var self = this;
             this.pos.bind('change:signature', function(pos, signature) {
                 if (signature) {
@@ -43,7 +44,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     if (!signature.isActive(self.pos))
                     // Ignore this update if it does not belong to the active signature
                         return;
-                    if ((signature.get('bmf_status')) && (signature.get('bmf_last_status') == 'IN_BETRIEB')) {
+                    if (signature.get('bmf_last_status') == 'IN_BETRIEB') {
                         self.statuses['signatureinheit'] = true;
                     } else {
                         self.statuses['signatureinheit'] = false;
@@ -61,6 +62,7 @@ odoo.define('pos_rksv.rksv', function (require) {
 
             if (this.proxy){
                 this.proxy.on('change:status', this, function (eh, status) {
+                    self.last_proxy_status = status.newValue;
                     // Do check posbox and rksv status
                     if (status.newValue.status == "connected") {
                         self.statuses['posbox'] = true;
@@ -68,9 +70,10 @@ odoo.define('pos_rksv.rksv', function (require) {
                         self.statuses['posbox'] = false;
                     }
                     // Check RKSV Status
-                    if (status.newValue.status === 'connected' && (!(self.pos.config.state === "setup" || self.pos.config.state === "failure"  || self.pos.config.state === "inactive"))) {
+                    if (status.newValue.status === 'connected' && (!(self.pos.config.state === "failure"  || self.pos.config.state === "inactive"))) {
                         var rksvstatus = status.newValue.drivers.rksv ? status.newValue.drivers.rksv.status : false;
-                        if (rksvstatus == 'connected') {
+                        // Connected or setup are ok - setup means we are connected - but we need some additional love...
+                        if ((rksvstatus == 'connected') || (rksvstatus == 'setup')) {
                             self.statuses['rksv'] = true;
                         } else {
                             self.statuses['rksv'] = false;
@@ -90,6 +93,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     if ((self.statuses['rksv_products_exists']===false)
                         && (self.pos.config.start_product_id) && (self.pos.db.get_product_by_id(self.pos.config.start_product_id[0]))
                         && (self.pos.config.month_product_id) && (self.pos.db.get_product_by_id(self.pos.config.month_product_id[0]))
+                        && (self.pos.config.null_product_id) && (self.pos.db.get_product_by_id(self.pos.config.null_product_id[0]))
                         && (self.pos.config.year_product_id) && (self.pos.db.get_product_by_id(self.pos.config.year_product_id[0]))) {
                         self.statuses['rksv_products_exists'] = true;
                     }
@@ -111,7 +115,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                         self.pos.signatures.set(signatures);
                     }
                     // Here do check for the start receipt flag - if it is set - then generate the start receipt for this cash register !
-                    
                     if ((self.start_receipt_in_progress === false) &&
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
@@ -128,22 +131,22 @@ odoo.define('pos_rksv.rksv', function (require) {
                         (status.newValue.drivers.rksv.has_valid_start_receipt === false)) {
                         self.start_receipt_in_progress = true;
                         self.bmf_register_start_receipt_rpc().then(
-                            function done(response) {
-                                if (response.success == false) {
-                                    self.start_receipt_in_progress = false;
-                                    self.pos.set('cashbox_mode', 'inactive');
-                                    console.log(response.message);
-                                } else {
-                                    self.start_receipt_in_progress = false;
-                                    console.log("Startbeleg wurde erfolgreich eingereicht!");
-                                }
+                            function done() {
+                                self.start_receipt_in_progress = false;
+                                console.log("Startbeleg wurde erfolgreich eingereicht!");
                             },
                             function failed(message) {
                                 self.start_receipt_in_progress = false;
-                                console.log(message);
+                                // Set setup state
+                                self.pos.set('cashbox_mode', 'setup');
+                                // Display error popup for user
+                                self.pos.gui.show_popup('error',{
+                                    'title': _t("Fehler"),
+                                    'body': message
+                                });
                             }
                         )
-                    } 
+                    }
                     if (
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
@@ -169,6 +172,20 @@ odoo.define('pos_rksv.rksv', function (require) {
                     }
                 });
             }
+        },
+        auto_receipt_needed: function() {
+            // If we miss rksv status - then something else is already problematic - no need to check further
+            if ((!this.last_proxy_status) || (!this.last_proxy_status.drivers) || (!this.last_proxy_status.drivers.rksv))
+                return false;
+            if ((this.last_proxy_status.drivers.rksv.start_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.start_receipt_needed === true))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.has_valid_start_receipt !== undefined) && (this.last_proxy_status.drivers.rksv.has_valid_start_receipt === false))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.year_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.year_receipt_needed === true))
+                return true;
+            if ((this.last_proxy_status.drivers.rksv.month_receipt_needed !== undefined) && (this.last_proxy_status.drivers.rksv.month_receipt_needed === true))
+                return true;
+            return false;
         },
         check_proxy_connection: function(){
             if (this.pos.proxy.connection === null) {
@@ -235,8 +252,8 @@ odoo.define('pos_rksv.rksv', function (require) {
             var self = this;
             if (!self.check_proxy_connection()) {
                 self.pos.gui.show_popup('error',{
-                    'message': _t("Fehler"),
-                    'comment': "PosBox Verbindung wird für diese Funktion benötigt !"
+                    'title': _t("Fehler"),
+                    'body': "PosBox Verbindung wird für diese Funktion benötigt !"
                 });
                 return;
             }
@@ -249,8 +266,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                 function done(response) {
                     if (response.success == false) {
                         self.pos.gui.show_popup('error',{
-                            'message': _t("Fehler"),
-                            'comment': response.message
+                            'title': _t("Fehler"),
+                            'body': response.message
                         });
                     } else {
                         // in response we should have the needed data to reprint - we assume to have a pos printer here
@@ -263,8 +280,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                 },
                 function failed() {
                     self.pos.gui.show_popup('error',{
-                        'message': _t("Fehler"),
-                        'comment': "Fehler bei der Kommunikation mit der PosBox!"
+                        'title': _t("Fehler"),
+                        'body': "Fehler bei der Kommunikation mit der PosBox!"
                     });
                 }
             );
@@ -354,7 +371,7 @@ odoo.define('pos_rksv.rksv', function (require) {
         rksv_create_null_receipt: function() {
             var self = this;
             // Create a new dummy order with no product
-            var order = this.create_dummy_order(null);
+            var order = this.create_dummy_order(this.pos.config.null_product_id[0]);
             // Sign Order
             this.pos.push_order(order).then(
                 function done() {
@@ -368,14 +385,17 @@ odoo.define('pos_rksv.rksv', function (require) {
         },
         set_signature: function (serial) {
             var self = this;
+            // We also do provide a deferred here for the caller
+            var deferred = $.Deferred();
             console.log('RKSV set signature got called !');
             if (!self.check_proxy_connection()) {
                 console.log('we cannot set the signature without proxy connection !');
-                return;
+                deferred.reject(_t('Keine Verbindung mit der PosBox ist möglich'));
+                return deferred;
             }
             this.inform_running = true;
             // We do generate a dummy order, to signal the cashbox the new signature
-            var order = this.create_dummy_order(null, this.pos.config.cashregisterid);
+            var order = this.create_dummy_order(this.pos.config.null_product_id[0], this.pos.config.cashregisterid);
             // Mark it as null receipt order type
             order.null_receipt = true;
             order.set_serial = serial;
@@ -396,23 +416,35 @@ odoo.define('pos_rksv.rksv', function (require) {
                         function done(result) {
                             if (!result['success']) {
                                 self.pos.gui.show_popup('error',{
-                                    'message': _t("RKSV Fehler"),
-                                    'comment': result['message']
+                                    'title': _t("RKSV Fehler"),
+                                    'body': result['message']
                                 });
+                                deferred.reject(result['message']);
                             } else {
+                                // To be correct - we do resolve the deferred here - even if we do reload
+                                deferred.resolve();
                                 location.reload();
                             }
+                        },
+                        function failed(message) {
+                            self.pos.gui.show_popup('error',{
+                                'title': _t("Fehler"),
+                                'body': _t("Fehler bei der Kommunikation mit Odoo, keine Internet Verbindung vorhhanden ?")
+                            });
+                            deferred.reject(_t("Fehler bei der Kommunikation mit Odoo, keine Internet Verbindung vorhhanden ?"));
                         }
                     );
                 },
                 function failed(message) {
                     self.inform_running = false;
                     self.pos.gui.show_popup('error',{
-                        'message': _t("RKSV Fehler"),
-                        'comment':  message
+                        'title': _t("RKSV Fehler"),
+                        'body':  message
                     });
+                    deferred.reject(message);
                 }
             );
+            return deferred;
         },
         inform_proxy: function (signature) {
             var self = this;
@@ -427,6 +459,83 @@ odoo.define('pos_rksv.rksv', function (require) {
         },
         fa_first_report: function() {
             this.pos.gui.show_popup('rksv_fa_widget');
+        },
+        delete_start_receipt: function() {
+            var self = this;
+            var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
+            op_popup.show({}, 'Start Beleg löschen', 'Löschen');
+            // First - do disable old event handlers
+            op_popup.$('.execute_button').off();
+            // Then install new click handler
+            op_popup.$('.execute_button').click(function() {
+                op_popup.loading('Löschen des Startbeleges');
+                if (self.check_proxy_connection()){
+                    self.proxy_rpc_call(
+                        '/hw_proxy/delete_start_receipt',
+                        Object.assign(self.get_rksv_info()),
+                        self.timeout
+                    ).then(
+                        function done(response) {
+                            if (response.success == false) {
+                                op_popup.failure(response.message);
+                            } else {
+                                op_popup.success(response.message);
+                                // Do set the cashbox_mode to setup
+                                self.pos.set('cashbox_mode', 'setup');
+                            }
+                        },
+                        function failed() {
+                            op_popup.failure("Fehler bei der Kommunikation mit der PosBox!");
+                        }
+                    );
+                } else {
+                    op_popup.failure("Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!");
+                }
+                op_popup.$('.execute_button').hide();
+                op_popup.$('.close_button').show();
+            });
+        },
+        start_receipt_set_valid: function() {
+            if (!this.pos.config.bmf_test_mode) {
+                this.pos.gui.show_popup('error',{
+                    'title': _t("Fehler"),
+                    'body': _t("Manuelles validieren des Start Beleges ist nur im Test Modus erlaubt")
+                });
+                return;
+            }
+            var self = this;
+            var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
+            op_popup.show({}, 'Start Beleg valid setzen', 'Valid');
+            // First - do disable old event handlers
+            op_popup.$('.execute_button').off();
+            // Then install new click handler
+            op_popup.$('.execute_button').click(function() {
+                op_popup.loading('Setze Valid Flag für Start Beleg');
+                if (self.check_proxy_connection()){
+                    self.proxy_rpc_call(
+                        '/hw_proxy/valid_start_receipt',
+                        Object.assign(self.get_rksv_info()),
+                        self.timeout
+                    ).then(
+                        function done(response) {
+                            if (response.success == false) {
+                                op_popup.failure(response.message);
+                            } else {
+                                op_popup.success(response.message);
+                                // Do set the cashbox_mode to active
+                                self.pos.set('cashbox_mode', 'active');
+                            }
+                        },
+                        function failed() {
+                            op_popup.failure("Fehler bei der Kommunikation mit der PosBox!");
+                        }
+                    );
+                } else {
+                    op_popup.failure("Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!");
+                }
+                op_popup.$('.execute_button').hide();
+                op_popup.$('.close_button').show();
+            });
         },
         rk_ausfalls_modus: function() {
             var self = this;
@@ -889,7 +998,11 @@ odoo.define('pos_rksv.rksv', function (require) {
                 self.timeout
             ).then(
                     function done(response) {
-                        proxyDeferred.resolve(response);
+                        if (response.success === true) {
+                            proxyDeferred.resolve(response);
+                        } else {
+                            proxyDeferred.reject(response.message);
+                        }
                     },
                     function failed() {
                         proxyDeferred.reject("Fehler bei der Kommunikation mit der PosBox!");
@@ -904,20 +1017,15 @@ odoo.define('pos_rksv.rksv', function (require) {
             op_popup.show({}, 'Startbeleg an BMF senden', 'Senden');
             op_popup.$('.execute_button').click(function() {
                 self.bmf_register_start_receipt_rpc().then(
-                    function done(response) {
-                        if (response.success == false) {
-                            op_popup.success(response.message);
-                        } else {
-                            op_popup.success("Startbeleg wurde erfolgreich eingereicht!");
-                        }
+                    function done() {
+                        op_popup.success("Startbeleg wurde erfolgreich eingereicht!");
                         op_popup.$('.close_button').show();
                     },
                     function failed(message) {
-                        op_popup.failed(message);
+                        op_popup.failure(message);
                         op_popup.$('.close_button').show();
                     }
-                        
-                )
+                );
                 op_popup.success("Startbeleg wurde übermittelt und wird gerade überprüft!!!");
                 op_popup.$('.execute_button').hide();
                 op_popup.$('.close_button').hide();

@@ -66,6 +66,7 @@ class pos_config(models.Model):
             ('inactive', 'Inactive'),
             ('setup', 'Setup'),
             ('active', 'Active'),
+            ('failure', 'Fehler'),
             ('signature_failed', 'Fehler Signatureinheit'),
             ('posbox_failed', 'Fehler PosBox')
         ],
@@ -89,6 +90,12 @@ class pos_config(models.Model):
     year_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Jahresbeleg (Produkt)',
+        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
+        required=True
+    )
+    null_product_id = fields.Many2one(
+        comodel_name='product.product',
+        string='Nullbeleg (Produkt)',
         domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
         required=True
     )

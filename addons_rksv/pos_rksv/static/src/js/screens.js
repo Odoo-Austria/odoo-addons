@@ -31,7 +31,6 @@ odoo.define('pos_rksv.screens', function (require) {
     var screens = require('point_of_sale.screens');
     var core = require('web.core');
     var QWeb = core.qweb;
-    var Model = require('web.DataModel');
     var gui = require('point_of_sale.gui');
     var _t = core._t;
 
@@ -188,6 +187,10 @@ odoo.define('pos_rksv.screens', function (require) {
             this.events['click .close_rksv'] = 'manual_close';
             this.events['click .activate_cashbox'] = 'activate_cashbox';
             this.events['click .register_cashbox'] = 'register_cashbox';
+            this.events['click .revalidate_startreceipt'] = 'revalidate_startreceipt';
+            this.events['click .delete_startreceipt'] = 'delete_startreceipt';
+            this.events['click .export_crypt'] = 'export_crypt';
+            this.events['click .start_receipt_set_valid'] = 'start_receipt_set_valid';
         },
         start: function() {
             var self = this;
@@ -248,6 +251,18 @@ odoo.define('pos_rksv.screens', function (require) {
         register_cashbox: function() {
             this.pos.rksv.register_cashbox();
         },
+        revalidate_startreceipt: function() {
+            this.pos.rksv.bmf_register_start_receipt();
+        },
+        export_crypt: function() {
+            this.pos.rksv.rksv_write_dep_crypt_container();
+        },
+        delete_startreceipt: function() {
+            this.pos.rksv.delete_start_receipt();
+        },
+        start_receipt_set_valid: function() {
+            this.pos.rksv.start_receipt_set_valid();
+        },
         manual_close: function() {
             // Clear the stay open flag
             this.stay_open = false;
@@ -259,11 +274,11 @@ odoo.define('pos_rksv.screens', function (require) {
         },
         auto_open_close: function() {
             if (this.pos.rksv === undefined) return;
-            if ((!this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
+            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
                 this.pos.gui.show_screen('rksv_status');
             } else if ((this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
                 // Already active - ok - stay active
-            } else if ((this.active) && ((this.pos.rksv.all_ok()) || (this.emergency_mode()))) {
+            } else if ((this.active) && ((this.pos.rksv.all_ok()) || (this.emergency_mode())) && (!this.pos.rksv.auto_receipt_needed())) {
                 // Active and everything is ok - or emergency mode - man - do try to close here
                 this.try_to_close();
             }
@@ -307,6 +322,7 @@ odoo.define('pos_rksv.screens', function (require) {
             ul = self.get_rksv_product(ul, self.pos.config.start_product_id, 'Startbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.null_product_id, 'Nullbeleg');
             container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
@@ -327,7 +343,7 @@ odoo.define('pos_rksv.screens', function (require) {
                 if (!signature.isActive(self.pos))
                     // Ignore this update if it does not belong to the active signature
                     return;
-                if ((signature.get('bmf_status')) && (signature.get('bmf_last_status')=='IN_BETRIEB')) {
+                if (signature.get('bmf_last_status')=='IN_BETRIEB') {
                     self.$('.signature-provider-status-indicator .indicator').css('background', 'green');
                     self.$('.signature-provider-status-indicator .indicator-message').html("Signatureinheit registriert und aktiv");
                 } else {
@@ -381,24 +397,40 @@ odoo.define('pos_rksv.screens', function (require) {
                     self.$('.posbox-status-indicator .indicator-message').html('PosBox getrennt (' + status.newValue.status + ')');
                 }
                 // Check if we have to activate ourself
-                if (status.newValue.status === 'connected' && (!(self.pos.config.state === "setup" || self.pos.config.state === "failure" || self.pos.config.state === "inactive"))) {
+                if (status.newValue.status === 'connected' && (!(self.pos.config.state === "failure" || self.pos.config.state === "inactive"))) {
                     var rksvstatus = status.newValue.drivers.rksv ? status.newValue.drivers.rksv.status : false;
                     var rksvmessage = status.newValue.drivers.rksv && status.newValue.drivers.rksv.message ? status.newValue.drivers.rksv.message : false;
                     if (!rksvstatus) {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').hide();
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
                         rksvmessage = "Status unbekannt";
-                        self.$('.rksv-status-indicator .register_cashbox').hide();
                     } else if (rksvstatus == 'connected') {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').hide();
                         // Everything is correct
                         self.$('.rksv-status-indicator .indicator').css('background', 'green');
                         rksvmessage = "PosBox Modul verbunden";
+                    } else if (rksvstatus == 'invalidstartreceipt') {
+                        self.$('.rksv-status-indicator .register_startreceipt').show();
                         self.$('.rksv-status-indicator .register_cashbox').hide();
+                        // Validation of start receipt failed - activate the try again button
+                        self.$('.rksv-status-indicator .indicator').css('background', 'orange');
+                        rksvmessage = "Validierungsfehler !";
+                    } else if (rksvstatus == 'failure') {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').hide();
+                        self.$('.rksv-status-indicator .indicator').css('background', 'red');
+                        rksvmessage = "Fehler";
                     } else if (rksvstatus == 'doesnotexists') {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').show();
                         // Cashbox is not registered on this posbox !
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
                         rksvmessage = "KassenID nicht auf dieser PosBox registriert!";
-                        self.$('.rksv-status-indicator .register_cashbox').show();
                     } else {
+                        self.$('.rksv-status-indicator .register_startreceipt').hide();
+                        self.$('.rksv-status-indicator .register_cashbox').hide();
                         // Only show it if it is not already in state visible !
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
                         self.$('.rksv-status-indicator .register_cashbox').hide();
@@ -417,7 +449,7 @@ odoo.define('pos_rksv.screens', function (require) {
                         rksvmessage = container.html();
                     }
                     self.$('.rksv-status-indicator .indicator-message').html(rksvmessage);
-                    
+
                 } else if (status.newValue.status === 'connected' && (self.pos.config.state === "setup")) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse befindet sich im Status Setup !");
@@ -474,26 +506,22 @@ odoo.define('pos_rksv.screens', function (require) {
             self.$el.find('.sprovider-btn').click(self, function (event) {
                 var password = self.$el.find('#pass_input_signature').val();
                 if (password == self.pos.config.pos_admin_passwd) {
-                    self.pos.rksv.set_signature(event.target.value);
+                    self.pos.rksv.set_signature(event.target.value).then(
+                        function done() {
+                            self.$('.provider-message-box').empty();
+                            self.$('.provider-message-box').append('<p style="color:green;">Signatur Provider wurde gesetzt.</p>');
+                        },
+                        function failed(message) {
+                            self.$('.provider-message-box').empty();
+                            self.$('.provider-message-box').append('<p style="color:red;">' + message + '</p>');
+                        }
+                    );
                 } else {
                     self.pos.gui.show_popup('error',{
-                        'message': _t("Passwort falsch"),
-                        'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
+                        'title': _t("Passwort falsch"),
+                        'body': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
-                var provider_obj = new Model('pos.config');
-                var result = provider_obj.call('set_provider', [self.$el.find('#pass_input_signature').val(), event.target.value, {'pos_config_id': self.pos.config.id}]).then(
-                    function done(result) {
-                        if (!result['success']) {
-                            self.$('.provider-message-box').empty();
-                            self.$('.provider-message-box').append('<p style="color:red;">' + result['message'] + '</p>');
-                        } else {
-                            self.$('.provider-message-box').empty();
-                            self.$('.provider-message-box').append('<p style="color:green;">' + result['message'] + '</p>');
-                            location.reload();
-                        }
-                    }
-                );
             });
             self.$el.find('.rk-ausfall-se').click(self, function (event) {
                 self.stay_open = false;
