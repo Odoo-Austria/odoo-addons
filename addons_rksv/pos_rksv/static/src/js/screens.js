@@ -416,7 +416,7 @@ odoo.define('pos_rksv.screens', function (require) {
                         self.$('.rksv-status-indicator .register_cashbox').hide();
                         // Validation of start receipt failed - activate the try again button
                         self.$('.rksv-status-indicator .indicator').css('background', 'orange');
-                        rksvmessage = "Validierungsfehler !";
+                        rksvmessage = "Validierungsfehler!";
                     } else if (rksvstatus == 'failure') {
                         self.$('.rksv-status-indicator .register_startreceipt').hide();
                         self.$('.rksv-status-indicator .register_cashbox').hide();
@@ -427,7 +427,7 @@ odoo.define('pos_rksv.screens', function (require) {
                         self.$('.rksv-status-indicator .register_cashbox').show();
                         // Cashbox is not registered on this posbox !
                         self.$('.rksv-status-indicator .indicator').css('background', 'red');
-                        rksvmessage = "KassenID nicht auf dieser PosBox registriert!";
+                        rksvmessage = "Kassen ID nicht auf dieser PosBox registriert!";
                     } else {
                         self.$('.rksv-status-indicator .register_startreceipt').hide();
                         self.$('.rksv-status-indicator .register_cashbox').hide();
