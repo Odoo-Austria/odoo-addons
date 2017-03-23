@@ -31,6 +31,8 @@ function openerp_rksv_screens(instance, module) {
     var screens = module;
     var gui = module.PosWidget.prototype;
     var Model = instance.web.Model;
+    var core = instance.web;
+    var _t = core._t;
 
     screens.PaymentScreenWidget.include({
         validate_order: function(options) {
@@ -316,6 +318,7 @@ function openerp_rksv_screens(instance, module) {
             ul = self.get_rksv_product(ul, self.pos.config.start_product_id, 'Startbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.null_product_id, 'Nullbeleg');
             container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
@@ -534,8 +537,8 @@ function openerp_rksv_screens(instance, module) {
                     );
                 } else {
                     self.pos.gui.show_popup('error',{
-                        'message': _t("Passwort falsch"),
-                        'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
+                        'title': _t("Passwort falsch"),
+                        'body': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
             });
