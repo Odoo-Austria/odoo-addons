@@ -11,11 +11,11 @@
                 <xpath expr="//page[@name='extra']" position="after">
                     <page name="signature" string="Signature">
                         <group name="receipt_data">
-                            <group>
+                            <group string="Beleg">
                                 <field name="typeOfReceipt"/>
                                  <field name="receipt_id"/>
                             </group>
-                            <group>
+                            <group string="Signatur">
                                  <field name="cashbox_mode"/>
                                  <field name="signatureSerial"/>
                             </group>
