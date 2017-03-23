@@ -10,33 +10,69 @@ class POSOrder(models.Model):
     _name = 'pos.order'
     _inherit = 'pos.order'
 
-    ocr_code_value = fields.Text(string="OCR Code Value", readonly=True)
-    qr_code_value = fields.Text(string="QR Code Value", readonly=True)
-    cashbox_mode = fields.Selection([
-        ('active', 'Normal'),
-        ('signature_failed', 'Signatureinheit Ausgefallen'),
-        ('posbox_failed', 'PosBox Ausgefallen')
-    ], string="Signatur Modus", readonly=True)
-    qr_code_image = fields.Binary(string="QR Code", attachment=True, readonly=True)
-    receipt_id = fields.Integer(string='Receipt ID', readonly=True)
-    typeOfReceipt = fields.Selection([
-        ('STANDARD_BELEG', 'Normaler Beleg'),
-        ('START_BELEG', 'Start Beleg'),
-        ('STORNO_BELEG', 'Storno Beleg'),
-        ('TRAINING_BELEG', 'Trainingsbeleg'),
-        ('NULL_BELEG', 'Null Beleg'),
-        ('NONE_BELEG', 'Kein Beleg'),
-    ], string="Belegart")
-    signatureSerial = fields.Char("Signatur Seriennummer", size=16)
-    encryptedTurnOverValue = fields.Char("Summenspeicher codiert", size=128)
-    chainValue = fields.Char("Verkettungswert", size=128)
-    signedJWSCompactRep = fields.Char("JWS", size=256)
-    taxSetNormal = fields.Integer("20% in Cent")
-    taxSetErmaessigt1 = fields.Integer("10% in Cent")
-    taxSetErmaessigt2 = fields.Integer("13% in Cent")
-    taxSetNull = fields.Integer("0% in Cent")
-    taxSetBesonders = fields.Integer("19% in Cent")
-    turnOverValue = fields.Integer("Summenspeicher")
+    ocr_code_value = fields.Text(
+        string="OCR Code Value",
+        readonly=True
+    )
+    qr_code_value = fields.Text(
+        string="QR Code Value",
+        readonly=True
+    )
+    cashbox_mode = fields.Selection(
+        selection=[
+            ('active', 'Normal'),
+            ('signature_failed', 'Signatureinheit ausgefallen'),
+            ('posbox_failed', 'PosBox ausgefallen')
+        ],
+        string="Modus (Signatur)", readonly=True
+    )
+    qr_code_image = fields.Binary(
+        string="QR Code",
+        attachment=True, readonly=True
+    )
+    receipt_id = fields.Integer(
+        string='Receipt ID', readonly=True
+    )
+    typeOfReceipt = fields.Selection(
+        selection=[
+            ('STANDARD_BELEG', 'Normaler Beleg'),
+            ('START_BELEG', 'Startbeleg'),
+            ('STORNO_BELEG', 'Stornobeleg'),
+            ('TRAINING_BELEG', 'Trainingsbeleg'),
+            ('NULL_BELEG', 'Nullbeleg'),
+            ('NONE_BELEG', 'Kein Beleg'),
+        ], string="Belegart"
+    )
+    signatureSerial = fields.Char(
+        string="Seriennummer (Signatur)", size=16
+    )
+    encryptedTurnOverValue = fields.Char(
+        string="Kodierter Summenspeicher", size=128
+    )
+    chainValue = fields.Char(
+        string="Verkettungswert", size=128
+    )
+    signedJWSCompactRep = fields.Char(
+        string="JWS", size=256
+    )
+    taxSetNormal = fields.Integer(
+        string="20% in Cent"
+    )
+    taxSetErmaessigt1 = fields.Integer(
+        string="10% in Cent"
+    )
+    taxSetErmaessigt2 = fields.Integer(
+        string="13% in Cent"
+    )
+    taxSetNull = fields.Integer(
+        string="0% in Cent"
+    )
+    taxSetBesonders = fields.Integer(
+        string="19% in Cent"
+    )
+    turnOverValue = fields.Integer(
+        string="Summenspeicher"
+    )
 
     def test_paid(self):
         """A Point of Sale is paid when the sum

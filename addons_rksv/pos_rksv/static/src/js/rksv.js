@@ -924,7 +924,6 @@ function openerp_rksv_rksv(instance, module) {
                                     'bmf_message': 'Wiederinbetriebnahme erfolgreich gemeldet',
                                     'bmf_last_status': 'IN_BETRIEB'
                                 });
-                                self.pos.set('cashbox_mode', 'active');
                             }
                         },
                         function failed() {
@@ -953,7 +952,7 @@ function openerp_rksv_rksv(instance, module) {
         bmf_sprovider_status: function(serial) {
             var signature = this.pos.signatures.get(serial);
             if (!signature) {
-                console.log('Unbekannte SE Seriennummer !');
+                console.log('Unbekannte SE Seriennummer!');
                 return;
             }
             var self = this;
