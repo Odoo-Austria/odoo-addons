@@ -560,7 +560,7 @@ function openerp_rksv_rksv(instance) {
         rk_ausfalls_modus: function() {
             var self = this;
             var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
-            op_popup.show({}, 'Signatureinheit Ausfallmodus aktivieren', 'Ausfallmodus');
+            op_popup.show({}, 'Ausfallmodus der Signatureinheit aktivieren', 'Ausfallmodus');
             // First - do disable old event handlers
             op_popup.$('.execute_button').off();
             // Then install new click handler
