@@ -93,6 +93,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     if ((self.statuses['rksv_products_exists']===false)
                         && (self.pos.config.start_product_id) && (self.pos.db.get_product_by_id(self.pos.config.start_product_id[0]))
                         && (self.pos.config.month_product_id) && (self.pos.db.get_product_by_id(self.pos.config.month_product_id[0]))
+                        && (self.pos.config.null_product_id) && (self.pos.db.get_product_by_id(self.pos.config.null_product_id[0]))
                         && (self.pos.config.year_product_id) && (self.pos.db.get_product_by_id(self.pos.config.year_product_id[0]))) {
                         self.statuses['rksv_products_exists'] = true;
                     }
@@ -370,7 +371,7 @@ odoo.define('pos_rksv.rksv', function (require) {
         rksv_create_null_receipt: function() {
             var self = this;
             // Create a new dummy order with no product
-            var order = this.create_dummy_order(null);
+            var order = this.create_dummy_order(this.pos.config.null_product_id[0]);
             // Sign Order
             this.pos.push_order(order).then(
                 function done() {
@@ -394,7 +395,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             }
             this.inform_running = true;
             // We do generate a dummy order, to signal the cashbox the new signature
-            var order = this.create_dummy_order(null, this.pos.config.cashregisterid);
+            var order = this.create_dummy_order(this.pos.config.null_product_id[0], this.pos.config.cashregisterid);
             // Mark it as null receipt order type
             order.null_receipt = true;
             order.set_serial = serial;

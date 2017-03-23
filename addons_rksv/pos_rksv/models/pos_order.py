@@ -71,3 +71,8 @@ class POSOrder(models.Model):
         order_values['taxSetBesonders'] = ui_order['taxSetBesonders'] if 'taxSetBesonders' in ui_order else None
         order_values['turnOverValue'] = ui_order['turnOverValue'] if 'turnOverValue' in ui_order else None
         return order_values
+
+    @api.model
+    def create_from_ui(self, orders):
+        _logger.info("Got orders: %r", orders)
+        return super(POSOrder, self).create_from_ui(orders)

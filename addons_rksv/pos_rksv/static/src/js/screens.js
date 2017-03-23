@@ -322,6 +322,7 @@ odoo.define('pos_rksv.screens', function (require) {
             ul = self.get_rksv_product(ul, self.pos.config.start_product_id, 'Startbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.null_product_id, 'Nullbeleg');
             container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
