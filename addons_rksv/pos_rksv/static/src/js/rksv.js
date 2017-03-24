@@ -589,16 +589,21 @@ odoo.define('pos_rksv.rksv', function (require) {
         },
         register_cashbox: function() {
             var self = this;
-            var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
+            var op_popup = this.pos.gui.popup_instances.rksv_register_cashbox_widget;
             op_popup.show({}, 'Kasse mit PosBox verknüpfen', 'Verknüpfen');
             // First - do disable old event handlers
             op_popup.$('.execute_button').off();
             // Then install new click handler
             op_popup.$('.execute_button').click(function() {
                 op_popup.loading('Mit PosBox verknüpfen');
+                var start_nr = op_popup.$('.cashbox_start_receipt_nr').val();
+                if ((!start_nr) || (!$.isNumeric( start_nr ))) {
+                    start_nr = 1;
+                }
                 if (self.check_proxy_connection()){
                     var local_params = {
-                        'name': self.pos.config.name
+                        'name': self.pos.config.name,
+                        'start_nr': parseInt(start_nr),
                     };
                     self.proxy_rpc_call(
                         '/hw_proxy/register_cashbox',
