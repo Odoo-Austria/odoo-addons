@@ -102,6 +102,28 @@ odoo.define('pos_rksv.popups', function (require) {
     /*
     Based on default Popup Widget - only an other Template
      */
+    var RegisterCashboxPopupWidget = RKSVPopUpWidget.extend({
+        template: 'RegisterCashboxPopupWidget',
+
+        show: function(show_options, title, exec_button_title, kundeninfo){
+            this._super(show_options, title, exec_button_title, kundeninfo);
+            // Hide the additional data fields per default
+            this.$('.startreceipt_div').hide();
+        },
+        check_passwd: function() {
+            var valid = this._super();
+            if (valid) {
+                // Show the additional data fields on valid password
+                this.$('.startreceipt_div').show();
+            }
+        }
+    });
+    gui.define_popup({name:'rksv_register_cashbox_widget', widget: RegisterCashboxPopupWidget});
+
+
+    /*
+    Based on default Popup Widget - only an other Template
+     */
     var RKSVSProviderAusfallPopupWidget = RKSVPopUpWidget.extend({
         template:'RKSVSProviderAusfallPopupWidget',
         // Extend show function to also hide the begruendung division on show

@@ -476,9 +476,13 @@ odoo.define('pos_rksv.screens', function (require) {
                     self.$('.rksv-status-indicator .indicator').css('background', 'red');
                     self.$('.rksv-status-indicator .indicator-message').html("Kasse ist deaktviert !");
                 }
+                /*
+                It should always be possible to use an other signature provider
+
                 if (self.pos.get('cashbox_mode') == 'active'){
                     self.$el.find('.sprovider-btn').hide()
                 }
+                */
                 if (self.pos.get('cashbox_mode') == 'signature_failed'){
                     self.$el.find('.sprovider-btn').show()
                 }
