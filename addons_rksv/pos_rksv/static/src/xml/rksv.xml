@@ -220,6 +220,31 @@
         </div>
     </t>
 
+    <t t-name="RegisterCashboxPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-rksv content">
+                <p class="title">Titel</p>
+                <div class="message" />
+                <div class="passwd_input">
+                    <label for="pass_input_operation">Password (PoS Admin)</label>
+                    <input id="pass_input_operation" class="pos_admin_passwd" type="password"/>
+                </div>
+                <div class="startreceipt_div" style="display:none;">
+                    <h2>Daten</h2>
+                    <label for="cashbox_start_receipt_nr">Start Bonnummer</label>
+                    <input id="cashbox_start_receipt_nr" class="cashbox_start_receipt_nr" type="number"/>
+                    <p>Startbeleg wird mit dieser Bonnummer erstellt !</p>
+                </div>
+                <div class="footer">
+                    <div class="button authorize authorize_button">Prüfen</div>
+                    <div class="button execute execute_button" style="display:none;">Ausführen</div>
+                    <div class="button cancel close_button">Schließen</div>
+                </div>
+            </div>
+            <div class="popup popup-rksv oe_hidden loading">Bitte warten...</div>
+        </div>
+    </t>
+
     <t t-name="RKSVSProviderRegistrationPopupWidget">
         <div class="modal-dialog">
             <div class="popup popup-rksv content">
