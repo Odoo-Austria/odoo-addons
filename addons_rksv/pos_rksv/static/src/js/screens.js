@@ -345,7 +345,8 @@ odoo.define('pos_rksv.screens', function (require) {
                     return;
                 var color = 'red';
                 var message = 'Signatur registriert und inaktiv';
-                if (signature.get('bmf_last_status') == 'IN_BETRIEB' && self.pos.get('cashbox_mode') == 'active') {
+                var cashbox_mode = self.pos.get('cashbox_mode');
+                if (signature.get('bmf_last_status') == 'IN_BETRIEB' && (cashbox_mode == 'active' || cashbox_mode == 'setup')) {
                     color = 'green';
                     message = 'Signatureinheit registriert und aktiv';
                     self.$('.sprovider-bmf-btn').hide();
