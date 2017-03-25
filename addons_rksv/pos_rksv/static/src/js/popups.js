@@ -116,6 +116,10 @@ odoo.define('pos_rksv.popups', function (require) {
                 // Show the additional data fields on valid password
                 this.$('.startreceipt_div').show();
             }
+        },
+        loading: function(message) {
+            this._super(message);
+            this.$('.startreceipt_div').hide();
         }
     });
     gui.define_popup({name:'rksv_register_cashbox_widget', widget: RegisterCashboxPopupWidget});
