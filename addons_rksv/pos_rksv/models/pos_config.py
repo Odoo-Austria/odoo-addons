@@ -78,25 +78,25 @@ class pos_config(models.Model):
     start_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Startbeleg (Produkt)',
-        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
+        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True), ('rksv_tax_mapping_correct', '=', True)],
         required=True
     )
     month_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Monatsbeleg (Produkt)',
-        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
+        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True), ('rksv_tax_mapping_correct', '=', True)],
         required=True
     )
     year_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Jahresbeleg (Produkt)',
-        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
+        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True), ('rksv_tax_mapping_correct', '=', True)],
         required=True
     )
     null_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Nullbeleg (Produkt)',
-        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
+        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True), ('rksv_tax_mapping_correct', '=', True)],
         required=True
     )
     _sql_constraints = [('cashregisterid_unique', 'unique(cashregisterid)', 'Cashregister ID must be unique.')]
