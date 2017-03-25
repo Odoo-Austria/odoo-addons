@@ -269,9 +269,16 @@ function openerp_rksv_rksv(instance, module) {
                         // in response we should have the needed data to reprint - we assume to have a pos printer here
                         var env = {
                             'title': title,
-                            'receipt': response.receipt
+                            'receipt': response.receipt,
+                            'company': self.pos.company,
+                            'widget': self.pos.chrome.widget
                         };
-                        self.pos.proxy.print_receipt(QWeb.render('RKSVReceipt',env));
+                        if(self.pos.config.iface_print_via_proxy){
+                            self.pos.proxy.print_receipt(QWeb.render('RKSVReceipt', env));
+                        } else {
+                            self.pos.gui.show_screen('receipt');
+                            self.pos.chrome.$('.pos-receipt-container').html(QWeb.render('RKSVTicket', env));
+                        }
                     }
                 },
                 function failed() {
