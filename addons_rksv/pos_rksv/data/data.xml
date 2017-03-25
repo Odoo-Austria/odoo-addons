@@ -6,14 +6,14 @@
         </record>
 
         <record id="rksv_start_receipt" model="product.product">
-            <field name="name">Start Beleg</field>
+            <field name="name">Startbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
             <field name="standard_price">0</field>
             <field name="list_price">0</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
-            <field name="description">Produkt für den Start Beleg</field>
+            <field name="description">Produkt für den Startbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
@@ -26,14 +26,14 @@
         </record>
 
         <record id="rksv_month_receipt" model="product.product">
-            <field name="name">Monats Beleg</field>
+            <field name="name">Monatsbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
             <field name="standard_price">0</field>
             <field name="list_price">0</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
-            <field name="description">Produkt für den Monats Beleg</field>
+            <field name="description">Produkt für den Monatsbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
@@ -46,14 +46,14 @@
         </record>
         
         <record id="rksv_year_receipt" model="product.product">
-            <field name="name">Jahres Beleg</field>
+            <field name="name">Jahresbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
             <field name="standard_price">0</field>
             <field name="list_price">0</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
-            <field name="description">Produkt für den Jahres Beleg</field>
+            <field name="description">Produkt für den Jahresbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
@@ -66,14 +66,14 @@
         </record>
 
         <record id="rksv_dummy_receipt" model="product.product">
-            <field name="name">Null Beleg</field>
+            <field name="name">Nullbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
             <field name="standard_price">0</field>
             <field name="list_price">0</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
-            <field name="description">Produkt für den Null Beleg</field>
+            <field name="description">Produkt für den Nullbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
