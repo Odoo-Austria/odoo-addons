@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="rksv_restaurant_assets" inherit_id="point_of_sale.assets">
+          <xpath expr="." position="inside">
+              <script type="text/javascript" src="/pos_pay_invoice/static/src/js/pos.js"></script>
+              <script type="text/javascript" src="/pos_pay_invoice/static/src/js/models.js"></script>
+              <script type="text/javascript" src="/pos_pay_invoice/static/src/js/screens.js"></script>
+              <link href="/pos_pay_invoice/static/src/css/invoices.css" rel="stylesheet"/>
+          </xpath>
+        </template>
+
+    </data>
+</odoo>
