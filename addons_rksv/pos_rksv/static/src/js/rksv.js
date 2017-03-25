@@ -202,7 +202,8 @@ odoo.define('pos_rksv.rksv', function (require) {
         },
         get_default_params: function(){
             return {
-                'test_mode': this.pos.config.bmf_test_mode
+                'test_mode': this.pos.config.bmf_test_mode,
+                'pos_ts': moment().format(),
             }
         },
         get_bmf_credentials: function(){
