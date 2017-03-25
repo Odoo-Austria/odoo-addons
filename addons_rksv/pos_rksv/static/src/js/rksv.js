@@ -305,6 +305,7 @@ function openerp_rksv_rksv(instance, module) {
         },
         create_start_receipt: function() {
             var self = this;
+            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             this.start_receipt_in_progress = true;
             // Create a new dummy order with the start product
             var order = this.create_dummy_order(this.pos.config.start_product_id[0], this.pos.config.cashregisterid);
@@ -324,6 +325,7 @@ function openerp_rksv_rksv(instance, module) {
         },
         create_year_receipt: function() {
             var self = this;
+            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             this.year_receipt_in_progress = true;
             var year = moment().subtract(1, 'years').format('YYYY');
             // Create a new dummy order with the year product
@@ -344,6 +346,7 @@ function openerp_rksv_rksv(instance, module) {
         },
         create_month_receipt: function() {
             var self = this;
+            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             this.month_receipt_in_progress = true;
             // Create a new order
             var year_month = moment().subtract(1, 'month').format('YYYY-MM');
@@ -366,6 +369,7 @@ function openerp_rksv_rksv(instance, module) {
         },
         rksv_create_null_receipt: function() {
             var self = this;
+            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             // Create a new dummy order with no product
             var order = this.create_dummy_order(this.pos.config.null_product_id[0]);
             // Sign Order
