@@ -388,14 +388,23 @@ odoo.define('pos_rksv.rksv', function (require) {
                 }
             );
         },
+        dummy_order_checks: function() {
+            var self = this;
+            if (!self.check_proxy_connection()) {
+                return _t('Keine Verbindung mit der PosBox ist möglich');
+            }
+            if (!self.statuses['rksv_products_exists']) {
+                return _t('RKSV Produkte müssen gesetzt sein !');
+            }
+            return true;
+        },
         set_signature: function (serial) {
             var self = this;
             // We also do provide a deferred here for the caller
             var deferred = $.Deferred();
-            console.log('RKSV set signature got called !');
-            if (!self.check_proxy_connection()) {
-                console.log('we cannot set the signature without proxy connection !');
-                deferred.reject(_t('Keine Verbindung mit der PosBox ist möglich'));
+            var message = this.dummy_order_checks();
+            if (message !== true) {
+                deferred.reject(message);
                 return deferred;
             }
             this.inform_running = true;
