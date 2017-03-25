@@ -298,8 +298,8 @@ odoo.define('pos_rksv.screens', function (require) {
                         this.pos.gui.back();
                     }
                 } else {
-                    // if no selected order does exist - then there is no previous-screen - so activate default screen
-                    this.pos.gui.show_screen(this.pos.gui.default_screen);
+                    // if no selected order does exist - then there is no previous-screen - so activate startup screen
+                    this.pos.gui.show_screen(this.pos.gui.startup_screen);
                 }
             }
         },
