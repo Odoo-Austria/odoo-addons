@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="Orderline">
+        <t t-jquery=".info-list" t-operation="append">
+            <t t-if="line.get_invoice()">
+                <li class="info orderline-invoice">
+                    <i class='fa fa-tag'/><t t-esc="line.get_invoice().get('number')" />
+                </li>
+            </t>
+        </t>
+    </t>
+
+    <t t-name="SearchInvoicesButton">
+        <div class='control-button'>
+            <i class='fa fa-tag' /> Invoices
+        </div>
+    </t>
+
+    <t t-extend='ClientLine'>
+        <t t-jquery='.client-line' t-operation='append'>
+            <td>
+                <button class="view_all_invoices" t-att-id='partner.id'><i class="fa fa-filter"></i> View invoices</button>
+            </td>
+        </t>
+    </t>
+
+    <t t-name="InvoiceLine">
+        <tr class='invoice-line' t-att-data-id='invoice.id'>
+            <td><t t-esc='invoice.get("number")' /></td>
+            <td><t t-esc='invoice.get("date_invoice")' /></td>
+            <td><t t-esc='invoice.get_partner_displayname()' /></td>
+            <td><t t-esc='invoice.get("name")?invoice.get("name"):""' /></td>
+            <td><t t-esc='invoice.get("amount_total")' /></td>
+            <td><t t-esc='invoice.get("date_due")' /></td>
+        </tr>
+    </t>
+
+    <t t-name="InvoiceListScreenWidget">
+        <div class="invoicelist-screen screen">
+            <div class="screen-content">
+                <section class="top-content">
+                    <span class='button back'>
+                        <i class='fa fa-angle-double-left'></i>
+                        Cancel
+                    </span>
+                    <span class='searchbox'>
+                        <input placeholder='Search Invoices' />
+                        <span class='search-clear'></span>
+                    </span>
+                    <span class='searchbox'></span>
+                    <span class='button next oe_hidden highlight'>
+                        Pay Invoice
+                        <i class='fa fa-angle-double-right'></i>
+                    </span>
+                </section>
+                <section class="full-content">
+                    <div class='window'>
+                        <section class='subwindow'>
+                            <div class='subwindow-container'>
+                                <div class='subwindow-container-fix touch-scrollable scrollable-y'>
+                                    <table class='invoice-list'>
+                                        <thead>
+                                            <tr>
+                                                <th>Number</th>
+                                                <th>Date</th>
+                                                <th>Partner</th>
+                                                <th>Reference</th>
+                                                <th>Amount</th>
+                                                <th>Due</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class='invoice-list-contents'>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </t>
+
+</templates>

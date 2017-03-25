@@ -319,7 +319,6 @@ function openerp_rksv_screens(instance, module) {
             ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.null_product_id, 'Nullbeleg');
-            ul = self.get_rksv_product(ul, self.pos.config.invoice_product_id, 'Referenzbeleg');
             container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
@@ -543,8 +542,8 @@ function openerp_rksv_screens(instance, module) {
                     );
                 } else {
                     self.pos.gui.show_popup('error',{
-                        'title': _t("Passwort falsch"),
-                        'body': _t("Das richtige POS Admin Passwort wird benötigt.")
+                        'message': _t("Passwort falsch"),
+                        'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
             });

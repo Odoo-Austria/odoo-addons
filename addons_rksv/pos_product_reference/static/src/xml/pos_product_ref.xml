@@ -5,8 +5,14 @@
         <t t-jquery=".info-list>" t-operation="append">
             <t t-if="line.get_product().product_ref">
                 <li class="ref">
-                    <em>Reference:</em><input class="pro_ref" type="text" name="pro_ref" t-att-value="line.get_product_reference()"/>
+                    <em>Reference: </em><input class="pro_ref" type="text" name="pro_ref" t-att-value="line.get_product_reference()"/>
                 </li>
+            </t>
+            <t t-if="!line.get_product().product_ref &amp;&amp; line.get_product_reference()">
+                <li class="ref">
+                    <em>Reference: </em><t t-raw="line.get_product_reference()"/>
+                </li>
+
             </t>
         </t>
     </t>

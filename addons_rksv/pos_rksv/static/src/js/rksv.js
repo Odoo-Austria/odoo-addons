@@ -137,8 +137,8 @@ function openerp_rksv_rksv(instance) {
                                 self.pos.set('cashbox_mode', 'setup');
                                 // Display error popup for user
                                 self.pos.gui.show_popup('error',{
-                                    'title': _t("Fehler"),
-                                    'body': message
+                                    'message': _t("Fehler"),
+                                    'comment': message
                                 });
                             }
                         )
@@ -249,8 +249,8 @@ function openerp_rksv_rksv(instance) {
             var self = this;
             if (!self.check_proxy_connection()) {
                 self.pos.gui.show_popup('error',{
-                    'title': _t("Fehler"),
-                    'body': "PosBox Verbindung wird für diese Funktion benötigt !"
+                    'message': _t("Fehler"),
+                    'comment': "PosBox Verbindung wird für diese Funktion benötigt !"
                 });
                 return;
             }
@@ -263,8 +263,8 @@ function openerp_rksv_rksv(instance) {
                 function done(response) {
                     if (response.success == false) {
                         self.pos.gui.show_popup('error',{
-                            'title': _t("Fehler"),
-                            'body': response.message
+                            'message': _t("Fehler"),
+                            'comment': response.message
                         });
                     } else {
                         // in response we should have the needed data to reprint - we assume to have a pos printer here
@@ -284,8 +284,8 @@ function openerp_rksv_rksv(instance) {
                 },
                 function failed() {
                     self.pos.gui.show_popup('error',{
-                        'title': _t("Fehler"),
-                        'body': "Fehler bei der Kommunikation mit der PosBox!"
+                        'message': _t("Fehler"),
+                        'comment': "Fehler bei der Kommunikation mit der PosBox!"
                     });
                 }
             );
@@ -436,8 +436,8 @@ function openerp_rksv_rksv(instance) {
                         function done(result) {
                             if (!result['success']) {
                                 self.pos.gui.show_popup('error',{
-                                    'title': _t("RKSV Fehler"),
-                                    'body': result['message']
+                                    'message': _t("RKSV Fehler"),
+                                    'comment': result['message']
                                 });
                                 deferred.reject(result['message']);
                             } else {
@@ -448,8 +448,8 @@ function openerp_rksv_rksv(instance) {
                         },
                         function failed(message) {
                             self.pos.gui.show_popup('error',{
-                                'title': _t("Fehler"),
-                                'body': _t("Fehler bei der Kommunikation mit Odoo, keine Internet Verbindung vorhhanden ?")
+                                'message': _t("Fehler"),
+                                'comment': _t("Fehler bei der Kommunikation mit Odoo, keine Internet Verbindung vorhhanden ?")
                             });
                             deferred.reject(_t("Fehler bei der Kommunikation mit Odoo, keine Internet Verbindung vorhhanden ?"));
                         }
@@ -458,8 +458,8 @@ function openerp_rksv_rksv(instance) {
                 function failed(message) {
                     self.inform_running = false;
                     self.pos.gui.show_popup('error',{
-                        'title': _t("RKSV Fehler"),
-                        'body':  message
+                        'message': _t("RKSV Fehler"),
+                        'comment':  message
                     });
                     deferred.reject(message);
                 }
@@ -518,8 +518,8 @@ function openerp_rksv_rksv(instance) {
         start_receipt_set_valid: function() {
             if (!this.pos.config.bmf_test_mode) {
                 this.pos.gui.show_popup('error',{
-                    'title': _t("Fehler"),
-                    'body': _t("Manuelles validieren des Startbeleges ist nur im Test Modus erlaubt")
+                    'message': _t("Fehler"),
+                    'comment': _t("Manuelles validieren des Startbeleges ist nur im Test Modus erlaubt")
                 });
                 return;
             }
