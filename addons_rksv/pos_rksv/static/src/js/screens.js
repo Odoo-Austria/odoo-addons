@@ -475,7 +475,7 @@ function openerp_rksv_screens(instance, module) {
                     self.$el.find('.sprovider-btn').hide()
                 }
                 if (self.pos.get('cashbox_mode') == 'signature_failed'){
-                	self.$el.find('.sprovider-btn').show()
+                    self.$el.find('.sprovider-btn').show()
                 }
                 if (self.pos.get('cashbox_mode') == 'posbox_failed'){
                     

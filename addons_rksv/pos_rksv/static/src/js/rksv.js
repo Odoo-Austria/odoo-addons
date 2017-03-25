@@ -325,7 +325,7 @@ function openerp_rksv_rksv(instance, module) {
         create_year_receipt: function() {
             var self = this;
             this.year_receipt_in_progress = true;
-            var year = new Date().getFullYear();
+            var year = moment().subtract(1, 'years').format('YYYY');
             // Create a new dummy order with the year product
             var order = this.create_dummy_order(this.pos.config.year_product_id[0], year);
             // Mark it as month receipt order type
@@ -346,7 +346,8 @@ function openerp_rksv_rksv(instance, module) {
             var self = this;
             this.month_receipt_in_progress = true;
             // Create a new order
-            var year_month = new Date().getFullYear() + "-" + ((new Date().getMonth()) + 1);
+            var year_month = moment().subtract(1, 'month').format('YYYY-MM');
+            //new Date().getFullYear() + "-" + ((new Date().getMonth()) + 1);
             // Create a new dummy order with the start product
             var order = this.create_dummy_order(this.pos.config.month_product_id[0], year_month);
             // Mark it as month receipt order type
@@ -458,7 +459,7 @@ function openerp_rksv_rksv(instance, module) {
         delete_start_receipt: function() {
             var self = this;
             var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
-            op_popup.show({}, 'Start Beleg löschen', 'Löschen');
+            op_popup.show({}, 'Startbeleg löschen', 'Löschen');
             // First - do disable old event handlers
             op_popup.$('.execute_button').off();
             // Then install new click handler
@@ -494,18 +495,18 @@ function openerp_rksv_rksv(instance, module) {
             if (!this.pos.config.bmf_test_mode) {
                 this.pos.gui.show_popup('error',{
                     'title': _t("Fehler"),
-                    'body': _t("Manuelles validieren des Start Beleges ist nur im Test Modus erlaubt")
+                    'body': _t("Manuelles validieren des Startbeleges ist nur im Test Modus erlaubt")
                 });
                 return;
             }
             var self = this;
             var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
-            op_popup.show({}, 'Start Beleg valid setzen', 'Valid');
+            op_popup.show({}, 'Startbeleg valid setzen', 'Valid');
             // First - do disable old event handlers
             op_popup.$('.execute_button').off();
             // Then install new click handler
             op_popup.$('.execute_button').click(function() {
-                op_popup.loading('Setze Valid Flag für Start Beleg');
+                op_popup.loading('Erzwinge Validierung des Startbelegs');
                 if (self.check_proxy_connection()){
                     self.proxy_rpc_call(
                         '/hw_proxy/valid_start_receipt',
