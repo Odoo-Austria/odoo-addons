@@ -293,7 +293,7 @@ function openerp_rksv_rksv(instance, module) {
             // Get current order
             var order = this.pos.get_order();
             // Check if it is empty
-            if (!order.is_empty()) {
+            if ((!order) || (!order.is_empty())) {
                 // Is not empty - so create new empty order
                 // Create dummy
                 this.pos.add_new_order();
@@ -422,7 +422,8 @@ function openerp_rksv_rksv(instance, module) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    self.pos.get('selectedOrder').destroy({'reason':'system'});
+                    // I don't think this is really necessary here - why did i add it ?
+                    // order.destroy({'reason':'system'});
                     self.proxy_informed = true;
                     self.inform_running = false;
                     var mode = self.pos.get('cashbox_mode');
