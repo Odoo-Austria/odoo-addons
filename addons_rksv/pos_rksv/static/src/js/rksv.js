@@ -311,7 +311,9 @@ odoo.define('pos_rksv.rksv', function (require) {
                 // Add product to order
                 order.add_product(product, {price: 0});
                 // Add reference to order line
-                order.selected_orderline.set_product_reference(reference);
+                if (order.selected_orderline){
+                    order.selected_orderline.set_product_reference(reference);
+                }
             }
             // return it
             return order;
