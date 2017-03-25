@@ -766,7 +766,9 @@ odoo.define('pos_rksv.rksv', function (require) {
                             if (response.success == false) {
                                 sprovider_popup.failure(response.message);
                             } else {
+                                // We need to receipt start receipt and other parameters
                                 sprovider_popup.success(response.message);
+                                self.pos.set('cashbox_mode', 'setup');
                             }
                         },
                         function failed() {
