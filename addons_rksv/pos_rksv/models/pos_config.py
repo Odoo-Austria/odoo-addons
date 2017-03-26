@@ -25,7 +25,7 @@ class POSConfig(models.Model):
                 config.invoice_product_id.rksv_tax_mapping_correct
             ):
                 raise UserError("All configuration products must be correctly configured before opening a PoS Session!")
-        return super(POSConfig, super).open_ui()
+        return super(POSConfig, self).open_ui()
 
     @api.multi
     def _calc_cashregisterid(self):
