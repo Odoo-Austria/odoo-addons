@@ -28,9 +28,15 @@
                         <group>
                             <field name="bmf_test_mode"/>
                             <field name="pos_admin_passwd" password="True" groups="base.group_system" />
+                         </group>
+                    </group>
+                    <group string="RKSV Produktkonfiguration" attrs="{'invisible': [('iface_rksv', '=', False)]}" groups="base.group_system" >
+                        <group>
                             <field name="start_product_id" />
-                            <field name="month_product_id" />
                             <field name="year_product_id" />
+                        </group>
+                        <group>
+                            <field name="month_product_id" />
                             <field name="null_product_id" />
                          </group>
                     </group>
