@@ -85,7 +85,7 @@
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
-            <field name="pos_product_invisible" eval="True"/>
+            <field name="pos_product_invisible" eval="False"/>
             <field name="default_code">RKSV004</field>
             <field name="rksv_product_type">product</field>
         </record>
@@ -101,7 +101,7 @@
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
-            <field name="pos_product_invisible" eval="True"/>
+            <field name="pos_product_invisible" eval="False"/>
             <field name="default_code">RKSV005</field>
             <field name="rksv_product_type">product</field>
         </record>
@@ -117,7 +117,7 @@
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
-            <field name="pos_product_invisible" eval="True"/>
+            <field name="pos_product_invisible" eval="False"/>
             <field name="default_code">RKSV006</field>
             <field name="rksv_product_type">product</field>
         </record>
@@ -133,7 +133,7 @@
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
-            <field name="pos_product_invisible" eval="True"/>
+            <field name="pos_product_invisible" eval="False"/>
             <field name="default_code">RKSV007</field>
             <field name="rksv_product_type">product</field>
         </record>
@@ -149,7 +149,7 @@
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
             <field name="available_in_pos" eval="True"/>
-            <field name="pos_product_invisible" eval="False"/>
+            <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV008</field>
             <field name="rksv_product_type">nullreceipt</field>
         </record>
