@@ -11,9 +11,21 @@ except ImportError:
 _logger = logging.getLogger(__name__)
 
 
-class pos_config(models.Model):
-    _name = 'pos.config'
+class POSConfig(models.Model):
     _inherit = 'pos.config'
+
+    @api.multi
+    def open_ui(self):
+        for config in self:
+            if not (
+                config.start_product_id.rksv_tax_mapping_correct and
+                config.year_product_id.rksv_tax_mapping_correct and
+                config.month_product_id.rksv_tax_mapping_correct and
+                config.null_product_id.rksv_tax_mapping_correct and
+                config.invoice_product_id.rksv_tax_mapping_correct
+            ):
+                raise UserError("All configuration products must be correctly configured before opening a PoS Session!")
+        return super(POSConfig, super).open_ui()
 
     @api.multi
     def _calc_cashregisterid(self):
