@@ -15,6 +15,10 @@ class ProductTemplate(models.Model):
         for template in self:
             rksv_tax = False
             for tax in template.taxes_id:
+                if template.rksv_product_type != 'product':
+                    if tax.rksv_tax_category != 'taxSetNull':
+                        break
+
                 if tax.rksv_tax and tax.rksv_tax_category > "":
                     rksv_tax = True
                     break
