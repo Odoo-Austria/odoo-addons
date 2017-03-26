@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="0">
+    <data>
         <record id="product_category_rksv" model="product.category">
             <field name="name">RKSV</field>
         </record>
@@ -20,9 +20,6 @@
             <field name="pos_product_invisible" eval="True"/>
             <field name="rksv_product_type">startreceipt</field>
             <field name="default_code">RKSV001</field>
-            <!-- TODO: Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_eu_sale_at'))]"/>
-            -->
         </record>
 
         <record id="rksv_month_receipt" model="product.product">
@@ -40,9 +37,6 @@
             <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV002</field>
             <field name="rksv_product_type">monthreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_eu_sale_at'))]"/>
-            -->
         </record>
         
         <record id="rksv_year_receipt" model="product.product">
@@ -60,9 +54,6 @@
             <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV003</field>
             <field name="rksv_product_type">yearreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_eu_sale_at'))]"/>
-            -->
         </record>
 
         <record id="rksv_dummy_receipt" model="product.product">
@@ -80,9 +71,6 @@
             <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV009</field>
             <field name="rksv_product_type">nullreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_eu_sale_at'))]"/>
-            -->
         </record>
 
         <record id="rksv_umsatz_20_receipt" model="product.product">
@@ -99,10 +87,7 @@
             <field name="available_in_pos" eval="True"/>
             <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV004</field>
-            <field name="rksv_product_type">nullreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_at_mwst_20'))]"/>
-            -->
+            <field name="rksv_product_type">product</field>
         </record>
         <record id="rksv_umsatz_10_receipt" model="product.product">
             <field name="name">Umsätze zu 10%</field>
@@ -118,10 +103,7 @@
             <field name="available_in_pos" eval="True"/>
             <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV005</field>
-            <field name="rksv_product_type">nullreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_at_mwst_10'))]"/>
-            -->
+            <field name="rksv_product_type">product</field>
         </record>
         <record id="rksv_umsatz_13_receipt" model="product.product">
             <field name="name">Umsätze zu 13%</field>
@@ -137,10 +119,7 @@
             <field name="available_in_pos" eval="True"/>
             <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV006</field>
-            <field name="rksv_product_type">nullreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_eu_sale_at'))]"/>
-            -->
+            <field name="rksv_product_type">product</field>
         </record>
         <record id="rksv_umsatz_0_receipt" model="product.product">
             <field name="name">Umsätze zu 0%</field>
@@ -156,10 +135,7 @@
             <field name="available_in_pos" eval="True"/>
             <field name="pos_product_invisible" eval="True"/>
             <field name="default_code">RKSV007</field>
-            <field name="rksv_product_type">nullreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_eu_sale_at'))]"/>
-            -->
+            <field name="rksv_product_type">product</field>
         </record>
         <record id="rksv_invoice_receipt" model="product.product">
             <field name="name">Rechnung</field>
@@ -176,9 +152,6 @@
             <field name="pos_product_invisible" eval="False"/>
             <field name="default_code">RKSV008</field>
             <field name="rksv_product_type">nullreceipt</field>
-            <!-- Better Solution is needed here
-            <field name="taxes_id" eval="[(4, ref('l10n_at.tax_eu_sale_at'))]"/>
-            -->
         </record>
     </data>
 </odoo>
