@@ -10,7 +10,7 @@ class PosConfig(models.Model):
     invoice_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Invoice (Product)',
-        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True), ('rksv_tax_mapping_correct', '=', True)],
+        domain=[('sale_ok', '=', True), ('available_in_pos', '=', True)],
         required=True
     )
 
