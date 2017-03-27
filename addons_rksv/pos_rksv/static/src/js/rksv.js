@@ -198,7 +198,7 @@ function openerp_rksv_rksv(instance, module) {
         get_default_params: function(){
             return {
                 'test_mode': this.pos.config.bmf_test_mode,
-                'pos_ts': moment().format(),
+                'pos_ts': (new Date()).toISOString(),
             }
         },
         get_bmf_credentials: function(){
@@ -315,7 +315,6 @@ function openerp_rksv_rksv(instance, module) {
         },
         create_start_receipt: function() {
             var self = this;
-            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             this.start_receipt_in_progress = true;
             // Create a new dummy order with the start product
             var order = this.create_dummy_order(this.pos.config.start_product_id[0], this.pos.config.cashregisterid);
@@ -335,9 +334,8 @@ function openerp_rksv_rksv(instance, module) {
         },
         create_year_receipt: function() {
             var self = this;
-            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             this.year_receipt_in_progress = true;
-            var year = moment().subtract(1, 'years').format('YYYY');
+            var year = ((new Date()).getFullYear() -1).toString()
             // Create a new dummy order with the year product
             var order = this.create_dummy_order(this.pos.config.year_product_id[0], year);
             // Mark it as month receipt order type
@@ -356,10 +354,12 @@ function openerp_rksv_rksv(instance, module) {
         },
         create_month_receipt: function() {
             var self = this;
-            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             this.month_receipt_in_progress = true;
             // Create a new order
-            var year_month = moment().subtract(1, 'month').format('YYYY-MM');
+            var today = new Date();
+            // This will also work accros a year - so 2017-01 minus 1 month will get 2016-12 !
+            today.setMonth(today.getMonth() - 1);
+            var year_month = today.format('Y-m');
             //new Date().getFullYear() + "-" + ((new Date().getMonth()) + 1);
             // Create a new dummy order with the start product
             var order = this.create_dummy_order(this.pos.config.month_product_id[0], year_month);
@@ -379,7 +379,6 @@ function openerp_rksv_rksv(instance, module) {
         },
         rksv_create_null_receipt: function() {
             var self = this;
-            self.pos.chrome.$el.find('div.button.cancel.close_button').click();
             // Create a new dummy order with no product
             var order = this.create_dummy_order(this.pos.config.null_product_id[0]);
             // Sign Order
