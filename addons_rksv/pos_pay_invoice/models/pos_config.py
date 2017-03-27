@@ -6,7 +6,7 @@ from odoo import fields, models
 class PosConfig(models.Model):
     _inherit = 'pos.config'
 
-    iface_search_invoices = fields.Boolean(string='Search for open Invoices', help='Pay open invoices on POS')
+    search_invoices = fields.Boolean(string='Search for open Invoices', help='Pay open invoices on POS')
     invoice_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Invoice (Product)',
