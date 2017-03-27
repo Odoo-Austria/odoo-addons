@@ -62,7 +62,9 @@ odoo.define('pos_pay_invoice.models', function (require) {
         },
         export_for_printing: function () {
             var data = OrderlineModelSuper.export_for_printing.call(this);
-            data.invoice = this.get_invoice().attributes;
+            if (this.get_invoice()){
+                data.invoice = this.get_invoice().attributes;
+            }
             return data;
         },
         clone: function() {
