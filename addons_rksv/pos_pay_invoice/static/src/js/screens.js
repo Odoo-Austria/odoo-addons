@@ -27,7 +27,7 @@ odoo.define('pos_pay_invoice.screens', function (require) {
         'name': 'search_invoice_button',
         'widget': SearchInvoicesButton,
         'condition': function () {
-            return this.pos.config.iface_search_invoices;
+            return this.pos.config.search_invoices;
         },
     });
 
