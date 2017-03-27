@@ -1,12 +1,8 @@
-odoo.define('pos_rksv_restaurant.rksv', function (require) {
-    "use strict";
-
-    // We do require the rksv module - we do extend it
-    var rksv = require('pos_rksv.rksv');
-
+function openerp_rksv_restaurant(instance) {
+    var module = instance.point_of_sale;
     /* RKSV Core Extension */
 
-    rksv.RKSV = rksv.RKSV.extend({
+    module.RKSV = module.RKSV.extend({
         create_dummy_order: function(product_id, reference) {
             // Set the default table here before we add the order - save the current for restore later
             var currentTable = this.pos.table;
@@ -19,4 +15,4 @@ odoo.define('pos_rksv_restaurant.rksv', function (require) {
             return order;
         },
     });
-});
+}
