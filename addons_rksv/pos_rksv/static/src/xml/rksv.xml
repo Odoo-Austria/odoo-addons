@@ -51,7 +51,7 @@
                     <div class="rksv-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>
                         <label>RKSV:</label>
-                        <div class="indicator-message">Status kann nicht ermittelt werden</div>
+                        <div class="indicator-message">Status wird abgefragt</div>
                         <button class="register_cashbox" style="display:none;">-> Kasse mit PosBox verknüpfen</button>
                         <button class="register_startreceipt revalidate_startreceipt" style="display:none;">-> Startbeleg prüfen</button>
                         <button class="register_startreceipt delete_startreceipt" style="display:none;">-> Startbeleg löschen</button>
@@ -61,18 +61,18 @@
                     <div class="cashbox-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>
                         <label>BMF (Kasse):</label>
-                        <div class="indicator-message ">Status kann nicht ermittelt werden</div>
+                        <div class="indicator-message ">Status wird abgefragt</div>
                         <button class="activate_cashbox" style="display:none;">-> Kasse beim BMF anmelden</button>
                     </div>
                     <div class="signature-provider-status-indicator clearfix">
                         <div class="indicator" style="background:red;"/>
                         <label>BMF (Signature):</label>
-                        <div class="indicator-message">Status kann nicht ermittelt werden</div>
+                        <div class="indicator-message">Status wird abgefragt</div>
                     </div>
                     <div class="monthproduct-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>
                         <label>Konfiguration:</label>
-                        <div class="indicator-message">Status kann nicht ermittelt werden</div>
+                        <div class="indicator-message">Status wird abgefragt</div>
                     </div>
                     <button class="close_rksv">Close</button>
                 </div>
@@ -150,7 +150,7 @@
                 <li class="button rksv_kasse_registrieren">BMF RK Anmeldung</li>
                 <li class="button bmf_status_rk">BMF RK Status</li>
                 <li class="button bmf_register_start_receipt">BMF Startbeleg übermitteln</li>
-                <li class="button rksv_reset_dep">DEP Zurücksetzen</li>
+                <!--li class="button rksv_reset_dep">DEP Zurücksetzen</li-->
                 <li class="button rksv_export_dep_crypt">DEP/Crypt Export</li>
                 <li class="button rksv_reprint_start_receipt">Startbeleg nochmals drucken</li>
                 <li class="button rksv_reprint_year_receipt">Jahresbeleg nochmals drucken</li>

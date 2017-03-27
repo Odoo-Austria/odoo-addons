@@ -89,6 +89,7 @@ odoo.define('pos_rksv.models', function (require) {
                 });
             } else {
                 this.set({
+                    'bmf_last_status': 'UNBEKANNT',
                     'bmf_message': status.message,
                     'bmf_status': status.success
                 });
@@ -118,20 +119,23 @@ odoo.define('pos_rksv.models', function (require) {
             // Do use the rksv object function for this
             pos.rksv.bmf_sprovider_status_rpc_call(this.get('serial')).then(
                 function done(response) {
-                    self.setBMFStatus(response);
-                    // Also do search in the list of signatures and update the status there
-                    var signatures = pos.signatures;
-                    if (signatures) {
-                        var signature = signatures.get(self.get('serial'));
-                        if (signature)
-                            signature.setBMFStatus(response);
-                    }
                     proxyDeferred.resolve(response);
+                    return response;
                 },
-                function failed() {
+                function failed(response) {
                     proxyDeferred.reject("Abfrage des Status beim BMF ist fehlgeschlagen");
+                    return response;
                 }
-            );
+            ).always(function(response) {
+                self.setBMFStatus(response);
+                // Also do search in the list of signatures and update the status there
+                var signatures = pos.signatures;
+                if (signatures) {
+                    var signature = signatures.get(self.get('serial'));
+                    if (signature)
+                        signature.setBMFStatus(response);
+                }
+            });
             return proxyDeferred;
         }
 
