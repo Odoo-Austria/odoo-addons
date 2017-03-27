@@ -7,19 +7,6 @@ openerp.pos_six = function(instance){
     var QWeb = instance.web.qweb;
     var _t = instance.web._t;
 
-    if (!chrome.Chrome.prototype.replace_widget) {
-        chrome.Chrome.include({
-            replace_widget: function (name, widget_config) {
-                for (var i = 0; i < this.widgets.length; i++) {
-                    if (this.widgets[i]['name'] == name) {
-                        this.widgets[i] = widget_config;
-                    }
-                }
-
-            }
-        });
-    }
-
     // Extend     render_paymentlines: function() { - we have to set state on button according to current payment line state
     module.PaymentScreenWidget = module.PaymentScreenWidget.extend({
         render_paymentline : function(line){
