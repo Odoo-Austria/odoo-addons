@@ -1,4 +1,5 @@
-function openerp_rksv_rksv(instance, module) {
+function openerp_rksv_rksv(instance) {
+    var module = instance.point_of_sale;
     var core = instance.web;
     var models = module;
     var QWeb = instance.web.qweb;
