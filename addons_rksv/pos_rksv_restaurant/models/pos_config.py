@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from openerp import models, fields, api, _
 
 
 class pos_config(models.Model):
