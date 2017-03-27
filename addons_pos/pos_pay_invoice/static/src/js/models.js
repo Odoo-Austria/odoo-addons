@@ -5,6 +5,7 @@ odoo.define('pos_pay_invoice.models', function (require) {
     "use strict";
     var models = require('point_of_sale.models');
     var core = require('web.core');
+    var _t = core._t;
 
     /*
     Define Invoice Model
@@ -78,6 +79,17 @@ odoo.define('pos_pay_invoice.models', function (require) {
                 return null;
             }
             return OrderlineModelSuper.set_discount.call(this, discount);
+        },
+        set_unit_price: function(price){
+            var invoice = this.get_invoice();
+            if ((invoice) && (price > invoice.get('amount_total'))) {
+                self.pos.gui.show_popup('error',{
+                    'title': _t("Error"),
+                    'body': _t("You can not enter a higher price than the total amount of the invoice !")
+                });
+                return;
+            }
+            return OrderlineModelSuper.set_unit_price.call(this, price);
         },
         set_quantity: function(quantity) {
             if ((this.invoice_id) && (quantity > 1)) {
