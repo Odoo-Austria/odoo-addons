@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <sheet position='inside'>
                 <group string="Pay Invoices" name="invoices">
-                    <field name="iface_search_invoices" />
+                    <field name="search_invoices" />
                     <field name="invoice_product_id"/>
                 </group>
             </sheet>
