@@ -22,8 +22,7 @@ class POSConfig(models.Model):
                 config.start_product_id.rksv_tax_mapping_correct and
                 config.year_product_id.rksv_tax_mapping_correct and
                 config.month_product_id.rksv_tax_mapping_correct and
-                config.null_product_id.rksv_tax_mapping_correct and
-                config.invoice_product_id.rksv_tax_mapping_correct
+                config.null_product_id.rksv_tax_mapping_correct
             ):
                 raise UserError("All configuration products must be correctly configured before opening a PoS Session!")
         return super(POSConfig, self).open_ui()
