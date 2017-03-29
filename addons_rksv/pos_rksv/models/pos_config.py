@@ -131,6 +131,17 @@ class POSConfig(models.Model):
         ],
         required=True
     )
+    invoice_product_id = fields.Many2one(
+        comodel_name='product.product',
+        string='Invoice (Product)',
+        domain=[
+            ('sale_ok', '=', True),
+            ('available_in_pos', '=', True),
+            ('rksv_tax_mapping_correct', '=', True),
+            ('rksv_product_type', '=', 'nullreceipt')
+        ],
+        required=True
+    )
     _sql_constraints = [('cashregisterid_unique', 'unique(cashregisterid)', 'Cashregister ID must be unique.')]
 
     @api.model

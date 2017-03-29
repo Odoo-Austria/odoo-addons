@@ -12,7 +12,6 @@
                         <button string="ID erzeugen" name="create_cashregisterid" type="object" attrs="{'invisible': [('cashregisterid', '>', '')]}"/>
                         <button string="Set to Active" name="set_active" type="object" states="inactive,deprecated,setup,failure"/>
                         <button string="Set to Inactive" name="set_inactive" type="object" states="active" />
-                        <field name="state" statusbar_visible="setup,active,inactive,deprecated,failure"/>
                         <field name="state" widget="statusbar" statusbar_visible="setup,active,inactive,deprecated,failure" statusbar_colors='{"failure" : "red"}' nolabel="1"/>
                     </header>
                 </xpath>
@@ -34,10 +33,11 @@
                         <group>
                             <field name="start_product_id" />
                             <field name="year_product_id" />
+                            <field name="month_product_id" />
                         </group>
                         <group>
-                            <field name="month_product_id" />
                             <field name="null_product_id" />
+                            <field name="invoice_product_id" />
                          </group>
                     </group>
                 </xpath>
