@@ -138,7 +138,7 @@ class POSConfig(models.Model):
             ('sale_ok', '=', True),
             ('available_in_pos', '=', True),
             ('rksv_tax_mapping_correct', '=', True),
-            ('rksv_product_type', '=', 'nullreceipt')
+            ('rksv_product_type', '=', 'product')
         ],
         required=True
     )
