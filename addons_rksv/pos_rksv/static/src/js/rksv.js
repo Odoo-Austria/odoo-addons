@@ -334,6 +334,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.start_receipt_in_progress = false;
                 },
                 function failed() {
+                    // TODO: Add error Message here !
                     self.start_receipt_in_progress = false;
                 }
             );
@@ -355,6 +356,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.year_receipt_in_progress = false;
                 },
                 function failed() {
+                    // TODO: Add error Message here !
                     self.year_receipt_in_progress = false;
                 }
             );
@@ -378,6 +380,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.month_receipt_in_progress = false;
                 },
                 function failed() {
+                    // TODO: Add error Message here !
                     self.month_receipt_in_progress = false;
                 }
             );
@@ -394,6 +397,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     order.finalize();
                 },
                 function failed() {
+                    // TODO: Add error Message here !
                     console.log('Failed to generate null receipt !');
                 }
             );
