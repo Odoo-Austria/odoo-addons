@@ -216,10 +216,11 @@ function openerp_rksv_screens(instance, module) {
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').hide();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').hide();
 
+            // Do request the current RK Status
+            self.pos.rksv.update_bmf_rk_status();
             // Do request new status from BMF on show
             var signature = self.pos.get('signature');
             // This will signal us the new status as soon as we get it
-            self.pos.rksv.update_bmf_rk_status();
             if (signature)
                 signature.try_refresh_status(self.pos);
             // Do render month product status
@@ -332,17 +333,18 @@ function openerp_rksv_screens(instance, module) {
             var self = this;
             if (self.pos.signatures === undefined) return;
             // Listen on status update for signaturs - display the change here
-            this.pos.signatures.bind('add remove change', function(signature) {
+            this.pos.signatures.bind('add remove', function(signature) {
                 // Do rerender the sprovider view
                 self.render_sproviders();
-                console.log('signature change handler got called');
+            });
+            this.pos.signatures.bind('change:bmf_status change:bmf_message change:bmf_last_status', function(signature) {
                 if (!signature.isActive(self.pos))
                     // Ignore this update if it does not belong to the active signature
                     return;
                 var color = 'red';
                 var message = 'Signatur registriert und inaktiv';
                 var cashbox_mode = self.pos.get('cashbox_mode');
-                if (signature.get('bmf_last_status') == 'IN_BETRIEB' && (cashbox_mode == 'active' || cashbox_mode == 'setup')) {
+                if ((signature.get('bmf_status')) && signature.get('bmf_last_status') == 'IN_BETRIEB' && (cashbox_mode == 'active' || cashbox_mode == 'setup')) {
                     color = 'green';
                     message = 'Signatureinheit registriert und aktiv';
                     self.$('.sprovider-bmf-btn').hide();
@@ -381,7 +383,7 @@ function openerp_rksv_screens(instance, module) {
                 } else {
                     self.$('.cashbox-status-indicator .indicator').css('background', 'red');
                     self.$('.cashbox-status-indicator .indicator-message').html(status.message);
-                    if (self.pos.rksv.bmf_auth_data()==true)
+                    if ((self.pos.rksv.bmf_auth_data()==true) && (!(status.connection===false)))
                         self.$('.cashbox-status-indicator .activate_cashbox').show();
                     else
                         self.$('.cashbox-status-indicator .activate_cashbox').hide();
@@ -399,6 +401,11 @@ function openerp_rksv_screens(instance, module) {
         posbox_status_handler: function () {
             var self = this;
             this.pos.proxy.on('change:status', this, function (eh, status) {
+                // Also check current bmf_status_rk
+                if ((status.newValue.status == "connected") && (!this.pos.get('bmf_status_rk').success)) {
+                    // BMF Status RK is false - so do recheck the status here
+                    self.pos.rksv.update_bmf_rk_status();
+                }
                 //this.pos.posbox_status = status.newValue.status;
                 if (status.newValue.status == "connected") {
                     self.$('.posbox-status-indicator .indicator').css('background', 'green');

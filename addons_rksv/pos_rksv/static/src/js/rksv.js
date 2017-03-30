@@ -99,7 +99,9 @@ function openerp_rksv_rksv(instance) {
                         var signatures = new Array();
                         var currentSignature = self.pos.get('signature');
                         $.each(status.newValue.drivers.rksv.cards, function(serial, signature) {
-                            var newSignature = new models.Signature(signature.cardinfo);
+                            var newSignature = new models.Signature(signature.cardinfo, {
+                                pos: self.pos
+                            });
                             signatures.push(newSignature);
                             // Check if this is an active signature - forward status if it is
                             if ((currentSignature) && (currentSignature.get('serial') == newSignature.get('serial'))) {
@@ -186,6 +188,11 @@ function openerp_rksv_rksv(instance) {
         check_proxy_connection: function(){
             if (this.pos.proxy.connection === null) {
                 console.log('No Proxy Connection available!');
+                return false;
+            }
+            // Do also check here the last proxy status - only if it is connected - then we will try
+            if ((!this.last_proxy_status) || (this.last_proxy_status.status != "connected")) {
+                console.log('No last proxy status, or last proxy status is not connected - so we do not have a connection here');
                 return false;
             }
             return true;
@@ -698,40 +705,37 @@ function openerp_rksv_rksv(instance) {
         },
         update_bmf_rk_status: function() {
             var self = this;
-            // Chck if we do have an active proxy connection - if not - then not update is possible
-            if (!self.check_proxy_connection()) {
-                self.pos.set('bmf_status_rk', {
-                    'success': false,
-                    'message': "Abfrage nicht möglich, PosBox ist nicht erreichbar !"
-                });
-                return false;
-            }
             // Check if the user provided us with bmf auth data - if not - then we can't read data from bmf
             if (!this.bmf_auth_data()) {
                 self.pos.set('bmf_status_rk', {
                     'success': false,
+                    'connection': false,
                     'message': "Keine BMF Anmeldedaten hinterlegt, Status Abfrage ist nicht möglich !"
                 });
-            } else {
-                if (self.check_proxy_connection()){
-                    this.bmf_status_rpc_call().then(
-                        function done(response) {
-                            self.pos.set('bmf_status_rk', response);
-                        },
-                        function failed() {
-                            self.pos.set('bmf_status_rk', {
-                                'success': false,
-                                'message': "Fehler bei der Kommunikation mit der PosBox!"
-                            });
-                        }
-                    );
-                } else {
+                return false;
+            }
+            // Check if we do have an active proxy connection - if not - then not update is possible
+            if (!self.check_proxy_connection()) {
+                self.pos.set('bmf_status_rk', {
+                    'success': false,
+                    'connection': false,
+                    'message': "Abfrage nicht möglich, PosBox ist nicht erreichbar !"
+                });
+                return false;
+            }
+            // Try to get new status
+            this.bmf_status_rpc_call().then(
+                function done(response) {
+                    self.pos.set('bmf_status_rk', response);
+                },
+                function failed(response) {
                     self.pos.set('bmf_status_rk', {
                         'success': false,
-                        'message': "Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!"
+                        'connection': false,
+                        'message': "Fehler bei der Kommunikation mit der PosBox!"
                     });
                 }
-            }
+            );
         },
         // Gets called from the debug widget - for automatic status update use update_bmf_rk_status function !
         bmf_status_rk: function() {

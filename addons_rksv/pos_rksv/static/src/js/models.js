@@ -43,7 +43,9 @@ function openerp_rksv_models(instance, module) {
         loaded: function (self, signature_provider) {
             console.log('signature provider loaded');
             if ((signature_provider) && (signature_provider.length == 1)) {
-                var signature = new models.Signature(signature_provider[0]);
+                var signature = new models.Signature(signature_provider[0], {
+                    pos: self
+                });
                 self.set('signature', signature);
             }
         }
@@ -62,6 +64,14 @@ function openerp_rksv_models(instance, module) {
      */
     models.Signature = Backbone.Model.extend({
         idAttribute: "serial",
+        initialize: function(attributes,options) {
+            Backbone.Model.prototype.initialize.apply(this, arguments);
+            var self = this;
+            options = options || {};
+
+            this.pos            = options.pos;
+            return this;
+        },
         getVAT: function() {
             var idx = this.get('subject').indexOf("ATU");
             return this.get('subject').substring(idx, idx + 11);
@@ -69,25 +79,33 @@ function openerp_rksv_models(instance, module) {
         matchVAT: function(vat) {
             return (vat === this.getVAT()?true:false);
         },
+        _updateStatus: function(status) {
+            this.set(status);
+            // Also do search in the list of signatures and update the status there
+            var signatures = this.pos.signatures;
+            if (signatures) {
+                var signature = signatures.get(this.get('serial'));
+                if (signature)
+                    signature.set(status);
+            }
+        },
         setStatus: function(status) {
-            this.set({
+            this._updateStatus({
                 'bmf_status': status.success,
                 'bmf_message': status.message
             });
         },
         setBMFStatus: function(status) {
+            var bmf_last_status = 'UNBEKANNT';
             if (status.success) {
-                this.set({
-                    'bmf_last_status': status.status.status,
-                    'bmf_message': status.message,
-                    'bmf_status': status.success
-                });
-            } else {
-                this.set({
-                    'bmf_message': status.message,
-                    'bmf_status': status.success
-                });
+                bmf_last_status = status.status.status;
             }
+            var newStatus = {
+                'bmf_last_status': bmf_last_status,
+                'bmf_message': status.message,
+                'bmf_status': status.success
+            };
+            this._updateStatus(newStatus);
         },
         isActive: function(pos) {
             var config_signature = pos.get('signature');
@@ -95,23 +113,20 @@ function openerp_rksv_models(instance, module) {
                 return false;
             return config_signature.get('serial') == this.get('serial');
         },
-        check_proxy_connection: function(pos){
-            if (pos.proxy.connection === null) {
-                console.log('No Proxy Connection available!');
-                return false;
-            }
-            return true;
-        },
-        try_refresh_status: function(pos) {
+        try_refresh_status: function() {
             var self = this;
             var proxyDeferred = $.Deferred();
-            if (!self.check_proxy_connection(pos)) {
+            if (!this.pos.rksv.check_proxy_connection()) {
+                this.setStatus({
+                    success: false,
+                    message: "Keine Verbindung zur PosBox, Status kann nicht abgefragt werden !"
+                });
                 proxyDeferred.reject("Keine Verbindung zur PosBox, Status kann nicht abgefragt werden !");
                 return proxyDeferred;
             }
             // Do initiate the rpc call - we will get the status response
             // Do use the rksv object function for this
-            pos.rksv.bmf_sprovider_status_rpc_call(this.get('serial')).then(
+            this.pos.rksv.bmf_sprovider_status_rpc_call(this.get('serial')).then(
                 function done(response) {
                     self.setBMFStatus(response);
                     // Also do search in the list of signatures and update the status there
@@ -126,7 +141,9 @@ function openerp_rksv_models(instance, module) {
                 function failed() {
                     proxyDeferred.reject("Abfrage des Status beim BMF ist fehlgeschlagen");
                 }
-            );
+            ).always(function(response) {
+                self.setBMFStatus(response);
+            });
             return proxyDeferred;
         }
 
