@@ -2,10 +2,6 @@
 
 from odoo import models, fields, api, _
 import logging
-try:
-    import simplejson as json
-except ImportError:
-    import json
 
 _logger = logging.getLogger(__name__)
 
