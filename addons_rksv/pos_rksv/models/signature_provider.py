@@ -43,8 +43,8 @@ class signature_provider(models.Model):
 
     @api.model
     def set_providers(self, providers, pos_config_id):
-        _logger.info("Providers: %r", providers)
-        _logger.info("POS Config: %r", pos_config_id)
+        _logger.debug("Providers: %r", providers)
+        _logger.debug("POS Config: %r", pos_config_id)
         for provider in providers:
             existing_provider = self.env['signature.provider'].search([('public_key', '=', provider['cin'])])
             vals = {
@@ -65,7 +65,7 @@ class signature_provider(models.Model):
 
     @api.model
     def update_status(self, signaturedata):
-        _logger.info("Got data to update: %r", signaturedata)
+        _logger.debug("Got data to update: %r", signaturedata)
         signature = self.search([('serial', '=', signaturedata['serial'])], limit=1)
         signature.bmf_last_status = signaturedata['bmf_last_status'] if 'bmf_last_status' in signaturedata else 'UNBEKANNT'
         signature.bmf_last_update = signaturedata['bmf_last_update'] if 'bmf_last_update' in signaturedata else None
