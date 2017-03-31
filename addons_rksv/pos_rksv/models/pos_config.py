@@ -47,51 +47,6 @@ class POSConfig(models.Model):
         else:
             return {'success': False, 'message': "Invalid POS config or Signature Provider."}
 
-    @api.multi
-    def _get_default_start_product(self):
-        try:
-            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_start_receipt')
-            _logger.info("got default: %r", default)
-            return default[1]
-        except:
-            return None
-
-    @api.multi
-    def _get_default_month_product(self):
-        try:
-            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_month_receipt')
-            _logger.info("got default: %r", default)
-            return default[1]
-        except:
-            return None
-
-    @api.multi
-    def _get_default_year_product(self):
-        try:
-            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_year_receipt')
-            _logger.info("got default: %r", default)
-            return default[1]
-        except:
-            return None
-
-    @api.multi
-    def _get_default_null_product(self):
-        try:
-            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_dummy_receipt')
-            _logger.info("got default: %r", default)
-            return default[1]
-        except:
-            return None
-
-    @api.multi
-    def _get_default_invoice_product(self):
-        try:
-            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_invoice_receipt')
-            _logger.info("got default: %r", default)
-            return default[1]
-        except:
-            return None
-
     cashregisterid = fields.Char(
         string='KassenID', size=36,
         compute='_calc_cashregisterid',
@@ -132,6 +87,7 @@ class POSConfig(models.Model):
         readonly=True,
         copy=False
     )
+
     start_product_id = fields.Many2one(
         comodel_name='product.product',
         string='Startbeleg (Produkt)',
@@ -143,7 +99,7 @@ class POSConfig(models.Model):
         ],
         required=True,
         store=True,
-        default=lambda self: self._get_default_start_product()
+        default=lambda self: self.env.ref('pos_rksv.rksv_start_receipt')
     )
     month_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -156,7 +112,7 @@ class POSConfig(models.Model):
         ],
         required=True,
         store=True,
-        default=lambda self: self._get_default_month_product()
+        default=lambda self: self.env.ref('pos_rksv.rksv_month_receipt')
     )
     year_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -169,7 +125,7 @@ class POSConfig(models.Model):
         ],
         required=True,
         store=True,
-        default=lambda self: self._get_default_year_product()
+        default=lambda self: self.env.ref('pos_rksv.rksv_year_receipt')
     )
     null_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -182,7 +138,7 @@ class POSConfig(models.Model):
         ],
         required=True,
         store=True,
-        default=lambda self: self._get_default_null_product()
+        default=lambda self: self.env.ref('pos_rksv.rksv_dummy_receipt')
     )
     invoice_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -195,7 +151,7 @@ class POSConfig(models.Model):
         ],
         required=True,
         store=True,
-        default=lambda self: self._get_default_invoice_product()
+        default=lambda self: self.env.ref('pos_rksv.rksv_invoice_receipt')
     )
     _sql_constraints = [('cashregisterid_unique', 'unique(cashregisterid)', 'Cashregister ID must be unique.')]
 
