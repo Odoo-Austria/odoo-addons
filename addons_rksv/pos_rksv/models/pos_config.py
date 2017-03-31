@@ -49,33 +49,48 @@ class POSConfig(models.Model):
 
     @api.multi
     def _get_default_start_product(self):
-        default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_start_receipt')
-        _logger.info("got default: %r", default)
-        return default[1]
+        try:
+            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_start_receipt')
+            _logger.info("got default: %r", default)
+            return default[1]
+        except:
+            return None
 
     @api.multi
     def _get_default_month_product(self):
-        default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_month_receipt')
-        _logger.info("got default: %r", default)
-        return default[1]
+        try:
+            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_month_receipt')
+            _logger.info("got default: %r", default)
+            return default[1]
+        except:
+            return None
 
     @api.multi
     def _get_default_year_product(self):
-        default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_year_receipt')
-        _logger.info("got default: %r", default)
-        return default[1]
+        try:
+            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_year_receipt')
+            _logger.info("got default: %r", default)
+            return default[1]
+        except:
+            return None
 
     @api.multi
     def _get_default_null_product(self):
-        default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_dummy_receipt')
-        _logger.info("got default: %r", default)
-        return default[1]
+        try:
+            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_dummy_receipt')
+            _logger.info("got default: %r", default)
+            return default[1]
+        except:
+            return None
 
     @api.multi
     def _get_default_invoice_product(self):
-        default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_invoice_receipt')
-        _logger.info("got default: %r", default)
-        return default[1]
+        try:
+            default = self.env['ir.model.data'].get_object_reference('pos_rksv', 'rksv_invoice_receipt')
+            _logger.info("got default: %r", default)
+            return default[1]
+        except:
+            return None
 
     cashregisterid = fields.Char(
         string='KassenID', size=36,
