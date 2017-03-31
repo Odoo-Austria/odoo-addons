@@ -6,6 +6,7 @@
     'sequence': 6,
     'summary': 'Registrierkassenpflicht Modul für Österreich',
     'website': 'https://www.callino.at/page/rksv',
+    "license": 'Other proprietary',
     'description': """
 Registrierkasse Österreich
 ==================================
