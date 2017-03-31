@@ -163,9 +163,23 @@ odoo.define('pos_rksv.screens', function (require) {
      Do extend Receipt screen - we do not allow the receipt to not get printed !
      */
     screens.ReceiptScreenWidget.include({
+        handle_auto_print: function() {
+           console.log('I WANT TO PRINT LATER')
+           var self = this
+           setTimeout(function(){
+                if (self.should_auto_print()) {
+                    self.print();
+                    if (self.should_close_immediately()){
+                        self.click_next();
+                    }
+                } else {
+                    self.lock_screen(false);
+                }
+            }, 1000);
+        },
         should_auto_print: function() {
-            console.log("always print the receipt - no mercy here");
-            return true;
+            console.log("We always must print the receipt");
+            return true && !this.pos.get_order()._printed;
         }
     });
 
