@@ -41,37 +41,48 @@ class POSOrder(models.Model):
             ('TRAINING_BELEG', 'Trainingsbeleg'),
             ('NULL_BELEG', 'Nullbeleg'),
             ('NONE_BELEG', 'Kein Beleg'),
-        ], string="Belegart"
+        ], string="Belegart",
+        readonly=True
     )
     signatureSerial = fields.Char(
-        string="Seriennummer (Signatur)", size=16
+        string="Seriennummer (Signatur)", size=16,
+        readonly=True
     )
     encryptedTurnOverValue = fields.Char(
-        string="Kodierter Summenspeicher", size=128
+        string="Kodierter Summenspeicher", size=128,
+        readonly=True
     )
     chainValue = fields.Char(
-        string="Verkettungswert", size=128
+        string="Verkettungswert", size=128,
+        readonly=True
     )
     signedJWSCompactRep = fields.Char(
-        string="JWS", size=256
+        string="JWS", size=256,
+        readonly=True
     )
     taxSetNormal = fields.Integer(
-        string="20% in Cent"
+        string="20% in Cent",
+        readonly=True
     )
     taxSetErmaessigt1 = fields.Integer(
-        string="10% in Cent"
+        string="10% in Cent",
+        readonly=True
     )
     taxSetErmaessigt2 = fields.Integer(
-        string="13% in Cent"
+        string="13% in Cent",
+        readonly=True
     )
     taxSetNull = fields.Integer(
-        string="0% in Cent"
+        string="0% in Cent",
+        readonly=True
     )
     taxSetBesonders = fields.Integer(
-        string="19% in Cent"
+        string="19% in Cent",
+        readonly=True
     )
     turnOverValue = fields.Integer(
-        string="Summenspeicher"
+        string="Summenspeicher",
+        readonly=True
     )
 
     def test_paid(self):
