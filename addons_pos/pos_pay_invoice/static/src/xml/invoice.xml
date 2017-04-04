@@ -16,11 +16,19 @@
         </div>
     </t>
 
+    <t t-extend='ClientLine'>
+        <t t-jquery='.client-line' t-operation='append'>
+            <td>
+                <button class="view_all_invoices" t-att-id='partner.id'><i class="fa fa-filter"></i> View invoices</button>
+            </td>
+        </t>
+    </t>
+
     <t t-name="InvoiceLine">
         <tr class='invoice-line' t-att-data-id='invoice.id'>
             <td><t t-esc='invoice.get("number")' /></td>
             <td><t t-esc='invoice.get("date_invoice")' /></td>
-            <td><t t-esc='invoice.get_partner().name' /></td>
+            <td><t t-esc='invoice.get_partner_displayname()' /></td>
             <td><t t-esc='invoice.get("name")?invoice.get("name"):""' /></td>
             <td><t t-esc='invoice.get("amount_total")' /></td>
             <td><t t-esc='invoice.get("date_due")' /></td>

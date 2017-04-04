@@ -1,35 +1,9 @@
-odoo.define('pos_pay_invoice.screens', function (require) {
-    "use strict";
-
-    var screens = require('point_of_sale.screens');
-    var gui = require('point_of_sale.gui');
+function openerp_payinvoice_screens(instance, module) {
+    var QWeb = instance.web.qweb;
+    var screens = module;
     var DomCache = screens.DomCache;
-    var core = require('web.core');
-    var QWeb = core.qweb;
+    var core = instance.web;
     var _t = core._t;
-
-    var SearchInvoicesButton = screens.ActionButtonWidget.extend({
-        template: 'SearchInvoicesButton',
-        button_click: function () {
-            var order = this.pos.get_order();
-            if (order) {
-                this.pos.gui.show_screen('invoicelist', {
-                    confirm: function (invoice) {
-                        // Add line here
-
-                    },
-                });
-            }
-        },
-    });
-
-    screens.define_action_button({
-        'name': 'search_invoice_button',
-        'widget': SearchInvoicesButton,
-        'condition': function () {
-            return this.pos.config.search_invoices;
-        },
-    });
 
     /*--------------------------------------*\
      |         THE INVOICE LIST             |
@@ -38,7 +12,7 @@ odoo.define('pos_pay_invoice.screens', function (require) {
     // The invoice list does display open invoices
     // and allows the cashier to search for an invoice
 
-    var InvoiceListScreenWidget = screens.ScreenWidget.extend({
+    screens.InvoiceListScreenWidget = screens.ScreenWidget.extend({
         template: 'InvoiceListScreenWidget',
 
         init: function(parent, options){
@@ -56,12 +30,12 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             // Does this not gets fired more than once if called severall times ?
             this.$('.back').click(function(){
                 console.log("Back button pressed");
-                self.gui.back();
+                self.pos.pos_widget.screen_selector.back();
             });
 
             this.$('.next').click(function(){
                 self.save_changes();
-                self.gui.back();
+                self.pos.pos_widget.screen_selector.back();
             });
 
             this.render_list(this.pos.invoices.sortBy('name'));
@@ -132,14 +106,10 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             order.add_product(product, {
                 price: this.new_invoice.get('amount_total'),
                 extras: {
-                    invoice_id: this.new_invoice.get('id'),
+                    invoice: this.new_invoice,
                 },
                 merge: false,
             });
-            // Add reference to order line
-            if (order.selected_orderline){
-                order.selected_orderline.set_product_reference(this.new_invoice.get('number'));
-            }
         },
         render_list: function(invoices){
             var order = this.pos.get_order();
@@ -149,11 +119,14 @@ odoo.define('pos_pay_invoice.screens', function (require) {
                 var invoice    = invoices[i];
                 // Check if this invoice is not already in this order
                 var found = false;
-                _.each(order.get_orderlines(), function(line) {
-                    if ((line.invoice_id) && (line.invoice_id == invoice.get('id'))) {
-                        found = true;
-                    }
-                }, this);
+                var orderlines = invoice.get('orderLines');
+                if (orderlines) {
+                    orderlines.each(function (line) {
+                        if ((line.invoice_id) && (line.invoice_id == invoice.get('id'))) {
+                            found = true;
+                        }
+                    }, this);
+                }
                 if (found)
                     continue;
 
@@ -214,6 +187,4 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             this._super();
         },
     });
-    gui.define_screen({name:'invoicelist', widget: InvoiceListScreenWidget});
-
-});
+}

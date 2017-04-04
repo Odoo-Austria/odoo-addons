@@ -1,10 +1,11 @@
 /*
  Do allow the cashier to select an open invoice that the customer will pay
  */
-odoo.define('pos_pay_invoice.models', function (require) {
+
+function openerp_payinvoice_models(instance, module) {
     "use strict";
-    var models = require('point_of_sale.models');
-    var core = require('web.core');
+    var models = module;
+    var core = instance.web;
     var _t = core._t;
 
     /*
@@ -18,6 +19,14 @@ odoo.define('pos_pay_invoice.models', function (require) {
         },
         get_partner: function() {
             return this.pos.db.get_partner_by_id(this.get('partner_id')[0]);
+        },
+        get_partner_displayname: function() {
+            var partner = this.get_partner();
+            if (partner) {
+                return partner.name;
+            } else {
+                return _t("Unknown");
+            }
         }
     });
 
@@ -83,9 +92,9 @@ odoo.define('pos_pay_invoice.models', function (require) {
         set_unit_price: function(price){
             var invoice = this.get_invoice();
             if ((invoice) && (price > invoice.get('amount_total'))) {
-                self.pos.gui.show_popup('error',{
-                    'title': _t("Error"),
-                    'body': _t("You can not enter a higher price than the total amount of the invoice !")
+                this.pos.pos_widget.screen_selector.show_popup('error',{
+                    'message': _t("Error"),
+                    'comment': _t("You can not enter a higher price than the total amount of the invoice !")
                 });
                 return;
             }
@@ -93,6 +102,10 @@ odoo.define('pos_pay_invoice.models', function (require) {
         },
         set_quantity: function(quantity) {
             if ((this.invoice_id) && (quantity > 1)) {
+                this.pos.pos_widget.screen_selector.show_popup('error',{
+                    'message': _t("Error"),
+                    'comment': _t("You can not pay the invoice more than 1 time !")
+                });
                 return;
             }
             return OrderlineModelSuper.set_quantity.call(this, quantity);
@@ -119,17 +132,32 @@ odoo.define('pos_pay_invoice.models', function (require) {
 
     var OrderModelSuper = models.Order.prototype;
     models.Order = models.Order.extend({
-        add_product: function(product, options) {
-            var last_orderline = this.get_last_orderline();
+        addProduct: function(product, options) {
+            var last_orderline = this.getLastOrderline();
             if ((last_orderline) && (last_orderline.invoice_id)) {
                 // Nothing else is allowed - so create new order here
                 this.pos.add_new_order();
                 var order = this.pos.get_order();
-                return order.add_product(product, options);
+                order.addProduct(product, options);
+                // Get Orderline
+                if (options && options.extras && options.extras.invoice) {
+                    var orderline = order.getLastOrderline();
+                    orderline.invoice_id = options.extras.invoice.get('id');
+                    // We need to force a rerender here
+                    order.get('orderLines').trigger('change', last_orderline);
+                }
+                return;
             }
             // Everything is ok - proceed
-            return OrderModelSuper.add_product.call(this, product, options);
+            OrderModelSuper.addProduct.call(this, product, options);
+            // Get ORderline
+            if (options && options.extras && options.extras.invoice) {
+                var last_orderline = this.getLastOrderline();
+                last_orderline.invoice_id = options.extras.invoice.get('id');
+                // We need to force a rerender here
+                this.get('orderLines').trigger('change', last_orderline);
+            }
         },
     });
 
-});
+}
