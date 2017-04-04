@@ -542,8 +542,8 @@ function openerp_rksv_screens(instance, module) {
                     );
                 } else {
                     self.pos.gui.show_popup('error',{
-                        'title': _t("Passwort falsch"),
-                        'body': _t("Das richtige POS Admin Passwort wird benötigt.")
+                        'message': _t("Passwort falsch"),
+                        'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
             });
