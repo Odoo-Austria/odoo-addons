@@ -74,7 +74,7 @@ function openerp_rksv_popups(instance, module){
             this.$('.message').html('<p style="color: red;">' + message + '</p>');
         },
         check_passwd: function() {
-            var pos_admin_passwd = self.posmodel.config.pos_admin_passwd;
+            var pos_admin_passwd = this.pos.config.pos_admin_passwd;
             var entered_passwd = this.$('.pos_admin_passwd').val();
             if (pos_admin_passwd === entered_passwd) {
                 this.$('.message').html("Authorized");
