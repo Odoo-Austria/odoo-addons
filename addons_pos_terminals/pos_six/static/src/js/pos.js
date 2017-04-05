@@ -28,12 +28,6 @@ openerp.pos_six = function(instance){
             }
 
             order.get('paymentLines').each(function(paymentLine){
-                // Check if this is our payment line
-                if (($(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').length > 0) && (paymentLine.cashregister.journal.is_sixx_terminal)) {
-                    // If that element exists - then we are at home baby
-                    $(line).find('.paymentline-input').prop('readonly', true);
-                    $(line).find('.paymentline-delete').hide();
-                }
                 if ((order.is_return_order) && (paymentLine.cashregister.journal.is_sixx_terminal)) {
                     $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
                     $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').html('Storno');
@@ -44,12 +38,7 @@ openerp.pos_six = function(instance){
                     $(line).find('.payment-terminal-transaction-reversal[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
                     $(line).find('.payment-terminal-transaction-abort[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
                 } else if (paymentLine.cashregister.journal.is_sixx_terminal) {
-                    if (!self.pos.config.auto_terminal_payment) {
-                        // Show Transaction Button only if not auto transaction is enabled
-                        $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
-                    } else {
-                        $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
-                    }
+                    $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
                     $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').html(paymentLine.get_transaction_amount_str());
                     $(line).find('.payment-terminal-transaction-reversal[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
                     $(line).find('.payment-terminal-transaction-abort[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
@@ -98,10 +87,6 @@ openerp.pos_six = function(instance){
                     this.selected_paymentline.set_amount(0);
                     this.selected_paymentline.set_is_return_line(false);
                     this.pos.pos_widget.payment_screen.rerender_paymentline(this.selected_paymentline);
-                    // Check if auto transaction is enabled - if so - then start it here
-                    if (this.pos.config.auto_terminal_payment) {
-                        this.pos.mpd.payment_terminal_transaction_start(this.selected_paymentline.cid, this.pos.currency.name);
-                    }
                 }
             }
         },
@@ -353,7 +338,7 @@ openerp.pos_six = function(instance){
                         $('.payment-terminal-transaction-start[data-cid=' + line_cid + ']').addClass('oe_hidden');
                         $('.payment-terminal-transaction-reversal[data-cid=' + line_cid + ']').removeClass('oe_hidden');
                         $('.payment-terminal-transaction-abort[data-cid=' + line_cid + ']').addClass('oe_hidden');
-                        //var order = self.pos.get_order();
+                        var order = self.pos.get_order();
                         // Set Amount from transaction
                         if (line.is_return_line==true) {
                             order.selected_paymentline.set_amount(-1 * result.amount);
@@ -376,14 +361,8 @@ openerp.pos_six = function(instance){
                         $('.payment-terminal-transaction-reversal[data-cid='+line_cid+']').addClass('oe_hidden');
                         $('.payment-terminal-transaction-abort[data-cid='+line_cid+']').addClass('oe_hidden');
                         self.pos.pos_widget.screen_selector.show_popup('error',{
-                            message: 'Fehler',
-                            comment: result['errorcode'] + ': ' + result['errormessage'],
+                            message: result['errorcode'] + ': ' + result['errormessage'],
                         });
-                        if (self.pos.config.auto_terminal_payment) {
-                            // Remove PAyment line on failure if auto payment is enabled
-                            //var order = self.pos.get_order();
-                            order.removePaymentline(line);
-                        }
                     }
                 },
                 function failed() {
