@@ -1,6 +1,4 @@
-openerp.pos_compat = function(instance){
-    var module = instance.point_of_sale;
-
+function openerp_rksv_compat(instance, module) {
     // A helper to get a reference to an existing model
     module.get_model = function(modelname) {
         var model = _.find(module.PosModel.prototype.models, function(model) {

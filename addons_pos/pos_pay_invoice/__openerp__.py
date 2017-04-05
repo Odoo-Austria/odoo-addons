@@ -13,7 +13,7 @@ POS Pay Invoice
 Pay invoice directly on in pos session
 """,
     'author': 'Wolfgang Pichler (Callino)',
-    'depends': ['point_of_sale', 'pos_product_reference', 'pos_compat'],
+    'depends': ['point_of_sale', 'pos_product_reference'],
     'test': [
     ],
     'data': [
