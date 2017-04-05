@@ -111,7 +111,7 @@
     </t>
 
     <t t-extend="XmlReceipt" >
-        <t t-jquery=".before-footer" t-operation="before">
+        <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
             <t t-foreach="receipt.paymentlines" t-as="line">
                 <pre t-if="line.six_receipt"><t t-raw="line.six_receipt"/></pre>
             </t>
