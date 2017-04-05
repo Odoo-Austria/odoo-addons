@@ -1,28 +1,24 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'POS Pay Invoice',
+    'name': 'POS compatibility layer',
     'version': '8.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
-    'summary': 'Pay invoice directly on in pos session',
+    'summary': 'Backport of some core POS functions from version 9+',
     'website': 'https://www.callino.at/',
     'description': """
-POS Pay Invoice
-===============
+POS compatibility
+=================
 
-Pay invoice directly on in pos session
 """,
     'author': 'Wolfgang Pichler (Callino)',
-    'depends': ['point_of_sale', 'pos_product_reference', 'pos_compat'],
+    'depends': ['point_of_sale', 'pos_product_reference'],
     'test': [
     ],
     'data': [
         'views/templates.xml',
-        'views/pos_config.xml',
-        'views/pos_order.xml',
     ],
     'qweb': [
-        'static/src/xml/invoice.xml'
     ],
     'installable': True,
     'auto_install': False,
