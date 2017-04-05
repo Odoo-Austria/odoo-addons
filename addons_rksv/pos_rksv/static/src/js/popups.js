@@ -56,7 +56,6 @@ function openerp_rksv_popups(instance, module){
             this.$('.pos_admin_passwd').val('');
         },
         loading: function(message) {
-            this.$('.execute_button').hide();
             this.$('.content').addClass('oe_hidden');
             this.$('.loading').removeClass('oe_hidden');
             this.$('.loading').html(message);
