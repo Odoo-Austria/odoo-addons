@@ -11,7 +11,6 @@
 
         <template id="rksv_assets" inherit_id="point_of_sale.assets_backend">
           <xpath expr="." position="inside">
-              <script type="text/javascript" src="/pos_rksv/static/src/js/compat.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/models.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/pos.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/rksv.js"></script>
