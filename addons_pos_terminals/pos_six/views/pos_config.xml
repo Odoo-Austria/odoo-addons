@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='currency_id']" position="after">
                     <field name="auto_terminal_shift"/>
+                    <field name="auto_terminal_payment"/>
                 </xpath>
             </field>
         </record>
