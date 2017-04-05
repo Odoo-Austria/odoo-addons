@@ -15,5 +15,15 @@
                 </field>
             </field>
         </record>
+        <record id="product_template_search_view_pos" model="ir.ui.view">
+            <field name="name">Point of Sale Product Search (RKSV)</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="point_of_sale.product_template_search_view_pos" />
+            <field name="arch" type="xml">
+                <filter name="filter_to_availabe_pos" position="replace">
+                    <filter name="filter_to_availabe_pos" string="Available in POS" domain="[('available_in_pos', '=', True), ('pos_product_invisible', '!=', True)]"/>
+                </filter>
+            </field>
+        </record>
     </data>
 </odoo>
