@@ -31,16 +31,16 @@
 
                 </div>
                 <div class="footer">
-                    <div class="button cancel" id="mpd_close_button">
+                    <div class="button cancel mpd_close_button">
                         Ok
                     </div>
-                    <div class="button oe_hidden" id="mpd_open_shift">
+                    <div class="button oe_hidden mpd_open_shift">
                         Öffnen
                     </div>
-                    <div class="button oe_hidden" id="mpd_close_shift">
+                    <div class="button oe_hidden mpd_close_shift">
                         Schließen
                     </div>
-                    <div class="button" id="mpd_balance_button">
+                    <div class="button mpd_balance_button">
                         Abschluss
                     </div>
                 </div>

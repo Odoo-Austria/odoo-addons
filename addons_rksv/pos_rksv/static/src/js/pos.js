@@ -3,7 +3,6 @@ openerp.pos_rksv = function (instance) {
     var models = module;
     var Model = instance.web.Model;
 
-    openerp_rksv_compat(instance, module);            // Compatibility Functions
     openerp_rksv_popups(instance, module);            // Import popup widgets
     openerp_rksv_models(instance, module);            // Import models
     openerp_rksv_rksv(instance, module);              // RKSV Object

@@ -2,10 +2,6 @@
 
 from openerp import models, fields, api, _
 import logging
-try:
-    import simplejson as json
-except ImportError:
-    import json
 
 _logger = logging.getLogger(__name__)
 
@@ -47,8 +43,8 @@ class signature_provider(models.Model):
 
     @api.model
     def set_providers(self, providers, pos_config_id):
-        _logger.info("Providers: %r", providers)
-        _logger.info("POS Config: %r", pos_config_id)
+        _logger.debug("Providers: %r", providers)
+        _logger.debug("POS Config: %r", pos_config_id)
         for provider in providers:
             existing_provider = self.env['signature.provider'].search([('public_key', '=', provider['cin'])])
             vals = {

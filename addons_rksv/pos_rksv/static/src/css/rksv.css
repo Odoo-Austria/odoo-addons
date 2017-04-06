@@ -11,8 +11,12 @@
 .subwindow-container .popup-rksv {
     width:100% !important;
     height:100% !important;
-    margin: 0 auto;
+    margin: 0 auto !important;
     overflow-y: scroll;
+}
+
+.popup-rksv {
+    top: 0px;
 }
 
 .rksvfa_image {

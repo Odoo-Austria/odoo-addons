@@ -13,7 +13,7 @@ MPD Integration Six Payment
 
 """,
     'author': 'Wolfgang Pichler',
-    'depends': ['point_of_sale'],
+    'depends': ['point_of_sale', 'pos_compat'],
     'test': [
     ],
     'data': [

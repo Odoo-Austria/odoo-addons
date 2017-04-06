@@ -3,14 +3,14 @@
 
     <!-- Extend the PosTicket - include QRCode - and for testing the OCR Representation -->
     <t t-extend="PosTicket">
-        <t t-jquery="t[t-esc='order.name']" t-operation="after">
-            <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+        <t t-jquery="t[t-esc='order.get('name')']" t-operation="after">
+            <p>Bon Nr.: <t t-esc="order.formatted_receipt_id" /></p>
         </t>
         <t t-jquery="t[t-if='widget.pos.config.receipt_footer']" t-operation="before">
-            <div t-if="receipt.cashbox_mode=='active'" style='text-align:center'>
+            <div t-if="order.cashbox_mode=='active'" style='text-align:center'>
                 <img t-att-src="order.qrcode_img" width="100px;"/>
             </div>
-            <div t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</div>
+            <div t-if="order.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</div>
             <p style="font-family: OCR-A, monospace;font-size:8px;word-wrap: break-word;"><t t-raw="order.ocrcodevalue"/></p>
         </t>
     </t>

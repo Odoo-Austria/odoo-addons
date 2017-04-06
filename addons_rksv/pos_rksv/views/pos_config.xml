@@ -34,11 +34,12 @@
                         <group>
                             <field name="start_product_id" />
                             <field name="year_product_id" />
+                            <field name="month_product_id" />
                         </group>
                         <group>
-                            <field name="month_product_id" />
                             <field name="null_product_id" />
-                         </group>
+                            <field name="invoice_product_id" />
+                        </group>
                     </group>
                 </xpath>
             </field>

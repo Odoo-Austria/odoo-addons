@@ -343,7 +343,7 @@ openerp.pos_six = function(instance){
 
             this.proxy.message('mpd/transaction', data, { timeout: 120000 }).then(
                 function done(result) {
-                    if (result.success==true) {
+                    if (result.success == true) {
                         console.log('Attach ref number to payment line');
                         line.ref_number = result.ref_number;
                         line.receipt = result.receipt;
@@ -353,12 +353,11 @@ openerp.pos_six = function(instance){
                         $('.payment-terminal-transaction-start[data-cid=' + line_cid + ']').addClass('oe_hidden');
                         $('.payment-terminal-transaction-reversal[data-cid=' + line_cid + ']').removeClass('oe_hidden');
                         $('.payment-terminal-transaction-abort[data-cid=' + line_cid + ']').addClass('oe_hidden');
-                        //var order = self.pos.get_order();
                         // Set Amount from transaction
-                        if (line.is_return_line==true) {
-                            order.selected_paymentline.set_amount(-1 * result.amount);
+                        if (line.is_return_line == true) {
+                            line.set_amount(-1 * result.amount);
                         } else {
-                            order.selected_paymentline.set_amount(result.amount);
+                            line.set_amount(result.amount);
                         }
                         // Do re render paymentline with it
                         self.pos.pos_widget.payment_screen.rerender_paymentline(order.selected_paymentline);
@@ -381,7 +380,6 @@ openerp.pos_six = function(instance){
                         });
                         if (self.pos.config.auto_terminal_payment) {
                             // Remove PAyment line on failure if auto payment is enabled
-                            //var order = self.pos.get_order();
                             order.removePaymentline(line);
                         }
                     }
@@ -561,11 +559,11 @@ openerp.pos_six = function(instance){
     });
 
     // Add our mpd class to the global pos namespace
-    var PosModelParent = module.PosModel;
+    var PosModelSuper = module.PosModel;
     module.PosModel = module.PosModel.extend({
         initialize: function (session, attributes) {
             // Call super call
-            PosModelParent.prototype.initialize.apply(this, arguments);
+            PosModelSuper.prototype.initialize.apply(this, arguments);
             // Do connect initialize MPD Class
             this.mpd = new MPD({'pos': this, 'proxy': this.proxy});
             this.bind('change:mpdstatus', function(pos,status){
@@ -580,7 +578,7 @@ openerp.pos_six = function(instance){
                 this.mpd.balance();
             }
             // Make super call
-            PosModelParent.prototype.initialize.apply(this, arguments);
+            PosModelSuper.prototype.initialize.apply(this, arguments);
         },
     });
 
@@ -593,21 +591,22 @@ openerp.pos_six = function(instance){
         },
         installEventHandler: function(pos) {
             var self = this;
-            this.$('#mpd_open_shift').on('click', pos, function(event){
+            this.$('.mpd_open_shift').off();
+            this.$('.mpd_open_shift').on('click', pos, function(event){
                 var cashier = event.data.pos.cashier || event.data.pos.user;
                 event.data.pos.mpd.open_shift(cashier.id);
-                //self.hide();
             });
-            this.$('#mpd_close_shift').on('click', pos, function(event){
+            this.$('.mpd_close_shift').off();
+            this.$('.mpd_close_shift').on('click', pos, function(event){
                 event.data.pos.mpd.close_shift(true);
-                //self.hide();
             });
-            this.$('#mpd_close_button').on('click', pos, function(){
+            this.$('.mpd_close_button').off();
+            this.$('.mpd_close_button').on('click', pos, function(){
                 self.hide();
             });
-            this.$('#mpd_balance_button').on('click', pos, function(event){
+            this.$('#mpd_balance_button').off();
+            this.$('.mpd_balance_button').on('click', pos, function(event){
                 event.data.pos.mpd.balance();
-                //self.hide();
             });
         },
         show: function(show_options){
