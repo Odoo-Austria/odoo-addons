@@ -74,7 +74,7 @@ odoo.define('pos_rksv.models', function (require) {
             var self = this;
             options = options || {};
 
-            this.pos            = options.pos;
+            this.pos = options.pos;
             return this;
         },
         getVAT: function() {
@@ -179,6 +179,8 @@ odoo.define('pos_rksv.models', function (require) {
             this.qrcode_img = result.qrcodeImage;
             this.ocrcodevalue = result.ocrcodeValue;
             this.receipt_id = result.receipt_id;
+            if (this.receipt_id)
+                this.formatted_receipt_id = ('00000000' + this.receipt_id).slice(-8);
             this.cashbox_mode = result.cashbox_mode;
             Object.assign(this, result);
         },
@@ -191,8 +193,7 @@ odoo.define('pos_rksv.models', function (require) {
             data.qrcode_img = this.qrcode_img;
             data.ocrcodevalue = this.ocrcodevalue;
             data.receipt_id = this.receipt_id;
-            if (this.receipt_id)
-                data.formatted_receipt_id = ('00000000' + this.receipt_id).slice(-8);
+            data.formatted_receipt_id = this.formatted_receipt_id;
             data.kassenidentifikationsnummer = this.pos.config.cashregisterid;
             data.start_receipt = this.start_receipt;
             data.year_receipt = this.year_receipt;

@@ -38,7 +38,7 @@
                         <group>
                             <field name="null_product_id" />
                             <field name="invoice_product_id" />
-                         </group>
+                        </group>
                     </group>
                 </xpath>
             </field>

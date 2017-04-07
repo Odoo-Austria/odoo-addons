@@ -9,6 +9,5 @@
               <link href="/pos_pay_invoice/static/src/css/invoices.css" rel="stylesheet"/>
           </xpath>
         </template>
-
     </data>
 </odoo>

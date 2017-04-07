@@ -61,7 +61,6 @@ odoo.define('pos_rksv.popups', function (require) {
             this.$('.pos_admin_passwd').val('');
         },
         loading: function(message) {
-            // Do hide execute button here - it got already clicked
             this.$('.execute_button').hide();
             this.$('.content').addClass('oe_hidden');
             this.$('.loading').removeClass('oe_hidden');
