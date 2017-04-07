@@ -31,7 +31,7 @@ openerp.pos_six = function(instance){
                 // Check if this is our payment line
                 if (($(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').length > 0) && (paymentLine.cashregister.journal.is_sixx_terminal)) {
                     // If that element exists - then we are at home baby
-                    $(line).find('.paymentline-input').prop('readonly', true);
+                    $(line).find('.paymentline-input').hide();
                     $(line).find('.paymentline-delete').hide();
                 }
                 if ((order.is_return_order) && (paymentLine.cashregister.journal.is_sixx_terminal)) {
