@@ -31,27 +31,7 @@ odoo.define('pos_six.pos', function (require) {
     }
 
     // Extend     render_paymentlines: function() { - we have to set state on button according to current payment line state
-    screens.PaymentScreenWidget.include({
-        render_paymentlines: function() {
-            var self = this;
-            // Supercall does render the payment lines
-            this._super();
-            // So we now have the lines in .paymentlines-container
-            // Remove old event handlers
-            this.$('.payment-terminal-transaction-start').off();
-            this.$('.payment-terminal-transaction-abort').off();
-            this.$('.payment-terminal-transaction-reversal').off();
-            // Install new event handlers
-            this.$('.payment-terminal-transaction-start').on('click', function(){
-                self.pos.mpd.payment_terminal_transaction_start($(this).data('cid'), self.pos.currency.name);
-            });
-            this.$('.payment-terminal-transaction-abort').on('click', function(){
-                self.pos.mpd.payment_terminal_transaction_abort();
-            });
-            this.$('.payment-terminal-transaction-reversal').on('click', function(){
-                self.pos.mpd.payment_terminal_transaction_reversal($(this).data('cid'), self.pos.currency.name);
-            });
-        },
+    screens.PaymentScreenWidget.extend({
         render_paymentline : function(line){
             // Supercall using prototype
             var line = this._super(line);
@@ -71,6 +51,12 @@ odoo.define('pos_six.pos', function (require) {
             }
 
             order.get('paymentLines').each(function(paymentLine){
+                // Check if this is our payment line
+                if (($(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').length > 0) && (paymentLine.cashregister.journal.is_sixx_terminal)) {
+                    // If that element exists - then we are at home baby
+                    $(line).find('.paymentline-input').prop('readonly', true);
+                    $(line).find('.paymentline-delete').hide();
+                }
                 if ((order.is_return_order) && (paymentLine.cashregister.journal.is_sixx_terminal)) {
                     $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
                     $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').html('Storno');
@@ -81,7 +67,12 @@ odoo.define('pos_six.pos', function (require) {
                     $(line).find('.payment-terminal-transaction-reversal[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
                     $(line).find('.payment-terminal-transaction-abort[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
                 } else if (paymentLine.cashregister.journal.is_sixx_terminal) {
-                    $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
+                    if (!self.pos.config.auto_terminal_payment) {
+                        // Show Transaction Button only if not auto transaction is enabled
+                        $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').removeClass('oe_hidden');
+                    } else {
+                        $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
+                    }
                     $(line).find('.payment-terminal-transaction-start[data-cid=' + paymentLine.cid + ']').html(paymentLine.get_transaction_amount_str());
                     $(line).find('.payment-terminal-transaction-reversal[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
                     $(line).find('.payment-terminal-transaction-abort[data-cid=' + paymentLine.cid + ']').addClass('oe_hidden');
@@ -123,15 +114,19 @@ odoo.define('pos_six.pos', function (require) {
             // Check - if this is a sixx payment terminal payment line - then set amount to 0 !
             if (cashregister.journal.is_sixx_terminal) {
                 if (this.is_return_order) {
-                    this.selected_paymentline.set_transaction_amount(open_amount);
+                    this.selected_paymentline.set_transaction_amount(this.getDueLeft());
                     this.selected_paymentline.set_amount(0);
                     this.selected_paymentline.set_is_return_line(true);
                     this.pos.gui.screen_instances.payment.render_paymentlines();
                 } else {
-                    this.selected_paymentline.set_transaction_amount(open_amount);  // this.selected_paymentline.get_amount()
+                    this.selected_paymentline.set_transaction_amount(this.getDueLeft());  // this.selected_paymentline.get_amount()
                     this.selected_paymentline.set_amount(0);
                     this.selected_paymentline.set_is_return_line(false);
                     this.pos.gui.screen_instances.payment.render_paymentlines();
+                    // Check if auto transaction is enabled - if so - then start it here
+                    if (this.pos.config.auto_terminal_payment) {
+                        this.pos.mpd.payment_terminal_transaction_start(this.selected_paymentline.cid, this.pos.currency.name);
+                    }
                 }
             }
         },
@@ -187,7 +182,7 @@ odoo.define('pos_six.pos', function (require) {
             return this.transaction_amount;
         },
         get_transaction_amount_str: function(){
-            return openerp.instances.instance0.web.format_value(this.amount, {
+            return openerp.instances.instance0.web.format_value(this.transaction_amount, {
                 type: 'float', digits: [69, this.pos.currency.decimals]
             });
         },
@@ -337,12 +332,7 @@ odoo.define('pos_six.pos', function (require) {
         payment_terminal_transaction_start: function(line_cid, currency_iso, ref){
             var self = this;
             var order = this.pos.get_order();
-            var line = null;
-            _.each(order.get_paymentlines(), function(cline) {
-                if (cline['cid'] == line_cid) {
-                    line = cline;
-                }
-            }, this);
+            var line = order.get_paymentlines()._byId[line_cid];
             var data = {};
             if (line.is_return_line==true) {
                 if (!ref) {
@@ -378,7 +368,7 @@ odoo.define('pos_six.pos', function (require) {
 
             this.proxy.message('mpd/transaction', data, { timeout: 120000 }).then(
                 function done(result) {
-                    if ((result) && (result.success==true)) {
+                    if (result.success == true) {
                         console.log('Attach ref number to payment line');
                         line.ref_number = result.ref_number;
                         line.receipt = result.receipt;
@@ -388,9 +378,8 @@ odoo.define('pos_six.pos', function (require) {
                         $('.payment-terminal-transaction-start[data-cid=' + line_cid + ']').addClass('oe_hidden');
                         $('.payment-terminal-transaction-reversal[data-cid=' + line_cid + ']').removeClass('oe_hidden');
                         $('.payment-terminal-transaction-abort[data-cid=' + line_cid + ']').addClass('oe_hidden');
-                        var order = self.pos.get_order();
                         // Set Amount from transaction
-                        if (line.is_return_line==true) {
+                        if (line.is_return_line == true) {
                             line.set_amount(-1 * result.amount);
                         } else {
                             line.set_amount(result.amount);
@@ -410,18 +399,14 @@ odoo.define('pos_six.pos', function (require) {
                         $('.payment-terminal-transaction-start[data-cid='+line_cid+']').removeClass('oe_hidden');
                         $('.payment-terminal-transaction-reversal[data-cid='+line_cid+']').addClass('oe_hidden');
                         $('.payment-terminal-transaction-abort[data-cid='+line_cid+']').addClass('oe_hidden');
-                        if (result) {
-                            self.pos.gui.show_popup('error', {
-                                'title': _t('Fehler'),
-                                'body': result['errorcode'] + ': ' + result['errormessage'],
-                            });
-                        } else {
-                            self.pos.gui.show_popup('error', {
-                                'title': _t('Fehler'),
-                                'body': _t('Unbekannter Fehler bei der Kommunikation mit der PosBox ist aufgetretten'),
-                            });
+                        self.pos.gui.show_popup('error', {
+                            'title': _t('Fehler'),
+                            'body': result['errorcode'] + ': ' + result['errormessage'],
+                        });
+                        if (self.pos.config.auto_terminal_payment) {
+                            // Remove PAyment line on failure if auto payment is enabled
+                            order.removePaymentline(line);
                         }
-
                     }
                 },
                 function failed() {
@@ -634,21 +619,6 @@ odoo.define('pos_six.pos', function (require) {
         init: function(pos, options) {
             console.log('in MPD Popup init');
             this._super(pos, options);
-            this.pos.bind('change:mpdstatus', function(pos,status){
-                // Do update every device state and status text on page
-                this.$('.mpd_shift_state_text').html(status.shift_state || "Unbekannt");
-                this.$('.mpd_device_status_text').html(status.device_status || "Unbekannt");
-                if (status.shift_state=='Open') {
-                    this.$('.mpd_open_shift').addClass('oe_hidden');
-                    this.$('.mpd_close_shift').removeClass('oe_hidden');
-                } else if (status.shift_state=='Closed') {
-                    this.$('.mpd_open_shift').removeClass('oe_hidden');
-                    this.$('.mpd_close_shift').addClass('oe_hidden');
-                } else {
-                    this.$('.mpd_open_shift').addClass('oe_hidden');
-                    this.$('.mpd_close_shift').addClass('oe_hidden');
-                }
-            }, this);
         },
         installEventHandler: function(pos) {
             var self = this;
@@ -656,12 +626,10 @@ odoo.define('pos_six.pos', function (require) {
             this.$('.mpd_open_shift').on('click', pos, function(event){
                 var cashier = event.data.pos.cashier || event.data.pos.user;
                 event.data.pos.mpd.open_shift(cashier.id);
-                //self.hide();
             });
             this.$('.mpd_close_shift').off();
             this.$('.mpd_close_shift').on('click', pos, function(event){
                 event.data.pos.mpd.close_shift(true);
-                //self.hide();
             });
             this.$('.mpd_close_button').off();
             this.$('.mpd_close_button').on('click', pos, function(){
@@ -755,6 +723,19 @@ odoo.define('pos_six.pos', function (require) {
                     } else {
                         self.set_status('warning');  // Removed , status.device_status
                     }
+                }
+                // Do update every device state and status text on page
+                $('.mpd_shift_state_text').html(status.shift_state || "Unbekannt");
+                $('.mpd_device_status_text').html(status.device_status || "Unbekannt");
+                if (status.shift_state=='Open') {
+                    $('#mpd_open_shift').addClass('oe_hidden');
+                    $('#mpd_close_shift').removeClass('oe_hidden');
+                } else if (status.shift_state=='Closed') {
+                    $('#mpd_open_shift').removeClass('oe_hidden');
+                    $('#mpd_close_shift').addClass('oe_hidden');
+                } else {
+                    $('#mpd_open_shift').addClass('oe_hidden');
+                    $('#mpd_close_shift').addClass('oe_hidden');
                 }
             }, this);
             this.$el.click(function(){

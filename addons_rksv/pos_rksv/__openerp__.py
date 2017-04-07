@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Registrierkasse Österreich',
-    'version': '9.0.0',
+    'version': '1.0',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Registrierkassenpflicht Modul für Österreich',

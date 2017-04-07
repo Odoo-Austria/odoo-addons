@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
 "name" : "POS Product Reference",
-"version" : "9.0.0",
+"version" : "1.0",
 "author" : "Callino",
 "website" : "http://callino.at",
 "category" : "Point of Sale",

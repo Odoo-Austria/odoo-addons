@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from openerp import models, fields, api, _
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ABStatementLine(models.Model):

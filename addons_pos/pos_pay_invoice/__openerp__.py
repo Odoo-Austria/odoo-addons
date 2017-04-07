@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'POS Pay Invoice',
-    'version': '10.0.0.1',
+    'version': '1.0',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Pay invoice directly on in pos session',
@@ -13,7 +13,7 @@ POS Pay Invoice
 Pay invoice directly on in pos session
 """,
     'author': 'Wolfgang Pichler (Callino)',
-    'depends': ['point_of_sale', 'pos_product_reference'],
+    'depends': ['point_of_sale', 'pos_product_reference', 'pos_compat'],
     'test': [
     ],
     'data': [

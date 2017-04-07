@@ -404,7 +404,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                     order.finalize();
                 },
                 function failed() {
-                    // TODO: Add error Message here !
                     console.log('Failed to generate null receipt !');
                 }
             );
