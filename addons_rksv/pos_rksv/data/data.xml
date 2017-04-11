@@ -8,8 +8,8 @@
         <record id="rksv_start_receipt" model="product.product">
             <field name="name">Startbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -25,8 +25,8 @@
         <record id="rksv_month_receipt" model="product.product">
             <field name="name">Monatsbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -38,12 +38,12 @@
             <field name="default_code">RKSV002</field>
             <field name="rksv_product_type">monthreceipt</field>
         </record>
-        
+
         <record id="rksv_year_receipt" model="product.product">
             <field name="name">Jahresbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -59,8 +59,8 @@
         <record id="rksv_dummy_receipt" model="product.product">
             <field name="name">Nullbeleg</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -76,8 +76,8 @@
         <record id="rksv_umsatz_20_receipt" model="product.product">
             <field name="name">Umsätze zu 20%</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -92,8 +92,8 @@
         <record id="rksv_umsatz_10_receipt" model="product.product">
             <field name="name">Umsätze zu 10%</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -108,8 +108,8 @@
         <record id="rksv_umsatz_13_receipt" model="product.product">
             <field name="name">Umsätze zu 13%</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -124,8 +124,8 @@
         <record id="rksv_umsatz_0_receipt" model="product.product">
             <field name="name">Umsätze zu 0%</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
@@ -140,8 +140,8 @@
         <record id="rksv_invoice_receipt" model="product.product">
             <field name="name">Rechnung</field>
             <field name="categ_id" ref="product_category_rksv"/>
-            <field name="standard_price">0</field>
-            <field name="list_price">0</field>
+            <field name="standard_price" eval="0.0"/>
+            <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="uom_po_id" ref="product.product_uom_unit"/>
