@@ -30,7 +30,7 @@ odoo.define('pos_rksv.models', function (require) {
     Here we do add the fields and the models we need to load from the server
      */
     // BMF Fields we do need to communicate directly with the BMF SOAP Service
-    models.load_fields("res.company", [ "bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu" ]);
+    models.load_fields("res.company", [ "bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu", "bmf_tax_number" ]);
     // Update domain on product.product
     models.append_domain("product.product", [['rksv_tax_mapping_correct','=',true]]);
     // Load Odoo configured signature providers - check if this is still needed !
@@ -71,18 +71,37 @@ odoo.define('pos_rksv.models', function (require) {
         idAttribute: "serial",
         initialize: function(attributes,options) {
             Backbone.Model.prototype.initialize.apply(this, arguments);
-            var self = this;
             options = options || {};
 
             this.pos = options.pos;
             return this;
         },
         getVAT: function() {
-            var idx = this.get('subject').indexOf("ATU");
-            return this.get('subject').substring(idx, idx + 11);
+            var regex = /.*\s(ATU\d{8})[,\s].*/g;
+            var m = regex.exec(this.get('subject'));
+            if (m && m.length==2) {
+                return m.pop();
+            }
+            return null;
+        },
+        getTaxNumber: function() {
+            var regex = /.*\s(\d{5}\/\d{4})[,\s].*/g;
+            var m = regex.exec(this.get('subject'));
+            if (m && m.length==2) {
+                var number = m.pop();
+                return number.replace(/[^\d]/g, "");
+            }
+            return null;
         },
         matchVAT: function(vat) {
             return (vat === this.getVAT()?true:false);
+        },
+        matchTaxNumber: function(tax_number) {
+            if (tax_number){
+                var clean_tax_number = tax_number.replace(/[^\d]/g, "");
+                return (clean_tax_number === this.getTaxNumber()?true:false);
+            }
+            return false;
         },
         _updateStatus: function(status) {
             this.set(status);

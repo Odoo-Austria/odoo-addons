@@ -516,9 +516,14 @@ odoo.define('pos_rksv.screens', function (require) {
         },
         render_card: function (card) {
             var valid_vat = false;
-            var company_vat = this.pos.company.vat;
-            if (card.matchVAT(company_vat)) {
+            if (card.matchVAT(this.pos.company.bmf_vat_number)) {
                 valid_vat = true;
+            }
+            if (!valid_vat) {
+                // Try to match against Steuernummer
+                if (card.matchTaxNumber(this.pos.company.bmf_tax_number)) {
+                    valid_vat = true;
+                }
             }
             var sprovider_html = QWeb.render('SignatureProvider', {
                 widget: this,

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <!-- Inherit Form View to Modify it -->
         <record id="view_company_form" model="ir.ui.view">
             <field name="name">view_company_form</field>
@@ -16,10 +15,13 @@
                             <field name="bmf_pin"/>
                             <field name="bmf_hersteller_atu"/>
                         </group>
+                        <group string="Identifikation für Signatureinheit">
+                            <field name="bmf_tax_number" placeholder="NNNNNNNNN"/>
+                            <field name="bmf_vat_number" placeholder="ATU12345678"/>
+                        </group>
                     </page>
                 </notebook>
             </field>
         </record>
-
     </data>
 </odoo>
