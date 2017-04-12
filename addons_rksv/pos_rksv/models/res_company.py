@@ -14,3 +14,4 @@ class Company(models.Model):
     bmf_benid = fields.Char('BMF Benutzer ID', size=32, copy=False)
     bmf_pin = fields.Char('BMF PIN', size=32, copy=False)
     bmf_hersteller_atu = fields.Char('BMF RK Hersteller ATU', size=32, copy=False)
+    tax_number = fields.Char('Steuernummer', size=10)

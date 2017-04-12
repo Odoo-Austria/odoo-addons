@@ -18,6 +18,9 @@
                         </group>
                     </page>
                 </notebook>
+                <field name="vat" position="after">
+                    <field name="tax_number" placeholder="NNNNNNNNN"/>
+                </field>
             </field>
         </record>
 
