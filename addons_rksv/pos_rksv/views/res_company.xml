@@ -9,8 +9,10 @@
             <field name="arch" type="xml">
                 <notebook position="inside">
                     <page string="BMF">
-                        <group string="Anmeldedaten Finanzonline">
+                        <group string="Finanzonline (Unternehmen)">
                             <field name="bmf_tid"/>
+                        </group>
+                        <group string="Finanzonline (RKSV Anmeldedaten)">
                             <field name="bmf_benid"/>
                             <field name="bmf_pin"/>
                             <field name="bmf_hersteller_atu"/>
