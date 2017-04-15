@@ -30,7 +30,7 @@ odoo.define('pos_rksv.models', function (require) {
     Here we do add the fields and the models we need to load from the server
      */
     // BMF Fields we do need to communicate directly with the BMF SOAP Service
-    models.load_fields("res.company", [ "bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu", "bmf_tax_number" ]);
+    models.load_fields("res.company", [ "bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu", "bmf_tax_number", "bmf_vat_number"]);
     // Update domain on product.product
     models.append_domain("product.product", [['rksv_tax_mapping_correct','=',true]]);
     // Load Odoo configured signature providers - check if this is still needed !
