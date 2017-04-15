@@ -51,26 +51,25 @@
     </t>
     <t t-name="RKSVTicket">
         <div class="pos-sale-ticket">
+            <t t-set="company" t-value="order.get_company()"/>
             <img class="company_logo" style="width: 100%; margin: 0; border: 0;" crossorigin="anonymous" t-att-src="company.logo_url" /><br /><br />
             <t t-esc="company.name"/><br />
             <t t-esc="company.street" /><br />
             <t t-esc="company.zip" /> <t t-esc="company.city" /> <br />
             <t t-esc="company.vat"/><br /><br />
             Phone: <t t-esc="company.phone || ''"/><br /><br />
-            <!-- 
             Kassa: <t t-esc="widget.pos.config.name" /><br /><br />
             <t t-if="widget.pos.config.receipt_header">
                 <div style='text-align:center'>
                     <t t-esc="widget.pos.config.receipt_header" />
                 </div>
                 <br /><br />
-            </t> -->
+            </t>
             <h2><t t-esc='title'/></h2>
             <div>
-                Referenz: <t t-esc="receipt.ref" /><br />
-                Bon Nr.: <t t-esc="('00000000' + receipt.receiptId).slice(-8)" />
+                <p>Referenz: <t t-esc="receipt.ref"/></p>
+                <p>Bon Nr.: <t t-esc="('00000000' + receipt.receiptId).slice(-8)" /></p>
             </div>
-            <div class="single_dash_line"></div>
             <div style="padding: 5px 0">Datum: <t t-esc="receipt.receiptDate" /><br /><br/></div>
             <div style='text-align:center'>
                 <p>Signature Serial: <t t-raw='receipt.signatureSerial' /></p>

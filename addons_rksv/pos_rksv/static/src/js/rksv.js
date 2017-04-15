@@ -243,21 +243,18 @@ odoo.define('pos_rksv.rksv', function (require) {
                     this.statuses['rksv'];
         },
         print_order: function(order) {
-            var self = this;
-            if(self.pos.config.iface_print_via_proxy){
-                var env = {
-                    widget:  this,
-                    order: order,
-                    receipt: order.export_for_printing(),
-                    paymentlines: order.get_paymentlines()
-                };
-                self.pos.proxy.print_receipt(QWeb.render('XmlReceipt',env));
-            } else{
-                self.pos.gui.show_screen('receipt')
-            }
+            this.pos.gui.show_screen('receipt');
+        },
+        print_rksv_order: function(){
+            this.pos.gui.show_screen('receipt_rksv', {}, true);
         },
         rksv_reprint_special_receipt: function(type, title) {
             var self = this;
+            // Make sure the current order is closed
+            var order = self.pos.get_order();
+            if (order && order.screen_data && order.screen_data.screen == 'receipt'){
+                order.finalize();
+            }
             if (!self.check_proxy_connection()) {
                 self.pos.gui.show_popup('error',{
                     'title': _t("Fehler"),
@@ -279,18 +276,11 @@ odoo.define('pos_rksv.rksv', function (require) {
                         });
                     } else {
                         // in response we should have the needed data to reprint - we assume to have a pos printer here
-                        var env = {
-                            'title': title,
-                            'receipt': response.receipt,
-                            'company': self.pos.company,
-                            'widget': self.pos.chrome.widget
-                        };
-                        if(self.pos.config.iface_print_via_proxy){
-                            self.pos.proxy.print_receipt(QWeb.render('RKSVReceipt', env));
-                        } else {
-                            self.pos.gui.show_screen('receipt');
-                            self.pos.chrome.$('.pos-receipt-container').html(QWeb.render('RKSVTicket', env));
+                        self.pos.rksv_print = {
+                            title: title,
+                            receipt: response.receipt,
                         }
+                        self.print_rksv_order();
                     }
                 },
                 function failed() {
@@ -322,6 +312,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                     order.selected_orderline.set_product_reference(reference);
                 }
             }
+            // set a validation date
+            order.initialize_validation_date();
             // return it
             return order;
         },
@@ -337,7 +329,6 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
                     self.start_receipt_in_progress = false;
                 },
                 function failed() {
@@ -359,7 +350,6 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
                     self.year_receipt_in_progress = false;
                 },
                 function failed() {
@@ -383,7 +373,6 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
                     self.month_receipt_in_progress = false;
                 },
                 function failed() {
@@ -401,7 +390,6 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
                 },
                 function failed() {
                     console.log('Failed to generate null receipt !');
