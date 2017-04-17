@@ -143,8 +143,8 @@
 
     <t t-extend="DebugWidget" >
         <t t-jquery=".content" t-operation="append">
-            <p class="category">RKSV</p>
-            <ul>
+            <p class="category rksvdebug">RKSV</p>
+            <ul class="rksvdebug">
                 <li class="button rksv_firstreport">Daten für FA</li>
                 <li class="button rksv_status">RKSV Status</li>
                 <li class="button rksv_kasse_registrieren">BMF RK Anmeldung</li>

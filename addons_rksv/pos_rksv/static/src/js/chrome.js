@@ -4,6 +4,7 @@ odoo.define('pos_rksv.chrome', function (require) {
     var chrome = require('point_of_sale.chrome');
     var gui = require('point_of_sale.gui');
     var core = require('web.core');
+    var _t = core._t;
 
     chrome.Chrome.include({
         replace_widget: function(name, widget_config) {
@@ -49,6 +50,9 @@ odoo.define('pos_rksv.chrome', function (require) {
         },
         start: function () {
             var self = this;
+            if (!self.pos.config.iface_rksv) {
+                return this._super();
+            }
             this.set_smart_status(this.pos.proxy.get('status'));
             this.pos.proxy.on('change:status', this, function (eh, status) {
                 self.set_smart_status(status.newValue);
@@ -59,7 +63,13 @@ odoo.define('pos_rksv.chrome', function (require) {
                     'stay_open': true
                 });
             });
+        },
+        renderElement: function() {
+            if (this.pos.config.iface_rksv) {
+                return this._super();
+            }
         }
+
     });
 
     /*
@@ -78,6 +88,16 @@ odoo.define('pos_rksv.chrome', function (require) {
         start: function () {
             // Supercall using prototype
             this._super();
+            if (!this.pos.config.iface_rksv) {
+                this.disable_rksv();
+            } else {
+                this.install_rksv_eventhandler();
+            }
+        },
+        disable_rksv: function() {
+            this.$('.rksvdebug').hide();
+        },
+        install_rksv_eventhandler: function() {
             var self = this;
             // Now do register our own events
             this.$('.button.rksv_firstreport').click(function(){
