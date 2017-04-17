@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
                 <notebook position="inside">
-                    <page string="BMF">
+                    <page string="BMF" attrs="{'invisible': [('rksv_at', '=', False)]}">
                         <group string="Finanzonline (Unternehmen)">
                             <field name="bmf_tid"/>
                         </group>
@@ -23,6 +23,9 @@
                         </group>
                     </page>
                 </notebook>
+                <field name="vat_check_vies" position="before">
+                    <field name="rksv_at"/>
+                </field>
             </field>
         </record>
     </data>

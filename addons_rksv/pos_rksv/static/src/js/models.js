@@ -208,6 +208,8 @@ odoo.define('pos_rksv.models', function (require) {
         },
         export_for_printing: function () {
             var data = OrderModelSuper.export_for_printing.call(this);
+            if (!this.pos.config.iface_rksv)
+                return data;
             data.qrcodevalue = this.qrcodevalue;
             data.qrcode_img = this.qrcode_img;
             data.ocrcodevalue = this.ocrcodevalue;
@@ -226,6 +228,8 @@ odoo.define('pos_rksv.models', function (require) {
         // Include RKSV Data for the export to odoo
         export_as_JSON: function () {
             var data = OrderModelSuper.export_as_JSON.call(this);
+            if (!this.pos.config.iface_rksv)
+                return data;
             var rksv_data = {
                 'qrcodevalue': this.qrcodevalue,
                 'qrcode_img': this.qrcode_img,
@@ -249,6 +253,8 @@ odoo.define('pos_rksv.models', function (require) {
         // Read also stored RKSV data
         init_from_JSON: function(json) {
             OrderModelSuper.init_from_JSON.call(this, json);
+            if (!this.pos.config.iface_rksv)
+                return;
             this.qrcodevalue = json.qrcodevalue;
             this.qrcode_img = json.qrcode_img;
             this.ocrcodevalue = json.ocrcodevalue;

@@ -83,12 +83,16 @@ odoo.define('pos_rksv.pos', function (require) {
             this.ready.done(function () {
                 console.log('All data is loaded - so do my work...');
                 // Check state from config - set it as my own state
-                self.set('cashbox_mode', self.config.state);
+                if (self.config.iface_rksv)
+                    self.set('cashbox_mode', self.config.state);
             });
         },
         push_order: function (order, type) {
             var self = this;
-            if (!order) return PosModelSuper.prototype.push_order.call(this, order);
+            // Handle the dummy case - this can happen
+            // Handle no rksv case
+            if ((!order) || (!self.config.iface_rksv))
+                return PosModelSuper.prototype.push_order.call(this, order);
             // This is my all - and really all deferred object
             var alldeferred = new $.Deferred(); // holds the global mutex
             var deferred = this.proxy.message('rksv_order', order.export_for_printing());
@@ -115,8 +119,9 @@ odoo.define('pos_rksv.pos', function (require) {
         },
         push_and_invoice_order: function (order) {
             var self = this;
-            // Handly the dummy case - this can happen
-            if (!order)
+            // Handle the dummy case - this can happen
+            // Handle no rksv case
+            if ((!order) || (!self.config.iface_rksv))
                 return PosModelSuper.prototype.push_order.call(this, order);
             if(!order.get_client()){
                 return PosModelSuper.prototype.push_and_invoice_order.call(self, order);

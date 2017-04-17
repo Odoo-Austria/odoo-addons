@@ -10,6 +10,7 @@ class Company(models.Model):
     _name = 'res.company'
     _inherit = 'res.company'
 
+    rksv_at = fields.Boolean('RKSV AT', default=True)
     bmf_tid = fields.Char('BMF TID', size=32, copy=False)
 
     bmf_benid = fields.Char('BMF Benutzer ID', size=32, copy=False)

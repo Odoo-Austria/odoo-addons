@@ -4,25 +4,28 @@
     <!-- Extend the PosTicket - include QRCode - and for testing the OCR Representation -->
     <t t-extend="PosTicket">
         <t t-jquery="t[t-esc='order.name']" t-operation="after">
-            <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
         </t>
         <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
-            <div t-if="receipt.cashbox_mode=='active'" style="text-align:center;margin: 20px 0;">
-                <img t-att-src="receipt.qrcode_img" width="100px"/>
-            </div>
-            <div t-if="receipt.cashbox_mode=='signature_failed'" style="text-align:center;margin: 20px 0;">Signatureinheit ausgefallen</div>
-            <!-- p style="font-family: OCR-A, monospace;font-size:8px;word-wrap: break-word;"><t t-raw="order.ocrcodevalue"/></p-->
+            <t  t-if="widget.pos.config.rksv_at">
+                <div t-if="receipt.cashbox_mode=='active'" style="text-align:center;margin: 20px 0;">
+                    <img t-att-src="receipt.qrcode_img" width="100px"/>
+                </div>
+                <div t-if="receipt.cashbox_mode=='signature_failed'" style="text-align:center;margin: 20px 0;">Signatureinheit ausgefallen</div>
+            </t>
         </t>
     </t>
 
     <!-- Extend the XmlReceipt to include the QRCode as a direct qrcode print command -->
     <t t-extend="XmlReceipt" >
         <t t-jquery="t[t-esc='receipt.name']" t-operation="after">
-            <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
         </t>
         <t t-jquery=".before-footer" t-operation="before">
-            <qrcode t-if="receipt.cashbox_mode=='active'"><t t-raw='receipt.qrcodevalue'/></qrcode>
-            <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
+            <t  t-if="widget.pos.config.rksv_at">
+                <qrcode t-if="receipt.cashbox_mode=='active'"><t t-raw='receipt.qrcodevalue'/></qrcode>
+                <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
+            </t>
         </t>
     </t>
     <t t-name="RKSVReceipt">
