@@ -4,10 +4,10 @@
     <!-- Extend the PosTicket - include QRCode - and for testing the OCR Representation -->
     <t t-extend="PosTicket">
         <t t-jquery="t[t-esc='order.name']" t-operation="after">
-            <p t-if="widget.pos.config.rksv_at">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
         </t>
         <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
-            <t  t-if="widget.pos.config.rksv_at">
+            <t t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">
                 <div t-if="receipt.cashbox_mode=='active'" style="text-align:center;margin: 20px 0;">
                     <img t-att-src="receipt.qrcode_img" width="100px"/>
                 </div>
@@ -19,10 +19,10 @@
     <!-- Extend the XmlReceipt to include the QRCode as a direct qrcode print command -->
     <t t-extend="XmlReceipt" >
         <t t-jquery="t[t-esc='receipt.name']" t-operation="after">
-            <p t-if="widget.pos.config.rksv_at">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
         </t>
         <t t-jquery=".before-footer" t-operation="before">
-            <t  t-if="widget.pos.config.rksv_at">
+            <t  t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">
                 <qrcode t-if="receipt.cashbox_mode=='active'"><t t-raw='receipt.qrcodevalue'/></qrcode>
                 <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
             </t>
