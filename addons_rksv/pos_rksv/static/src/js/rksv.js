@@ -62,6 +62,9 @@ odoo.define('pos_rksv.rksv', function (require) {
 
             if (this.proxy){
                 this.proxy.on('change:status', this, function (eh, status) {
+                    // Ignore the status change when rksv is not enabled
+                    if (!self.pos.config.iface_rksv)
+                        return;
                     self.last_proxy_status = status.newValue;
                     // Do check posbox and rksv status
                     if (status.newValue.status == "connected") {

@@ -37,6 +37,8 @@ odoo.define('pos_rksv.screens', function (require) {
     screens.PaymentScreenWidget.include({
         // TODO: Implement this by splitting up and contributing to Odoo Core
         validate_order: function(force_validation) {
+            if (!this.pos.config.iface_rksv)
+                return this._super();
             var self = this;
             var order = this.pos.get_order();
 
@@ -150,8 +152,8 @@ odoo.define('pos_rksv.screens', function (require) {
                     },
                     function failed(message){
                         self.pos.gui.show_popup('error',{
-                            'message': _t("RKSV Fehler"),
-                            'comment':  message
+                            'title': _t("RKSV Fehler"),
+                            'body':  message
                         });
                     }
                 );
@@ -164,7 +166,8 @@ odoo.define('pos_rksv.screens', function (require) {
      */
     screens.ReceiptScreenWidget.include({
         handle_auto_print: function() {
-           console.log('I WANT TO PRINT LATER')
+            if (!this.pos.config.iface_rksv)
+                return this._super();
            var self = this;
            setTimeout(function(){
                 if (self.should_auto_print()) {
@@ -178,6 +181,8 @@ odoo.define('pos_rksv.screens', function (require) {
             }, 1000);
         },
         should_auto_print: function() {
+            if (!this.pos.config.iface_rksv)
+                return this._super();
             console.log("We always must print the receipt");
             return true && !this.pos.get_order()._printed;
         }
@@ -206,7 +211,17 @@ odoo.define('pos_rksv.screens', function (require) {
             this.events['click .export_crypt'] = 'export_crypt';
             this.events['click .start_receipt_set_valid'] = 'start_receipt_set_valid';
         },
+        willStart: function() {
+            if (this.pos.config.iface_rksv)
+                return $.when();
+            else
+                // We do provide a deferred which will never fire
+                return $.Deferred();
+        },
         start: function() {
+            if (!this.pos.config.iface_rksv)
+                // Do nothing if rksv is not enabled
+                return;
             var self = this;
             console.log('RKSV: do install proxy status change handler');
             self.posbox_status_handler();
@@ -288,6 +303,9 @@ odoo.define('pos_rksv.screens', function (require) {
             return (mode=='signature_failed' || mode=='posbox_failed');
         },
         auto_open_close: function() {
+            // Do not open when rksv is not enabled
+            if (!this.pos.config.iface_rksv) return;
+            // Do not open when rksv is not intitialized
             if (this.pos.rksv === undefined) return;
             if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
                 this.pos.gui.show_screen('rksv_status');

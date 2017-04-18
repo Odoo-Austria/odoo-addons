@@ -16,7 +16,8 @@
                     </header>
                 </xpath>
                 <field name="iface_cashdrawer" position="after">
-                    <field name="iface_rksv" />
+                    <field name="rksv_at" invisible="True"/>
+                    <field name="iface_rksv" attrs="{'invisible': [('rksv_at', '=', False), ('iface_rksv', '=', False)]}"/>
                 </field>
                 <xpath expr="//group[@name='receipt']" position="before">
                     <group string="Registrierkassenverordnung (Österreich)" attrs="{'invisible': [('iface_rksv', '=', False)]}">
@@ -26,18 +27,18 @@
                         </group>
                         <group>
                             <field name="bmf_test_mode"/>
-                            <field name="pos_admin_passwd" password="True" groups="base.group_system" />
+                            <field name="pos_admin_passwd" password="True" groups="base.group_system"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
                          </group>
                     </group>
                     <group string="RKSV Produktkonfiguration" attrs="{'invisible': [('iface_rksv', '=', False)]}" groups="base.group_system" >
                         <group>
-                            <field name="start_product_id" />
-                            <field name="year_product_id" />
-                            <field name="month_product_id" />
+                            <field name="start_product_id" attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                            <field name="year_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                            <field name="month_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
                         </group>
                         <group>
-                            <field name="null_product_id" />
-                            <field name="invoice_product_id" />
+                            <field name="null_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                            <field name="invoice_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
                         </group>
                     </group>
                 </xpath>
