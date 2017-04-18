@@ -166,7 +166,7 @@ odoo.define('pos_rksv.screens', function (require) {
      */
     screens.ReceiptScreenWidget.include({
         handle_auto_print: function() {
-            if (!this.pos.config.iface_rksv)
+           if (!this.pos.config.iface_rksv)
                 return this._super();
            var self = this;
            setTimeout(function(){
