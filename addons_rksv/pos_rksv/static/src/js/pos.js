@@ -26,6 +26,7 @@ odoo.define('pos_rksv.pos', function (require) {
             this.signatures = new models.Signatures(null, {
                 pos: this
             });
+            this.signature_update = false;
             // pos backbone attributes
             this.set({
                 'bmf_status_rk': 'unknown',
@@ -52,7 +53,12 @@ odoo.define('pos_rksv.pos', function (require) {
                 signatures.each(function (signature) {
                     cardinfos.push(signature.attributes);
                 });
-                provider_obj.call('set_providers', [cardinfos, {'pos_config_id': self.config.id}]);
+                signature.pos.signature_update = true;
+                provider_obj.call('set_providers', [cardinfos, {'pos_config_id': self.config.id}]).always(
+                    function finish(result) {
+                        signature.pos.signature_update = false;
+                    }
+                );
             });
             this.bind('change:bmf_status_rk', function (pos, status) {
                 // Save current state
@@ -64,10 +70,16 @@ odoo.define('pos_rksv.pos', function (require) {
                 }]);
             });
             this.signatures.bind('change:bmf_status change:bmf_message', function (signature) {
-                console.log('Write status change back to odoo');
-                // Write back new status to odoo
+                console.log('Try to fire an update for status in backend');
                 var signaturemodel = new Model('signature.provider');
-                signaturemodel.call('update_status', [signature.attributes]);
+                if (!signature.pos.signature_update){
+                    signature.pos.signature_update = true;
+                    signaturemodel.call('update_status', [signature.attributes]).always(
+                        function finish(result) {
+	                        signature.pos.signature_update = false;
+                        }
+                    );
+                }
             });
             // Bind on cashbox_mode flag
             this.bind('change:cashbox_mode', function (pos, state) {
