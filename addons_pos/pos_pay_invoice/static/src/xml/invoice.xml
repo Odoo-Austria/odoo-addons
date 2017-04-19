@@ -19,11 +19,11 @@
     <t t-name="InvoiceLine">
         <tr class='invoice-line' t-att-data-id='invoice.id'>
             <td><t t-esc='invoice.get("number")' /></td>
-            <td><t t-esc='invoice.get("date_invoice")' /></td>
+            <td><t t-esc='moment(invoice.get("date_invoice")).format("L")' /></td>
             <td><t t-esc='invoice.get_partner().name' /></td>
             <td><t t-esc='invoice.get("name")?invoice.get("name"):""' /></td>
-            <td><t t-esc='invoice.get("amount_total")' /></td>
-            <td><t t-esc='invoice.get("date_due")' /></td>
+            <td><t t-esc='widget.format_currency_no_symbol(invoice.get("amount_total"), 2)' /></td>
+            <td><t t-esc='invoice.get("date_due")?moment(invoice.get("date_due")).format("L"):""' /></td>
         </tr>
     </t>
 

@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'POS Pay Invoice',
+    'name': 'PoS Pay Invoice',
     'version': '1.0',
     'category': 'Point of Sale',
     'sequence': 6,
-    'summary': 'Pay invoice directly on in pos session',
-    'website': 'https://www.callino.at/',
+    'summary': 'Pay open invoice directly in PoS session',
+    'website': 'https://github.com/Odoo-Austria',
+    'author': 'WT-IO-IT GmbH, Wolfgang Taferner, Wolfgang Pichler (Callino)',
+    'license': "AGPL-3",
     'description': """
-POS Pay Invoice
-===============
+PoS Pay Invoice
+================
 
-Pay invoice directly on in pos session
+Pay invoice directly on in PoS session
 """,
-    'author': 'Wolfgang Pichler (Callino)',
     'depends': ['point_of_sale', 'pos_product_reference'],
     'test': [
     ],
