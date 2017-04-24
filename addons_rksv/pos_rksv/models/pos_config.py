@@ -66,7 +66,7 @@ class POSConfig(models.Model):
         inverse_name='pos_config_id',
         string='Available Providers'
     )
-    iface_rksv = fields.Boolean(string='RKSV', help="Use PosBox for RKSV")
+    iface_rksv = fields.Boolean(string='RKSV', default=True, help="Use PosBox for RKSV")
     bound_signature = fields.Boolean(string='Bound')
     pos_admin_passwd = fields.Char(string='POS Admin Password')
     bmf_gemeldet = fields.Boolean(string='Registrierkasse beim BMF angemeldet')

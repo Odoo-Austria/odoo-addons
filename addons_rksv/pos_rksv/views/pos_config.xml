@@ -17,7 +17,7 @@
                 </xpath>
                 <field name="iface_cashdrawer" position="after">
                     <field name="rksv_at" invisible="True"/>
-                    <field name="iface_rksv" attrs="{'invisible': [('rksv_at', '=', False), ('iface_rksv', '=', False)]}"/>
+                    <field name="iface_rksv" attrs="{'readonly': [('rksv_at', '=', True), ('iface_rksv', '=', True)], 'invisible': [('rksv_at', '=', False), ('iface_rksv', '=', False)]}"/>
                 </field>
                 <xpath expr="//group[@name='receipt']" position="before">
                     <group string="Registrierkassenverordnung (Österreich)" attrs="{'invisible': [('iface_rksv', '=', False)]}">
