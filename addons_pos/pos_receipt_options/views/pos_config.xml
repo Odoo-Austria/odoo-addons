@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record id="view_pos_config_form" model="ir.ui.view">
+            <field name="name">pos.config.form.view.inherit</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_config_form"></field>
+            <field name="arch" type="xml">
+                <sheet position='inside'>
+                    <group string="Print Receipt Options" name="print_options">
+                        <group>
+                            <field name="print_shop_name"/>
+                            <field name="print_shop_logo"/>
+                            <field name="print_shop_address"/>
+                            <field name="print_shop_phone"/>
+                        </group>
+                        <group>
+                            <field name="print_shop_vat"/>
+                            <field name="print_shop_email"/>
+                            <field name="print_shop_website"/>
+                            <field name="print_shop_cashier"/>
+                        </group>
+                    </group>
+                </sheet>
+            </field>
+        </record>
+    </data>
+
+</openerp>
