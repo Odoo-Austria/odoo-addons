@@ -18,4 +18,3 @@ class PosConfig(models.Model):
         ],
         required=True
     )
-

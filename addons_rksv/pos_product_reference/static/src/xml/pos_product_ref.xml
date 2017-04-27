@@ -12,7 +12,6 @@
                 <li class="ref">
                     <em>Reference: </em><t t-raw="line.get_product_reference()"/>
                 </li>
-
             </t>
         </t>
     </t>

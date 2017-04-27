@@ -73,13 +73,27 @@ openerp.pos_compat = function(instance){
             PosWidgetSuper.prototype.build_widgets.call(this);
             // Then add the defined extra screens
             _.each(module.PosWidget.prototype.extrascreens, function(screen) {
+                var self = this;
                 this[screen['name']] = new screen['widget'](this, {});
-                if (screen['position']) {
-                    this[screen['name']].appendTo($(screen['position']));
+                if (this[screen['name']].willStart) {
+                    this[screen['name']].willStart().then(
+                        function done() {
+                            if (screen['position']) {
+                                self[screen['name']].appendTo($(screen['position']));
+                            } else {
+                                self[screen['name']].appendTo(self.$('.screens'));
+                            }
+                            self.screen_selector.add_screen(screen['name'], self[screen['name']])
+                        }
+                    );
                 } else {
-                    this[screen['name']].appendTo(this.$('.screens'));
+                    if (screen['position']) {
+                        this[screen['name']].appendTo($(screen['position']));
+                    } else {
+                        this[screen['name']].appendTo(this.$('.screens'));
+                    }
+                    this.screen_selector.add_screen(screen['name'], this[screen['name']])
                 }
-                this.screen_selector.add_screen(screen['name'], this[screen['name']])
             }, this);
             // And do add the extra popups
             _.each(module.PosWidget.prototype.extrapopups, function(popup) {
@@ -121,4 +135,4 @@ openerp.pos_compat = function(instance){
             return this.get_applicable_taxes();
         }
     });
-}
+};

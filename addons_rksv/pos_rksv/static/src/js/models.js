@@ -25,7 +25,7 @@ function openerp_rksv_models(instance, module) {
     Here we do add the fields and the models we need to load from the server
      */
     // BMF Fields we do need to communicate directly with the BMF SOAP Service
-    models.load_fields("res.company", [ "bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu" ]);
+    models.load_fields("res.company", [ "bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu", "bmf_tax_number", "bmf_vat_number"]);
     // Update domain on product.product
     models.append_domain("product.product", [['rksv_tax_mapping_correct','=',true]]);
     // Load Odoo configured signature providers - check if this is still needed !
@@ -66,18 +66,37 @@ function openerp_rksv_models(instance, module) {
         idAttribute: "serial",
         initialize: function(attributes,options) {
             Backbone.Model.prototype.initialize.apply(this, arguments);
-            var self = this;
             options = options || {};
 
-            this.pos            = options.pos;
+            this.pos = options.pos;
             return this;
         },
         getVAT: function() {
-            var idx = this.get('subject').indexOf("ATU");
-            return this.get('subject').substring(idx, idx + 11);
+            var regex = /.*\s(ATU\d{8})[,\s].*/g;
+            var m = regex.exec(this.get('subject'));
+            if (m && m.length==2) {
+                return m.pop();
+            }
+            return null;
+        },
+        getTaxNumber: function() {
+            var regex = /.*\s(\d{5}\/\d{4})[,\s].*/g;
+            var m = regex.exec(this.get('subject'));
+            if (m && m.length==2) {
+                var number = m.pop();
+                return number.replace(/[^\d]/g, "");
+            }
+            return null;
         },
         matchVAT: function(vat) {
             return (vat === this.getVAT()?true:false);
+        },
+        matchTaxNumber: function(tax_number) {
+            if (tax_number){
+                var clean_tax_number = tax_number.replace(/[^\d]/g, "");
+                return (clean_tax_number === this.getTaxNumber()?true:false);
+            }
+            return false;
         },
         _updateStatus: function(status) {
             this.set(status);
@@ -131,7 +150,7 @@ function openerp_rksv_models(instance, module) {
                     proxyDeferred.resolve(response);
                     return response;
                 },
-                function failed() {
+                function failed(response) {
                     proxyDeferred.reject("Abfrage des Status beim BMF ist fehlgeschlagen");
                     return response;
                 }
@@ -184,6 +203,8 @@ function openerp_rksv_models(instance, module) {
         },
         export_for_printing: function () {
             var data = OrderModelSuper.export_for_printing.call(this);
+            if (!this.pos.config.iface_rksv)
+                return data;
             data.qrcodevalue = this.qrcodevalue;
             data.qrcode_img = this.qrcode_img;
             data.ocrcodevalue = this.ocrcodevalue;
@@ -202,6 +223,8 @@ function openerp_rksv_models(instance, module) {
         // Include RKSV Data for the export to odoo
         export_as_JSON: function () {
             var data = OrderModelSuper.export_as_JSON.call(this);
+            if (!this.pos.config.iface_rksv)
+                return data;
             var rksv_data = {
                 'qrcodevalue': this.qrcodevalue,
                 'qrcode_img': this.qrcode_img,
@@ -225,6 +248,8 @@ function openerp_rksv_models(instance, module) {
         // Read also stored RKSV data
         init_from_JSON: function(json) {
             OrderModelSuper.init_from_JSON.call(this, json);
+            if (!this.pos.config.iface_rksv)
+                return;
             this.qrcodevalue = json.qrcodevalue;
             this.qrcode_img = json.qrcode_img;
             this.ocrcodevalue = json.ocrcodevalue;

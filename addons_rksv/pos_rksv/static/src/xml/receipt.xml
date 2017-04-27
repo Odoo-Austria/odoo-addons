@@ -4,25 +4,32 @@
     <!-- Extend the PosTicket - include QRCode - and for testing the OCR Representation -->
     <t t-extend="PosTicket">
         <t t-jquery="t[t-esc='order.get('name')']" t-operation="after">
-            <p>Bon Nr.: <t t-esc="order.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Bon Nr.: <t t-esc="order.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at and !widget.pos.config.iface_rksv">NICHT GESETZTESKONFORMER BELEG!</p>
         </t>
         <t t-jquery="t[t-if='widget.pos.config.receipt_footer']" t-operation="before">
-            <div t-if="order.cashbox_mode=='active'" style='text-align:center'>
-                <img t-att-src="order.qrcode_img" width="100px;"/>
-            </div>
-            <div t-if="order.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</div>
-            <p style="font-family: OCR-A, monospace;font-size:8px;word-wrap: break-word;"><t t-raw="order.ocrcodevalue"/></p>
+            <t t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">
+                <div t-if="order.cashbox_mode=='active'" style="text-align:center;margin: 20px 0;">
+                    <img t-att-src="order.qrcode_img" width="100px;"/>
+                </div>
+                <div t-if="order.cashbox_mode=='signature_failed'" style="text-align:center;margin: 20px 0;">Signatureinheit ausgefallen</div>
+            </t>
+            <p t-if="widget.pos.config.rksv_at and !widget.pos.config.iface_rksv">NICHT GESETZTESKONFORMER BELEG!</p>
         </t>
     </t>
 
     <!-- Extend the XmlReceipt to include the QRCode as a direct qrcode print command -->
     <t t-extend="XmlReceipt" >
         <t t-jquery="t[t-esc='receipt.name']" t-operation="after">
-            <p>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
+            <p t-if="widget.pos.config.rksv_at and !widget.pos.config.iface_rksv">NICHT GESETZTESKONFORMER BELEG!</p>
         </t>
         <t t-jquery="t[t-if='receipt.footer']" t-operation="before">
-            <qrcode t-if="receipt.cashbox_mode=='active'"><t t-raw='receipt.qrcodevalue'/></qrcode>
-            <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
+            <t  t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">
+                <qrcode t-if="receipt.cashbox_mode=='active'"><t t-raw='receipt.qrcodevalue'/></qrcode>
+                <p t-if="receipt.cashbox_mode=='signature_failed'">Signatureinheit ausgefallen</p>
+            </t>
+            <p t-if="widget.pos.config.rksv_at and !widget.pos.config.iface_rksv">NICHT GESETZTESKONFORMER BELEG!</p>
         </t>
     </t>
     <t t-name="RKSVReceipt">
@@ -51,26 +58,25 @@
     </t>
     <t t-name="RKSVTicket">
         <div class="pos-sale-ticket">
+            <t t-set="company" t-value="order.get_company()"/>
             <img class="company_logo" style="width: 100%; margin: 0; border: 0;" crossorigin="anonymous" t-att-src="company.logo_url" /><br /><br />
             <t t-esc="company.name"/><br />
             <t t-esc="company.street" /><br />
             <t t-esc="company.zip" /> <t t-esc="company.city" /> <br />
             <t t-esc="company.vat"/><br /><br />
             Phone: <t t-esc="company.phone || ''"/><br /><br />
-            <!-- 
             Kassa: <t t-esc="widget.pos.config.name" /><br /><br />
             <t t-if="widget.pos.config.receipt_header">
                 <div style='text-align:center'>
                     <t t-esc="widget.pos.config.receipt_header" />
                 </div>
                 <br /><br />
-            </t> -->
+            </t>
             <h2><t t-esc='title'/></h2>
             <div>
-                Referenz: <t t-esc="receipt.ref" /><br />
-                Bon Nr.: <t t-esc="('00000000' + receipt.receiptId).slice(-8)" />
+                <p>Referenz: <t t-esc="receipt.ref"/></p>
+                <p>Bon Nr.: <t t-esc="('00000000' + receipt.receiptId).slice(-8)" /></p>
             </div>
-            <div class="single_dash_line"></div>
             <div style="padding: 5px 0">Datum: <t t-esc="receipt.receiptDate" /><br /><br/></div>
             <div style='text-align:center'>
                 <p>Signature Serial: <t t-raw='receipt.signatureSerial' /></p>

@@ -59,15 +59,18 @@ class signature_provider(models.Model):
                 'pos_config_id': pos_config_id['pos_config_id'],
             }
             if existing_provider:
-                existing_provider.update(vals)
+                existing_provider.write(vals)
             else:
                 self.env['signature.provider'].create(vals)
 
     @api.model
     def update_status(self, signaturedata):
-        _logger.info("Got data to update: %r", signaturedata)
+        _logger.debug("Got data to update: %r", signaturedata)
         signature = self.search([('serial', '=', signaturedata['serial'])], limit=1)
-        signature.bmf_last_status = signaturedata['bmf_last_status'] if 'bmf_last_status' in signaturedata else 'UNBEKANNT'
-        signature.bmf_last_update = signaturedata['bmf_last_update'] if 'bmf_last_update' in signaturedata else None
-        signature.bmf_message = signaturedata['bmf_message'] if 'bmf_message' in signaturedata else ''
+        vals = {}
+        vals['bmf_last_status'] = signaturedata['bmf_last_status'] if 'bmf_last_status' in signaturedata else 'UNBEKANNT'
+        vals['bmf_last_update'] = signaturedata['bmf_last_update'] if 'bmf_last_update' in signaturedata else None
+        vals['bmf_message'] = signaturedata['bmf_message'] if 'bmf_message' in signaturedata else ''
+        signature.write(vals)
+
         return True

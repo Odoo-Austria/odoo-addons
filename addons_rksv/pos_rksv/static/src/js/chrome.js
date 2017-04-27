@@ -36,6 +36,9 @@ function openerp_rksv_chrome(instance, module){
         },
         start: function () {
             var self = this;
+            if (!self.pos.config.iface_rksv) {
+                return this._super();
+            }
             this.set_smart_status(this.pos.proxy.get('status'));
             this.pos.proxy.on('change:status', this, function (eh, status) {
                 self.set_smart_status(status.newValue);
@@ -46,7 +49,13 @@ function openerp_rksv_chrome(instance, module){
                     'stay_open': true
                 });
             });
+        },
+        renderElement: function() {
+            if (this.pos.config.iface_rksv) {
+                return this._super();
+            }
         }
+
     });
 
     /*
@@ -65,6 +74,16 @@ function openerp_rksv_chrome(instance, module){
         start: function () {
             // Supercall using prototype
             this._super();
+            if (!this.pos.config.iface_rksv) {
+                this.disable_rksv();
+            } else {
+                this.install_rksv_eventhandler();
+            }
+        },
+        disable_rksv: function() {
+            this.$('.rksvdebug').hide();
+        },
+        install_rksv_eventhandler: function() {
             var self = this;
             // Now do register our own events
             this.$('.button.rksv_firstreport').click(function(){

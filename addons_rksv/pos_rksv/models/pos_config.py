@@ -18,6 +18,9 @@ class POSConfig(models.Model):
     @api.multi
     def open_ui(self):
         for config in self:
+            if not self.iface_rksv:
+                # Do not check for rksv products if rksv is not activated for this pos.config
+                continue
             if not (
                 config.start_product_id.rksv_tax_mapping_correct and
                 config.year_product_id.rksv_tax_mapping_correct and
@@ -63,10 +66,11 @@ class POSConfig(models.Model):
         inverse_name='pos_config_id',
         string='Available Providers'
     )
-    iface_rksv = fields.Boolean(string='RKSV', help="Use PosBox for RKSV")
+    iface_rksv = fields.Boolean(string='RKSV', default=True, help="Use PosBox for RKSV")
     bound_signature = fields.Boolean(string='Bound')
     pos_admin_passwd = fields.Char(string='POS Admin Password')
     bmf_gemeldet = fields.Boolean(string='Registrierkasse beim BMF angemeldet')
+    rksv_at = fields.Boolean('RKSV AT', related='company_id.rksv_at')
     bmf_test_mode = fields.Boolean(
         string='BMF Test Modus',
         default=True
@@ -94,11 +98,10 @@ class POSConfig(models.Model):
         domain=[
             ('sale_ok', '=', True),
             ('available_in_pos', '=', True),
+            ('rksv_tax_mapping_correct', '=', True),
             ('rksv_product_type', '=', 'startreceipt'),
-            ('rksv_tax_mapping_correct', '=', True)
         ],
-        required=True,
-        #default=lambda self: self.env.ref('pos_rksv.rksv_start_receipt')
+        required=False,
     )
     month_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -106,11 +109,10 @@ class POSConfig(models.Model):
         domain=[
             ('sale_ok', '=', True),
             ('available_in_pos', '=', True),
+            ('rksv_tax_mapping_correct', '=', True),
             ('rksv_product_type', '=', 'monthreceipt'),
-            ('rksv_tax_mapping_correct', '=', True)
         ],
-        required=True,
-        #default=lambda self: self.env.ref('pos_rksv.rksv_month_receipt')
+        required=False,
     )
     year_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -118,11 +120,10 @@ class POSConfig(models.Model):
         domain=[
             ('sale_ok', '=', True),
             ('available_in_pos', '=', True),
+            ('rksv_tax_mapping_correct', '=', True),
             ('rksv_product_type', '=', 'yearreceipt'),
-            ('rksv_tax_mapping_correct', '=', True)
         ],
-        required=True,
-        #default=lambda self: self.env.ref('pos_rksv.rksv_year_receipt')
+        required=False,
     )
     null_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -130,11 +131,10 @@ class POSConfig(models.Model):
         domain=[
             ('sale_ok', '=', True),
             ('available_in_pos', '=', True),
+            ('rksv_tax_mapping_correct', '=', True),
             ('rksv_product_type', '=', 'nullreceipt'),
-            ('rksv_tax_mapping_correct', '=', True)
         ],
-        required=True,
-        #default=lambda self: self.env.ref('pos_rksv.rksv_dummy_receipt')
+        required=False,
     )
     invoice_product_id = fields.Many2one(
         comodel_name='product.product',
@@ -143,12 +143,10 @@ class POSConfig(models.Model):
             ('sale_ok', '=', True),
             ('available_in_pos', '=', True),
             ('rksv_tax_mapping_correct', '=', True),
-            ('rksv_product_type', '=', 'product')
+            ('rksv_product_type', '=', 'nullreceipt')
         ],
-        required=True,
-        #default=lambda self: self.env.ref('pos_rksv.rksv_invoice_receipt')
+        required=False,
     )
-
     _sql_constraints = [('cashregisterid_unique', 'unique(cashregisterid)', 'Cashregister ID must be unique.')]
 
     @api.model

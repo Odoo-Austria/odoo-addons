@@ -5,6 +5,7 @@ function openerp_rksv_rksv(instance) {
     var QWeb = instance.web.qweb;
     var Model = instance.web.Model;
     var _t = core._t;
+
     /* RKSV Core Extension */
 
     var RKSV = core.Class.extend({
@@ -58,6 +59,9 @@ function openerp_rksv_rksv(instance) {
 
             if (this.proxy){
                 this.proxy.on('change:status', this, function (eh, status) {
+                    // Ignore the status change when rksv is not enabled
+                    if (!self.pos.config.iface_rksv)
+                        return;
                     self.last_proxy_status = status.newValue;
                     // Do check posbox and rksv status
                     if (status.newValue.status == "connected") {
@@ -254,6 +258,11 @@ function openerp_rksv_rksv(instance) {
         },
         rksv_reprint_special_receipt: function(type, title) {
             var self = this;
+            // Make sure the current order is closed
+            var order = self.pos.get_order();
+            if (order && order.screen_data && order.screen_data.screen == 'receipt'){
+                order.finalize();
+            }
             if (!self.check_proxy_connection()) {
                 self.pos.gui.show_popup('error',{
                     'message': _t("Fehler"),
@@ -336,6 +345,7 @@ function openerp_rksv_rksv(instance) {
                     self.start_receipt_in_progress = false;
                 },
                 function failed() {
+                    // TODO: Add error Message here !
                     self.start_receipt_in_progress = false;
                 }
             );
@@ -356,6 +366,7 @@ function openerp_rksv_rksv(instance) {
                     self.year_receipt_in_progress = false;
                 },
                 function failed() {
+                    // TODO: Add error Message here !
                     self.year_receipt_in_progress = false;
                 }
             );
@@ -381,6 +392,7 @@ function openerp_rksv_rksv(instance) {
                     self.month_receipt_in_progress = false;
                 },
                 function failed() {
+                    // TODO: Add error Message here !
                     self.month_receipt_in_progress = false;
                 }
             );

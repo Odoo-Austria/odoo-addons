@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="pos_rksv.view_pos_config_form"/>
             <field name="arch" type="xml">
                 <field name="signature_provider_id" position="after">
-                    <field name="default_table_id"/>
+                    <field name="default_table_id" attrs="{'required': [('iface_rksv', '=', True)]}"/>
                 </field>
             </field>
         </record>

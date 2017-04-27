@@ -35,7 +35,10 @@ function openerp_rksv_screens(instance, module) {
     var _t = core._t;
 
     screens.PaymentScreenWidget.include({
+        // TODO: Implement this by splitting up and contributing to Odoo Core
         validate_order: function(options) {
+            if (!this.pos.config.iface_rksv)
+                return this._super();
             var self = this;
             options = options || {};
 
@@ -160,8 +163,10 @@ function openerp_rksv_screens(instance, module) {
      */
     screens.ReceiptScreenWidget.include({
         should_auto_print: function() {
-            console.log("always print the receipt - no mercy here");
-            return true;
+            if (!this.pos.config.iface_rksv)
+                return this._super();
+            console.log("We always must print the receipt");
+            return true && !this.pos.get_order()._printed;
         }
     });
 
@@ -188,7 +193,17 @@ function openerp_rksv_screens(instance, module) {
             this.events['click .export_crypt'] = 'export_crypt';
             this.events['click .start_receipt_set_valid'] = 'start_receipt_set_valid';
         },
+        willStart: function() {
+            if (this.pos.config.iface_rksv)
+                return $.when();
+            else
+                // We do provide a deferred which will never fire
+                return $.Deferred();
+        },
         start: function() {
+            if (!this.pos.config.iface_rksv)
+                // Do nothing if rksv is not enabled
+                return;
             var self = this;
             console.log('RKSV: do install proxy status change handler');
             self.posbox_status_handler();
@@ -270,6 +285,9 @@ function openerp_rksv_screens(instance, module) {
             return (mode=='signature_failed' || mode=='posbox_failed');
         },
         auto_open_close: function() {
+            // Do not open when rksv is not enabled
+            if (!this.pos.config.iface_rksv) return;
+            // Do not open when rksv is not intitialized
             if (this.pos.rksv === undefined) return;
             if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
                 this.pos.gui.show_screen('rksv_status');
@@ -320,6 +338,7 @@ function openerp_rksv_screens(instance, module) {
             ul = self.get_rksv_product(ul, self.pos.config.month_product_id, 'Monatsbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.year_product_id, 'Jahresbeleg');
             ul = self.get_rksv_product(ul, self.pos.config.null_product_id, 'Nullbeleg');
+            ul = self.get_rksv_product(ul, self.pos.config.invoice_product_id, 'Referenzbeleg');
             container.append(ul);
             if (this.pos.rksv.statuses['rksv_products_exists']) {
                 self.$('.monthproduct-status-indicator .indicator').css('background', 'green');
@@ -497,9 +516,14 @@ function openerp_rksv_screens(instance, module) {
         },
         render_card: function (card) {
             var valid_vat = false;
-            var company_vat = this.pos.company.vat;
-            if (card.matchVAT(company_vat)) {
+            if (card.matchVAT(this.pos.company.bmf_vat_number)) {
                 valid_vat = true;
+            }
+            if (!valid_vat) {
+                // Try to match against Steuernummer
+                if (card.matchTaxNumber(this.pos.company.bmf_tax_number)) {
+                    valid_vat = true;
+                }
             }
             var sprovider_html = QWeb.render('SignatureProvider', {
                 widget: this,
