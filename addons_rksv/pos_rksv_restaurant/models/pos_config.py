@@ -9,5 +9,5 @@ class pos_config(models.Model):
     default_table_id = fields.Many2one(
         comodel_name='restaurant.table',
         string='Standard Tisch',
-        required=False
+        required=True
     )
