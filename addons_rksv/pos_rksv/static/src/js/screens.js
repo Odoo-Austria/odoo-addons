@@ -103,6 +103,17 @@ odoo.define('pos_rksv.screens', function (require) {
                 return;
             }
 
+            if (order.push_to_rksv) {
+                // If validation date is already set - then this order is already in validation state - so do not send it a second time
+                self.gui.show_popup('error',{
+                    'title': _t('Not allowed'),
+                    'body': _t('This order is already transmitted'),
+                });
+                return;
+            }
+            // Set the push to rksv flag
+            order.push_to_rksv = true;
+
             if (order.is_paid_with_cash() && this.pos.config.iface_cashdrawer) {
                     this.pos.proxy.open_cashbox();
             }
@@ -114,6 +125,8 @@ odoo.define('pos_rksv.screens', function (require) {
                 this.invoicing = true;
 
                 invoiced.fail(function(error){
+                    // Reset the push to rksv flag
+                    order.push_to_rksv = false;
                     self.invoicing = false;
                     if (error.message === 'Missing Customer') {
                         self.gui.show_popup('confirm',{
@@ -151,6 +164,8 @@ odoo.define('pos_rksv.screens', function (require) {
                         self.gui.show_screen('receipt');
                     },
                     function failed(message){
+                        // Reset the push to rksv flag
+                        order.push_to_rksv = false;
                         self.pos.gui.show_popup('error',{
                             'title': _t("RKSV Fehler"),
                             'body':  message
