@@ -132,14 +132,10 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             order.add_product(product, {
                 price: this.new_invoice.get('amount_total'),
                 extras: {
-                    invoice_id: this.new_invoice.get('id'),
+                    invoice: this.new_invoice,
                 },
                 merge: false,
             });
-            // Add reference to order line
-            if (order.selected_orderline){
-                order.selected_orderline.set_product_reference(this.new_invoice.get('number'));
-            }
         },
         render_list: function(invoices){
             var order = this.pos.get_order();

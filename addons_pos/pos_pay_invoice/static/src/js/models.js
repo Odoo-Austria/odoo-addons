@@ -18,6 +18,14 @@ odoo.define('pos_pay_invoice.models', function (require) {
         },
         get_partner: function() {
             return this.pos.db.get_partner_by_id(this.get('partner_id')[0]);
+        },
+        get_partner_displayname: function() {
+            var partner = this.get_partner();
+            if (partner) {
+                return partner.name;
+            } else {
+                return _t("Unknown");
+            }
         }
     });
 
@@ -93,6 +101,10 @@ odoo.define('pos_pay_invoice.models', function (require) {
         },
         set_quantity: function(quantity) {
             if ((this.invoice_id) && (quantity > 1)) {
+                self.pos.gui.show_popup('error',{
+                    'title': _t("Error"),
+                    'body': _t("You can not pay the invoice more than 1 time !")
+                });
                 return;
             }
             return OrderlineModelSuper.set_quantity.call(this, quantity);
@@ -125,10 +137,25 @@ odoo.define('pos_pay_invoice.models', function (require) {
                 // Nothing else is allowed - so create new order here
                 this.pos.add_new_order();
                 var order = this.pos.get_order();
-                return order.add_product(product, options);
+                order.addProduct(product, options);
+                // Get Orderline
+                if (options && options.extras && options.extras.invoice) {
+                    var orderline = order.getLastOrderline();
+                    orderline.invoice_id = options.extras.invoice.get('id');
+                    // We need to force a rerender here
+                    order.get('orderLines').trigger('change', last_orderline);
+                }
+                return;
             }
             // Everything is ok - proceed
-            return OrderModelSuper.add_product.call(this, product, options);
+            OrderModelSuper.add_product.call(this, product, options);
+            // Get ORderline
+            if (options && options.extras && options.extras.invoice) {
+                var last_orderline = this.getLastOrderline();
+                last_orderline.invoice_id = options.extras.invoice.get('id');
+                // We need to force a rerender here
+                this.get('orderLines').trigger('change', last_orderline);
+            }
         },
     });
 
