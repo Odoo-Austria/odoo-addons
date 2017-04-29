@@ -21,6 +21,7 @@ Pay invoice directly on in PoS session
         'views/templates.xml',
         'views/pos_config.xml',
         'views/pos_order.xml',
+        'views/account_invoice.xml',
     ],
     'qweb': [
         'static/src/xml/invoice.xml'

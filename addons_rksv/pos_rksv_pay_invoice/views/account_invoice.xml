@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="customer_invoice_form_view" model="ir.ui.view">
+            <field name="name">Customer Invoice (Form)</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="pos_pay_invoice.customer_invoice_form_view" />
+            <field name="arch" type="xml">
+                <field name="pos_order_id" position="after">
+                    <field name="qr_code_image" widget="image" options="{'preview_image': 'qr_code_image', 'size': [100, 100]}" attrs="{'invisible': [('pos_order_id', '=', False)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

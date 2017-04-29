@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Registrierkasse Österreich - Zahle Rechnung',
+    'name': 'Registrierkasse Österreich - Rechnung über PoS zahlen',
     'version': '1.0',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Registrierkassenpflicht Modul für Österreich',
-    'website': 'https://www.callino.at/page/rksv',
+    'website': 'https://github.com/Odoo-Austria',
+    'author': 'Wolfgang Pichler (Callino), WT-IO-IT GmbH, Wolfgang Taferner',
     'description': """
 Registrierkasse Österreich - Rechnung
-=====================================
+=======================================
 """,
-    'author': 'Wolfgang Pichler (Callino), Wolfgang Taferner (WT-IO-IT GmbH)',
-    'depends': ['point_of_sale', 'pos_rksv', 'pos_pay_invoice'],
+    'depends': ['pos_rksv', 'pos_pay_invoice'],
     'test': [
     ],
     'data': [
+        'views/account_invoice.xml',
     ],
     'qweb': [
     ],
