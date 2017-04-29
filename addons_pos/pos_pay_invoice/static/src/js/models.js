@@ -138,23 +138,19 @@ odoo.define('pos_pay_invoice.models', function (require) {
                 this.pos.add_new_order();
                 var order = this.pos.get_order();
                 order.addProduct(product, options);
-                // Get Orderline
                 if (options && options.extras && options.extras.invoice) {
-                    var orderline = order.getLastOrderline();
-                    orderline.invoice_id = options.extras.invoice.get('id');
-                    // We need to force a rerender here
-                    order.get('orderLines').trigger('change', last_orderline);
+                    var orderline = this.get_last_orderline();
+                    last_orderline.invoice_id = options.extras.invoice.get('id');
+                    this.orderlines.trigger('change', last_orderline)
                 }
                 return;
             }
             // Everything is ok - proceed
             OrderModelSuper.add_product.call(this, product, options);
-            // Get ORderline
             if (options && options.extras && options.extras.invoice) {
-                var last_orderline = this.getLastOrderline();
+                var last_orderline = this.get_last_orderline();
                 last_orderline.invoice_id = options.extras.invoice.get('id');
-                // We need to force a rerender here
-                this.get('orderLines').trigger('change', last_orderline);
+                this.orderlines.trigger('change', last_orderline)
             }
         },
     });
