@@ -187,8 +187,10 @@ odoo.define('pos_rksv.screens', function (require) {
             return true && !this.pos.get_order()._printed;
         },
         print_web: function() {
+           var self = this;
+           self.print_web_delayed = this._super;
            setTimeout(function() {
-               this._super();
+               self.print_web_delayed();
            }, 1000);
         },
     });
