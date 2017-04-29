@@ -35,73 +35,12 @@ odoo.define('pos_rksv.screens', function (require) {
     var _t = core._t;
 
     screens.PaymentScreenWidget.include({
-        // TODO: Implement this by splitting up and contributing to Odoo Core
-        validate_order: function(force_validation) {
+        finalize_validation: function() {
             if (!this.pos.config.iface_rksv)
                 return this._super();
+
             var self = this;
             var order = this.pos.get_order();
-
-            // Copied from finalize_validation
-            // FIXME: this check is there because the backend is unable to
-            // process empty orders. This is not the right place to fix it.
-            if (order.get_orderlines().length === 0) {
-                this.gui.show_popup('error',{
-                    'title': _t('Empty Order'),
-                    'body':  _t('There must be at least one product in your order before it can be validated'),
-                });
-                return;
-            }
-
-            var plines = order.get_paymentlines();
-            for (var i = 0; i < plines.length; i++) {
-                if (plines[i].get_type() === 'bank' && plines[i].get_amount() < 0) {
-                    this.pos_widget.screen_selector.show_popup('error',{
-                        'message': _t('Negative Bank Payment'),
-                        'comment': _t('You cannot have a negative amount in a Bank payment. Use a cash payment method to return money to the customer.'),
-                    });
-                    return;
-                }
-            }
-
-            if (!order.is_paid() || this.invoicing) {
-                return;
-            }
-
-            // The exact amount must be paid if there is no cash payment method defined.
-            if (Math.abs(order.get_total_with_tax() - order.get_total_paid()) > 0.00001) {
-                var cash = false;
-                for (var i = 0; i < this.pos.cashregisters.length; i++) {
-                    cash = cash || (this.pos.cashregisters[i].journal.type === 'cash');
-                }
-                if (!cash) {
-                    this.gui.show_popup('error',{
-                        title: _t('Cannot return change without a cash payment method'),
-                        body:  _t('There is no cash payment method available in this point of sale to handle the change.\n\n Please pay the exact amount or add a cash payment method in the point of sale configuration'),
-                    });
-                    return;
-                }
-            }
-
-            // if the change is too large, it's probably an input error, make the user confirm.
-            if (!force_validation && (order.get_total_with_tax() * 1000 < order.get_total_paid())) {
-                this.gui.show_popup('confirm',{
-                    title: _t('Please Confirm Large Amount'),
-                    body:  _t('Are you sure that the customer wants to  pay') +
-                           ' ' +
-                           this.format_currency(order.get_total_paid()) +
-                           ' ' +
-                           _t('for an order of') +
-                           ' ' +
-                           this.format_currency(order.get_total_with_tax()) +
-                           ' ' +
-                           _t('? Clicking "Confirm" will validate the payment.'),
-                    confirm: function() {
-                        self.validate_order('confirm');
-                    },
-                });
-                return;
-            }
 
             if (order.push_to_rksv) {
                 // If validation date is already set - then this order is already in validation state - so do not send it a second time
@@ -115,9 +54,8 @@ odoo.define('pos_rksv.screens', function (require) {
             order.push_to_rksv = true;
 
             if (order.is_paid_with_cash() && this.pos.config.iface_cashdrawer) {
-                    this.pos.proxy.open_cashbox();
+                this.pos.proxy.open_cashbox();
             }
-
             order.initialize_validation_date();
 
             if (order.is_to_invoice()) {
