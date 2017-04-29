@@ -137,7 +137,7 @@ odoo.define('pos_pay_invoice.models', function (require) {
                 // Nothing else is allowed - so create new order here
                 this.pos.add_new_order();
                 var order = this.pos.get_order();
-                order.addProduct(product, options);
+                order.add_product(product, options);
                 if (options && options.extras && options.extras.invoice) {
                     var orderline = this.get_last_orderline();
                     last_orderline.invoice_id = options.extras.invoice.get('id');
