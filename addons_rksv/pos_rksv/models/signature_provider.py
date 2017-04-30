@@ -24,7 +24,7 @@ class signature_provider(models.Model):
     x509 = fields.Text(string='X509')
     pos_config_id = fields.Many2one(
         comodel_name='pos.config',
-        string='POSBox'
+        string='Point of Sale'
     )
     bmf_last_status = fields.Selection(
         selection=[
@@ -38,8 +38,14 @@ class signature_provider(models.Model):
         track_visibility='onchange',
         copy=False
     )
-    bmf_last_update = fields.Datetime('Letztes Update vom BMF')
-    bmf_message = fields.Char(string="BMF Status Text")
+    bmf_last_update = fields.Datetime(
+        string='Letztes Update vom BMF',
+        copy=False)
+    bmf_message = fields.Char(
+        string="BMF Status Text",
+        track_visibility='onchange',
+        copy=False
+    )
 
     @api.model
     def set_providers(self, providers, pos_config_id):

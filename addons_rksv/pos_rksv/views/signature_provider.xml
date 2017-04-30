@@ -6,25 +6,58 @@
             <field name="model">signature.provider</field>
             <field name="arch" type="xml">
                 <form string="Signature Provider">
-                <header>
-                    <field name="bmf_last_status" widget="statusbar" nolabel="1" />
-                </header>
-                    <group>
+                    <header>
+                        <field name="bmf_last_status" widget="statusbar" nolabel="1" />
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field  name="name" />
+                        </h1>
                         <group>
-                            <field name="name"/>
-                            <field name="serial"/>
-                            <field name="reader"/>
-                            <field name="pos_config_id"/>
+                            <group>
+                                <field name="pos_config_id" />
+                                <field name="reader" />
+                            </group>
+                            <group />
                         </group>
-                        <group>
-                            <field name="valid_from"/>
-                            <field name="valid_until"/>
-                            <field name="provider_name"/>
-                            <field name="issuer"/>
-                            <field name="subject"/>
-                            <field name="x509"/>
-                        </group>
-                    </group>
+                        <notebook>
+                            <page string="Zertifikat">
+                                <group string="Subject">
+                                    <field name="subject" />
+                                </group>
+                                <group string="Meta">
+                                    <group>
+                                        <field name="serial" />
+                                        <field name="provider_name" />
+                                        <field name="issuer" />
+                                   </group>
+                                    <group>
+                                        <field name="valid_from" />
+                                        <field name="valid_until" />
+                                    </group>
+                                    
+                                </group>
+                                <group string="Content">
+                                    <field name="x509" nolabel="1" />
+                                </group>
+                            </page>
+                            <page string="BMF">
+                                <group>
+                                    <field name="bmf_last_update" />
+                                    <field name="bmf_message" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field
+                            name="message_follower_ids"
+                            widget="mail_followers"
+                            groups="base.group_user" />
+                        <field
+                            name="message_ids"
+                            widget="mail_thread" />
+                    </div>
                 </form>
             </field>
         </record>
@@ -32,7 +65,12 @@
             <field name="name">signature.provider.tree</field>
             <field name="model">signature.provider</field>
             <field name="arch" type="xml">
-                <tree colors="blue:bmf_last_status == 'UNBEKANNT';green:bmf_last_status == 'IN_BETRIEB';red:bmf_last_status == 'AUSFALL' " string="Signaturerstellungseinheiten">
+                <tree
+                    string="Signaturerstellungseinheiten"
+                    decoration-bf="True"
+                    decoration-success="bmf_last_status == 'IN_BETRIEB'"
+                    decoration-info="bmf_last_status == 'UNBEKANNT'"
+                    decoration-danger="bmf_last_status == 'AUSFALL'">
                     <field name="bmf_last_status" invisible="1"/>
                     <field name="subject"/>
                     <field name="serial"/>
