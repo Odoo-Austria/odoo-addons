@@ -5,15 +5,14 @@
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'MPD Six Payment Terminal Integration Odoo POS',
-    'website': 'https://www.callino.at/page/mpd',
-    "license": 'Other proprietary',
+    'website': 'https://github.com/Odoo-Austria',
+    'author': 'Wolfgang Pichler (Callino), WT-IO-IT GmbH, Wolfgang Taferner',
+    'license': "Other proprietary",
     'description': """
 MPD Integration Six Payment
-===========================
-
+=============================
 
 """,
-    'author': 'Wolfgang Pichler',
     'depends': ['point_of_sale'],
     'test': [
     ],

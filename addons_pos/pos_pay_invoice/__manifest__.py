@@ -6,8 +6,8 @@
     'sequence': 6,
     'summary': 'Pay open invoice directly in PoS session',
     'website': 'https://github.com/Odoo-Austria',
-    'author': 'WT-IO-IT GmbH, Wolfgang Taferner, Wolfgang Pichler (Callino)',
-    'license': "AGPL-3",
+    'author': 'Wolfgang Pichler (Callino), WT-IO-IT GmbH, Wolfgang Taferner',
+    'license': "Other proprietary",
     'description': """
 PoS Pay Invoice
 ================

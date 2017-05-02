@@ -7,6 +7,7 @@
     'summary': 'Registrierkassenpflicht Modul für Österreich',
     'website': 'https://github.com/Odoo-Austria',
     'author': 'Wolfgang Pichler (Callino), WT-IO-IT GmbH, Wolfgang Taferner',
+    'license': "Other proprietary",
     'description': """
 Registrierkasse Österreich - Rechnung
 =======================================

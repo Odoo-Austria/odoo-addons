@@ -5,15 +5,15 @@
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Registrierkassenpflicht Modul für Österreich',
-    'website': 'https://www.callino.at/page/rksv',
-    "license": 'Other proprietary',
+    'website': 'https://github.com/Odoo-Austria',
+    'author': 'Wolfgang Pichler (Callino), WT-IO-IT GmbH, Wolfgang Taferner',
+    'license': "Other proprietary",
     'description': """
 Registrierkasse Österreich
 ==================================
 
 Registrierkassen Modul für die Anforderungen der Österreichischen Registrierkassenpflicht
 """,
-    'author': 'Wolfgang Pichler (Callino), Wolfgang Taferner (WT-IO-IT GmbH)',
     'depends': ['point_of_sale', 'pos_product_reference'],
     'test': [
     ],
