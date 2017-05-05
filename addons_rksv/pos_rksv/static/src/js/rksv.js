@@ -342,7 +342,7 @@ odoo.define('pos_rksv.rksv', function (require) {
         },
         create_year_receipt: function() {
             var self = this;
-            if (self.pos.get_order().start_receipt){
+            if ((self.pos.get_order()) && (self.pos.get_order().start_receipt)) {
                 self.pos.get_order().finalize();
             }
             self.pos.chrome.$el.find('div.button.cancel.close_button').click();
@@ -366,7 +366,7 @@ odoo.define('pos_rksv.rksv', function (require) {
         },
         create_month_receipt: function() {
             var self = this;
-            if (self.pos.get_order().year_receipt){
+            if ((self.pos.get_order()) && (self.pos.get_order().year_receipt)) {
                 self.pos.get_order().finalize();
             }
             self.pos.chrome.$el.find('div.button.cancel.close_button').click();
