@@ -14,8 +14,6 @@ odoo.define('pos_rksv_restaurant.rksv', function (require) {
             this.pos.set_table(table);
             // Make super call to create dummy order
             var order = this._super(product_id, reference);
-            // Set back the old table
-            this.pos.set_table(currentTable);
             return order;
         },
     });
