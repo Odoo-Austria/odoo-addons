@@ -352,6 +352,9 @@ function openerp_rksv_rksv(instance) {
         },
         create_year_receipt: function() {
             var self = this;
+            if ((self.pos.get_order()) && (self.pos.get_order().start_receipt)) {
+                self.pos.get_order().finalize();
+            }
             this.year_receipt_in_progress = true;
             var year = ((new Date()).getFullYear() -1).toString()
             // Create a new dummy order with the year product
@@ -373,6 +376,9 @@ function openerp_rksv_rksv(instance) {
         },
         create_month_receipt: function() {
             var self = this;
+            if ((self.pos.get_order()) && (self.pos.get_order().year_receipt)) {
+                self.pos.get_order().finalize();
+            }
             this.month_receipt_in_progress = true;
             // Create a new order
             var today = new Date();
