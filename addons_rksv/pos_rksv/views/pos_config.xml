@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
             <field name="arch" type="xml">
                 <button name="set_active" position="attributes">
-                    <attribute name="states">inactive,deprecated,setup,signature_failed,posbox_failed</attribute>
+                    <attribute name="states">inactive,deprecated,setup,signature_failed,posbox_failed,failure</attribute>
                 </button>
                 <button name="set_deprecate" position="replace">
                     <button string="Failure" name="set_failure" type="object" states="active,inactive" />
