@@ -20,7 +20,7 @@ POS Receipt Printing
 
 """,
     'author': 'Wolfgang Pichler (Callino)',
-    'depends': ['point_of_sale'],
+    'depends': ['point_of_sale', 'pos_compat'],
     'test': [
     ],
     'data': [
