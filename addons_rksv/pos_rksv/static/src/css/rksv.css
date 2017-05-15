@@ -169,3 +169,13 @@
     display: inline;
     float: left;
 }
+
+.pos .button.disabled,
+.pos .button.disabled:active{
+    background: #e2e2e2;
+    border: solid 1px #BEBEBE;
+    opacity: 0.5;
+    cursor: default;
+    color: inherit;
+    pointer-events: none;
+}
