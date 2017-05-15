@@ -7,6 +7,8 @@ odoo.define('pos_pay_invoice.screens', function (require) {
     var core = require('web.core');
     var QWeb = core.qweb;
     var _t = core._t;
+    var Model = require('web.DataModel');
+    var models = require('point_of_sale.models');
 
     var SearchInvoicesButton = screens.ActionButtonWidget.extend({
         template: 'SearchInvoicesButton',
@@ -64,6 +66,10 @@ odoo.define('pos_pay_invoice.screens', function (require) {
                 self.gui.back();
             });
 
+            this.$('.reload').click(function(){
+                self.reload();
+            });
+
             this.render_list(this.pos.invoices.sortBy('name'));
 
             this.$('.invoice-list-contents').delegate('.invoice-line','click',function(event){
@@ -76,7 +82,7 @@ odoo.define('pos_pay_invoice.screens', function (require) {
                 this.chrome.widget.keyboard.connect(this.$('.searchbox input'));
             }
 
-            this.$('.searchbox input').on('keypress',function(event){
+            this.$('.searchbox input').on('input',function(event){
                 clearTimeout(search_timeout);
 
                 var query = this.value;
@@ -89,6 +95,8 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             this.$('.searchbox .search-clear').click(function(){
                 self.clear_search();
             });
+            // Do reload invoice list to be up to date
+            self.reload();
         },
         hide: function () {
             this._super();
@@ -103,6 +111,45 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             }else{
                 this.render_list(this.pos.invoices.sortBy('name'));
             }
+        },
+        reload: function() {
+            var self = this;
+            self.reload_invoices().then(
+                function() {
+                    self.render_list(self.pos.invoices.sortBy('name'));
+                },
+                function() {
+                    self.pos.gui.show_popup('error',{
+                        'title': _t("Fehler"),
+                        'body': _t("Konnte Rechnungen nicht neu laden")
+                    });
+                }
+            );
+        },
+        reload_invoices: function() {
+            var self = this;
+            var def  = new $.Deferred();
+            var fields = _.find(this.pos.models,function(model){ return model.model === 'account.invoice'; }).fields;
+            new Model('account.invoice')
+                .query(fields)
+                .filter(['&', ['state', '=', 'open'], ['pos_order_id', '=', false]])
+                .all({'timeout':3000, 'shadow': true})
+                .then(function(invoices){
+                    // Add the new invoices
+                    var model_invoices = new Array;
+                    _.each(invoices, function(invoicedata) {
+                        var invoice = new models.Invoice(invoicedata, {
+                            pos: this.pos,
+                        });
+                        model_invoices.push(invoice);
+                    }, self);
+                    self.pos.invoices.reset(model_invoices);
+                    def.resolve();
+                }, function(err,event){
+                    event.preventDefault();
+                    def.reject();
+                });
+            return def;
         },
         clear_search: function(){
             this.render_list(this.pos.invoices.sortBy('name'));
@@ -190,22 +237,6 @@ odoo.define('pos_pay_invoice.screens', function (require) {
                 this.toggle_save_button();
             }
         },
-
-        // This fetches invoice changes on the server, and in case of changes,
-        // rerenders the affected views
-        reload_invoices: function(){
-            var self = this;
-            return this.pos.load_invoices().then(function(){
-                self.render_list(self.pos.db.get_partners_sorted(1000));
-
-                // update the currently assigned client if it has been changed in db.
-                var curr_client = self.pos.get_order().get_client();
-                if (curr_client) {
-                    self.pos.get_order().set_client(self.pos.db.get_partner_by_id(curr_client.id));
-                }
-            });
-        },
-
         close: function(){
             this._super();
         },

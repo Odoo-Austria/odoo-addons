@@ -40,6 +40,10 @@
                         <span class='search-clear'></span>
                     </span>
                     <span class='searchbox'></span>
+                    <span class='button reload'>
+                        Reload
+                        <i class='fa fa-reload'></i>
+                    </span>
                     <span class='button next oe_hidden highlight'>
                         Pay Invoice
                         <i class='fa fa-angle-double-right'></i>
