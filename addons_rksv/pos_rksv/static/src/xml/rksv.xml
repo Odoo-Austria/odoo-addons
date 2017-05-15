@@ -207,7 +207,7 @@
                     <input id="pass_input_operation" class="pos_admin_passwd" type="password"/>
                 </div>
                 <div class="kundeninfo_div" style="display:none;">
-                    <h2>Info an BMF</h2>
+                    <h2 class="kundeninfo_title">Info an BMF</h2>
                     <textarea class="kundeninfo" cols="40" rows="5"></textarea>
                 </div>
                 <div class="footer">

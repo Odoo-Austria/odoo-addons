@@ -843,7 +843,10 @@ odoo.define('pos_rksv.rksv', function (require) {
         bmf_sprovider_registrieren: function(serial) {
             var self = this;
             var sprovider_popup = this.pos.gui.popup_instances.rksv_popup_widget;
-            sprovider_popup.show({}, 'Signatureinheit registrieren', 'BMF melden', true);
+            sprovider_popup.show({
+                'kundeninfo_title': 'Bezeichnung',
+                'kundeninfo_required': true,
+            }, 'Signatureinheit registrieren', 'Registrieren', true);
             // First - do remove old event handlers
             sprovider_popup.$('.execute_button').off();
             // And do install our own event handler

@@ -46,6 +46,9 @@ odoo.define('pos_rksv.popups', function (require) {
             this.$('.kundeninfo').val('');
             this.$('.execute_button').hide();
             this.$('.close_button').show();
+            if (show_options['kundeninfo_title']) {
+                this.$('.kundeninfo_title').html(show_options['kundeninfo_title']);
+            }
             this.installEventHandler();
         },
         hide: function(){
@@ -80,13 +83,27 @@ odoo.define('pos_rksv.popups', function (require) {
             this.$('.message').html('<p style="color: red;">' + message + '</p>');
         },
         check_passwd: function() {
+            var self = this;
             var pos_admin_passwd = this.pos.config.pos_admin_passwd;
             var entered_passwd = this.$('.pos_admin_passwd').val();
             if (pos_admin_passwd === entered_passwd) {
                 this.$('.message').html("Authorized");
                 this.$('.passwd_input').hide();
                 this.$('.authorize_button').hide();
-                this.$('.execute_button').show();
+                this.$('.kundeninfo').off();
+                if ((!this.options['kundeninfo_required']) || (!this.kundeninfo)) {
+                    this.$('.execute_button').show();
+                } else if (this.options['kundeninfo_required']) {
+                    this.$('.execute_button').show();
+                    this.$('.execute_button').addClass('disabled');
+                    this.$('.kundeninfo').on('input', function(){
+                        if (self.$('.kundeninfo').val() > '') {
+                            self.$('.execute_button').removeClass('disabled');
+                        } else {
+                            self.$('.execute_button').addClass('disabled');
+                        }
+                    });
+                }
                 if (this.kundeninfo)
                     this.$('.kundeninfo_div').show();
                 return true;
