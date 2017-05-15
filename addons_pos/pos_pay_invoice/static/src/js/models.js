@@ -40,9 +40,9 @@ odoo.define('pos_pay_invoice.models', function (require) {
     // Load Odoo configured signature providers - check if this is still needed !
     models.load_models({
         model: 'account.invoice',
-        fields: ['name', 'number', 'partner_id', 'date_invoice', 'amount_total', 'date_due', 'id'],
+        fields: ['name', 'number', 'partner_id', 'date_invoice', 'amount_total', 'date_due', 'id', 'pos_order_id'],
         domain: function (self) {
-            return [['state', '=', 'open']];   // Do load open invoices
+            return ['&', ['state', '=', 'open'], ['pos_order_id', '=', false]];   // Do load open invoices
         },
         loaded: function (self, invoices) {
             if ((invoices) && (invoices.length > 0)) {

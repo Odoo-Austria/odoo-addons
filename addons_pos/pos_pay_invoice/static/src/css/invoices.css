@@ -146,6 +146,12 @@
     margin-top:8px;
     left: 50%;
 }
+.screen .top-content .reload{
+    right: auto;
+    margin-left: -90px;
+    margin-top:8px;
+    left: 75%;
+}
 .pos .invoicelist-screen .searchbox input{
     width: 120px;
 }
