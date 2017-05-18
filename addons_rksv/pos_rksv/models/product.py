@@ -33,7 +33,7 @@ class ProductTemplate(models.Model):
             ('monthreceipt', 'Monatsbeleg'),
             ('nullreceipt', 'Nullbeleg'),
         ],
-        string='RKSV Produkt Art', required=True, default='product')
+        string='RKSV Produkt Art', required=False, default='product')
     rksv_tax_mapping_correct = fields.Boolean(
         string='RKSV Steuern',
         store=True,
