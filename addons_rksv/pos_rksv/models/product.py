@@ -39,4 +39,3 @@ class ProductTemplate(models.Model):
         store=True,
         compute=_compute_rksv_tax_mapping_correct,
         readonly=True)
-    pos_product_invisible = fields.Boolean('Nicht sichtbar am POS', default=False)
