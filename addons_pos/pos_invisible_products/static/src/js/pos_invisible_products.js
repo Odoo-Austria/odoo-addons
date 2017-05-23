@@ -1,4 +1,7 @@
-function openerp_rksv_db(instance, module){
+openerp.pos_invisible_products = function(instance, module) {
+
+    var module = instance.point_of_sale;
+    module.load_fields("product.product", ['pos_product_invisible']);
 
     module.PosDB.include({
         invisible_filtered: function(products) {

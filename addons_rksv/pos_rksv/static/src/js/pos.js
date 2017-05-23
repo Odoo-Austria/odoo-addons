@@ -9,7 +9,6 @@ openerp.pos_rksv = function (instance) {
     openerp_rksv_chrome(instance, module);            // Debug Widget, Status Indicator
     openerp_rksv_devices(instance, module);           // Overwrite the status json request
     openerp_rksv_screens(instance, module);           // Define the Status Screen, extend existing screens
-    openerp_rksv_db(instance, module);                // PosDB Extensions
 
     /*
     PosModel ist the main pos Model - which does get referenced everywhere with pos
