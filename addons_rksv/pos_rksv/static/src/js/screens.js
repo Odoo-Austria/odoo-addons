@@ -155,6 +155,18 @@ function openerp_rksv_screens(instance, module) {
                 $("input").blur();
             },250);
             
+        },
+        start: function() {
+            var self = this;
+            this._super();
+            // do bind on proxy status change - disable action bar when we lose proxy connection
+            this.pos.proxy.on('change:status', this, function (eh, status) {
+                if (!self.pos.rksv.all_ok()) {
+                    self.hide_action_bar();
+                } else {
+                    self.show_action_bar();
+                }
+            });
         }
     });
 
@@ -292,7 +304,12 @@ function openerp_rksv_screens(instance, module) {
             if (!this.pos.config.iface_rksv) return;
             // Do not open when rksv is not intitialized
             if (this.pos.rksv === undefined) return;
-            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
+            // Open Status widget on:
+            // - Not already active
+            // - Not all is ok - or we need a automatic receipt
+            // - Not in emergency mode
+            // - Do not open on only WLAN lost
+            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode()) && (!this.pos.rksv.lost_wlan())) {
                 this.pos.gui.show_screen('rksv_status');
             } else if ((this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
                 // Already active - ok - stay active

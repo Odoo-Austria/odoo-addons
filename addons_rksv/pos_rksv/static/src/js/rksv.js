@@ -236,6 +236,9 @@ function openerp_rksv_rksv(instance) {
             });
             return combined_status;
         },
+        lost_wlan: function() {
+            return (!this.statuses['posbox']);
+        },
         can_sign: function() {
             return  this.statuses['posbox'] &&
                     this.statuses['kasse'] &&
