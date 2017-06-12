@@ -123,16 +123,7 @@ function openerp_rksv_screens(instance, module) {
                     self.pos_widget.action_bar.set_button_disabled('validation',false);
                     self.pos_widget.action_bar.set_button_disabled('invoice',false);
                     self.pos.rksv.rksv_done();
-                    if(self.pos.config.iface_print_via_proxy){
-                        var receipt = currentOrder.export_for_printing();
-                        self.pos.proxy.print_receipt(QWeb.render('XmlReceipt',{
-                            receipt: receipt,
-                            widget: self
-                        }));
-                        self.pos.get('selectedOrder').destroy();    //finish order and go back to scan screen
-                    }else{
-                        self.pos_widget.screen_selector.set_current_screen(self.next_screen);
-                    }
+                    self.pos_widget.screen_selector.set_current_screen(self.next_screen);
                     deferred.resolve();
                 });
             }else{
@@ -142,16 +133,7 @@ function openerp_rksv_screens(instance, module) {
                     function done(){
                         self.pos.rksv.rksv_done();
                         console.log('RKSV has done its job - we have signed the order');
-                        if(self.pos.config.iface_print_via_proxy){
-                            var receipt = currentOrder.export_for_printing();
-                            self.pos.proxy.print_receipt(QWeb.render('XmlReceipt',{
-                                receipt: receipt,
-                                widget: self
-                            }));
-                            self.pos_widget.screen_selector.set_current_screen(self.next_screen);
-                        }else{
-                            self.pos_widget.screen_selector.set_current_screen(self.next_screen);
-                        }
+                        self.pos_widget.screen_selector.set_current_screen(self.next_screen);
                         deferred.resolve();
                     },
                     function failed(message){
@@ -194,6 +176,13 @@ function openerp_rksv_screens(instance, module) {
      Do extend Receipt screen - we do not allow the receipt to not get printed !
      */
     screens.ReceiptScreenWidget.include({
+        show: function() {
+            var self = this;
+            if(self.pos.config.iface_print_via_proxy){
+                self.print_proxy();
+            }
+            this._super();
+        },
         should_auto_print: function() {
             if (!this.pos.config.iface_rksv)
                 return this._super();
@@ -674,5 +663,145 @@ function openerp_rksv_screens(instance, module) {
     /*
     Main Blocking RKSV Status Popup Widget
      */
-    gui.define_screen({name:'rksv_status', widget: RKSVStatusScreen, position: '.pos'});
-}
+    gui.define_screen({name:'rksv_status', widget: RKSVStatusScreen});
+
+
+    /*------------------------------------------*\
+    |         THE RKSV RECEIPT SCREEN            |
+    \*==========================================*/
+
+    // The receipt screen displays the order's
+    // receipt and allows it to be printed in a web browser.
+    // The receipt screen is not shown if the point of sale
+    // is set up to print with the proxy. Altough it could
+    // be useful to do so...
+
+    var ReceiptRKSVScreenWidget = screens.ScreenWidget.extend({
+        template: 'ReceiptScreenWidget',
+        show: function (options) {
+            this._super();
+            var self = this;
+            var order = this.pos.get_order();
+            if (order) {
+                var data = order.get_screen_data('params');
+                this.add_action_button({
+                    label: _t('Print'),
+                    icon: '/point_of_sale/static/src/img/icons/png48/printer.png',
+                    click: function(){ self.print(data); },
+                });
+                this.add_action_button({
+                    label: _t('Go Back'),
+                    icon: '/point_of_sale/static/src/img/icons/png48/go-previous.png',
+                    click: function() { self.pos.gui.back(); },
+                });
+                this.render_receipt(data);
+                this.handle_auto_print();
+            }
+        },
+        handle_auto_print: function () {
+            if (this.should_auto_print()) {
+                this.print();
+                if (this.should_close_immediately()) {
+                    this.click_back();
+                }
+            } else {
+                this.lock_screen(false);
+            }
+        },
+        should_auto_print: function () {
+            return this.pos.config.iface_print_auto;
+        },
+        should_close_immediately: function () {
+            return this.pos.config.iface_print_via_proxy && this.pos.config.iface_print_skip_screen;
+        },
+        lock_screen: function (locked) {
+            this._locked = locked;
+            if (locked) {
+                this.$('.next').removeClass('highlight');
+            } else {
+                this.$('.next').addClass('highlight');
+            }
+        },
+        print_web: function () {
+            window.print();
+        },
+        print_xml: function (data) {
+            var pos = this.pos
+            var order = pos.get_order();
+            var env = {
+                widget: this,
+                order: order,
+                title: data.title,
+                receipt: data.receipt,
+            };
+            var receipt = QWeb.render('RKSVReceipt', env);
+            this.pos.proxy.print_receipt(receipt);
+        },
+        print: function (data) {
+            var self = this;
+
+            if (!this.pos.config.iface_print_via_proxy) { // browser (html) printing
+
+                // The problem is that in chrome the print() is asynchronous and doesn't
+                // execute until all rpc are finished. So it conflicts with the rpc used
+                // to send the orders to the backend, and the user is able to go to the next
+                // screen before the printing dialog is opened. The problem is that what's
+                // printed is whatever is in the page when the dialog is opened and not when it's called,
+                // and so you end up printing the product list instead of the receipt...
+                //
+                // Fixing this would need a re-architecturing
+                // of the code to postpone sending of orders after printing.
+                //
+                // But since the print dialog also blocks the other asynchronous calls, the
+                // button enabling in the setTimeout() is blocked until the printing dialog is
+                // closed. But the timeout has to be big enough or else it doesn't work
+                // 1 seconds is the same as the default timeout for sending orders and so the dialog
+                // should have appeared before the timeout... so yeah that's not ultra reliable.
+                this.lock_screen(true);
+
+                setTimeout(function () {
+                    self.lock_screen(false);
+                }, 1000);
+
+                this.print_web();
+            } else {    // proxy (xml) printing
+                this.print_xml(data);
+                this.lock_screen(false);
+            }
+        },
+        click_back: function () {
+
+        },
+        renderElement: function () {
+            var self = this;
+            this._super();
+            this.$('.next').click(function () {
+                if (!self._locked) {
+                    self.click_next();
+                }
+            });
+            this.$('.back').click(function () {
+                if (!self._locked) {
+                    self.click_back();
+                }
+            });
+            this.$('.button.print').click(function () {
+                if (!self._locked) {
+                    self.print();
+                }
+            });
+        },
+        render_receipt: function (data) {
+            var pos = this.pos;
+            var order = pos.get_order();
+            this.$('.pos-receipt-container').html(QWeb.render('RKSVTicket', {
+                title: data.title,
+                receipt: data.receipt,
+                widget: this,
+                order: order,
+                company: pos.company,
+            }));
+        },
+    });
+   gui.define_screen({name:'receipt_rksv', widget: ReceiptRKSVScreenWidget});
+};
