@@ -63,8 +63,8 @@ function openerp_rksv_rksv(instance) {
                     if (!self.pos.config.iface_rksv)
                         return;
                     self.last_proxy_status = status.newValue;
-                    // Do check posbox and rksv status
-                    if (status.newValue.status == "connected") {
+                    // Do check posbox and rksv status - and rksv module must be preset
+                    if ((status.newValue.status == "connected") && (status.newValue.drivers.rksv)) {
                         self.statuses['posbox'] = true;
                     } else {
                         self.statuses['posbox'] = false;
