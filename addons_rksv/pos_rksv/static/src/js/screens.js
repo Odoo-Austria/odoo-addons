@@ -161,6 +161,9 @@ function openerp_rksv_screens(instance, module) {
             this._super();
             // do bind on proxy status change - disable action bar when we lose proxy connection
             this.pos.proxy.on('change:status', this, function (eh, status) {
+                if (self.hidden)
+                    // Ignore this status change if payment screen is hidden
+                    return;
                 if (!self.pos.rksv.all_ok()) {
                     self.hide_action_bar();
                 } else {
