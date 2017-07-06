@@ -70,7 +70,7 @@ openerp.pos_rksv = function (instance) {
                     signature.pos.signature_update = true;
                     signaturemodel.call('update_status', [signature.attributes]).always(
                         function finish(result) {
-	                        signature.pos.signature_update = false;
+                            signature.pos.signature_update = false;
                         }
                     );
                 }

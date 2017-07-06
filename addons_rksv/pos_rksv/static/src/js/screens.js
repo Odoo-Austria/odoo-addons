@@ -231,13 +231,16 @@ function openerp_rksv_screens(instance, module) {
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').hide();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').hide();
 
-            // Do request the current RK Status
-            self.pos.rksv.update_bmf_rk_status();
-            // Do request new status from BMF on show
-            var signature = self.pos.get('signature');
-            // This will signal us the new status as soon as we get it
-            if (signature)
-                signature.try_refresh_status(self.pos);
+            // Only request current status if there is an connection available
+            if (self.pos.rksv.check_proxy_connection()) {
+                // Do request the current RK Status
+                self.pos.rksv.update_bmf_rk_status();
+                // Do request new status from BMF on show
+                var signature = self.pos.get('signature');
+                // This will signal us the new status as soon as we get it
+                if (signature)
+                    signature.try_refresh_status(self.pos);
+            }
             // Do render month product status
             self.render_month_product();
             // Do rerender signature providers
