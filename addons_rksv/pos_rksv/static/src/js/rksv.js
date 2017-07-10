@@ -239,6 +239,9 @@ odoo.define('pos_rksv.rksv', function (require) {
             });
             return combined_status;
         },
+        lost_connection: function() {
+            return (!this.statuses['posbox']);
+        },
         can_sign: function() {
             return  this.statuses['posbox'] &&
                     this.statuses['kasse'] &&

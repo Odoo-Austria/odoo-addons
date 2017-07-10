@@ -42,6 +42,14 @@ odoo.define('pos_rksv.screens', function (require) {
             var self = this;
             var order = this.pos.get_order();
 
+            if (self.pos.rksv.lost_connection()) {
+                // We are not able to validate an order without PosBox Connection - so display Error message here
+                self.gui.show_popup('error',{
+                    'title': _t('Not possible'),
+                    'body': _t('You need an active connecton to your PosBox to validate the order'),
+                });
+                return;
+            }
             if (order.push_to_rksv) {
                 // If validation date is already set - then this order is already in validation state - so do not send it a second time
                 self.gui.show_popup('error',{
@@ -111,6 +119,18 @@ odoo.define('pos_rksv.screens', function (require) {
                     }
                 );
             }
+        },
+        start: function() {
+            var self = this;
+            this._super();
+            // do bind on proxy status change - disable action bar when we lose proxy connection
+            this.pos.proxy.on('change:status', this, function (eh, status) {
+                if (!self.pos.rksv.all_ok()) {
+                    this.$('.next').hide();
+                } else {
+                    this.$('.next').show();
+                }
+            });
         }
     });
 
@@ -252,7 +272,12 @@ odoo.define('pos_rksv.screens', function (require) {
             if (!this.pos.config.iface_rksv) return;
             // Do not open when rksv is not intitialized
             if (this.pos.rksv === undefined) return;
-            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
+            // Open Status widget on:
+            // - Not already active
+            // - Not all is ok - or we need a automatic receipt
+            // - Not in emergency mode
+            // - Do not open on only WLAN lost
+            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode()) && (!this.pos.rksv.lost_connection())) {
                 this.pos.gui.show_screen('rksv_status');
             } else if ((this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
                 // Already active - ok - stay active
