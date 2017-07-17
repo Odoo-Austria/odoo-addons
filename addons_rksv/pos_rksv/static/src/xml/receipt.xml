@@ -4,6 +4,7 @@
     <!-- Extend the PosTicket - include QRCode - and for testing the OCR Representation -->
     <t t-extend="PosTicket">
         <t t-jquery="t[t-esc='order.get('name')']" t-operation="after">
+            <div t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv" class="pos-center-align" style="font-size:12px;">Kassen Nr.: <t t-esc="order.pos.config.cashregisterid" /></div>
             <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Bon Nr.: <t t-esc="order.formatted_receipt_id" /></p>
             <p t-if="widget.pos.config.rksv_at and !widget.pos.config.iface_rksv">NICHT GESETZTESKONFORMER BELEG!</p>
         </t>
@@ -21,6 +22,7 @@
     <!-- Extend the XmlReceipt to include the QRCode as a direct qrcode print command -->
     <t t-extend="XmlReceipt" >
         <t t-jquery="t[t-esc='receipt.name']" t-operation="after">
+            <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Kassen Nr.: <t t-esc="receipt.kassenidentifikationsnummer" /></p>
             <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></p>
             <p t-if="widget.pos.config.rksv_at and !widget.pos.config.iface_rksv">NICHT GESETZTESKONFORMER BELEG!</p>
         </t>
