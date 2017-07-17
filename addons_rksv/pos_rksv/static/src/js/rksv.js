@@ -344,7 +344,7 @@ function openerp_rksv_rksv(instance) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    self.pos.get('selectedOrder').destroy({'reason':'system'});
+                    order.destroy({'reason':'system'});
                     self.start_receipt_in_progress = false;
                 },
                 function failed() {
@@ -368,7 +368,7 @@ function openerp_rksv_rksv(instance) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    self.pos.get('selectedOrder').destroy({'reason':'system'});
+                    order.destroy({'reason':'system'});
                     self.year_receipt_in_progress = false;
                 },
                 function failed() {
@@ -397,7 +397,7 @@ function openerp_rksv_rksv(instance) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    self.pos.get('selectedOrder').destroy({'reason':'system'});
+                    order.destroy({'reason':'system'});
                     self.month_receipt_in_progress = false;
                 },
                 function failed() {
@@ -414,7 +414,7 @@ function openerp_rksv_rksv(instance) {
             this.pos.push_order(order).then(
                 function done() {
                     self.print_order(order);
-                    order.finalize();
+                    order.destroy({'reason':'system'});
                 },
                 function failed() {
                     console.log('Failed to generate null receipt !');
