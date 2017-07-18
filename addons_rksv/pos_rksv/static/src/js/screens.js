@@ -86,6 +86,11 @@ function openerp_rksv_screens(instance, module) {
                     this.pos.proxy.open_cashbox();
             }
 
+            // Set the push to rksv flag
+            currentOrder.push_to_rksv = true;
+            // deactivate the validation button while we try to send the order
+            this.hide_action_bar();
+            self.pos.rksv.rksv_wait();
             if(options.invoice){
                 // deactivate the validation button while we try to send the order
                 this.pos_widget.action_bar.set_button_disabled('validation',true);
@@ -94,6 +99,9 @@ function openerp_rksv_screens(instance, module) {
                 var invoiced = this.pos.push_and_invoice_order(currentOrder);
 
                 invoiced.fail(function(error){
+                    // Set the push to rksv flag back
+                    currentOrder.push_to_rksv = false;
+                    self.pos.rksv.rksv_done();
                     if(error === 'error-no-client'){
                         self.pos_widget.screen_selector.show_popup('error',{
                             message: _t('An anonymous order cannot be invoiced'),
@@ -112,6 +120,7 @@ function openerp_rksv_screens(instance, module) {
                 invoiced.done(function(){
                     self.pos_widget.action_bar.set_button_disabled('validation',false);
                     self.pos_widget.action_bar.set_button_disabled('invoice',false);
+                    self.pos.rksv.rksv_done();
                     if(self.pos.config.iface_print_via_proxy){
                         var receipt = currentOrder.export_for_printing();
                         self.pos.proxy.print_receipt(QWeb.render('XmlReceipt',{
@@ -128,6 +137,7 @@ function openerp_rksv_screens(instance, module) {
                 console.log("do push order to signature unit - after result proceed");
                 this.pos.push_order(currentOrder).then(
                     function done(){
+                        self.pos.rksv.rksv_done();
                         console.log('RKSV has done its job - we have signed the order');
                         if(self.pos.config.iface_print_via_proxy){
                             var receipt = currentOrder.export_for_printing();
@@ -141,6 +151,7 @@ function openerp_rksv_screens(instance, module) {
                         }
                     },
                     function failed(message){
+                        self.pos.rksv.rksv_done();
                         self.pos.gui.show_popup('error',{
                             'message': _t("RKSV Fehler"),
                             'comment':  message

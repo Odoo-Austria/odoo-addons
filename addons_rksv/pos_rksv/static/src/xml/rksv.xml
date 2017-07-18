@@ -176,6 +176,17 @@
         </t>
     </t>
 
+    <t t-extend="PosWidget">
+        <t t-jquery=".pos" t-operation="append">
+            <div class="overlay oe_hidden" id="rksv_waiting">
+                <div class="rksv-progress-img">
+                    <img src="/pos_rksv/static/src/img/qrcode.png"/>
+                    <p >Bitte Warten - Signatur wird erstellt...</p>
+                </div>
+            </div>
+        </t>
+    </t>
+
     <t t-name="RKSVFAPopupWidget">
         <div class="modal-dialog">
             <div class="popup popup-rksv content">

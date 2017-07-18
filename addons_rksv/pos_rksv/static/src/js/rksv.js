@@ -1100,7 +1100,19 @@ function openerp_rksv_rksv(instance) {
         // the barcode scanner will stop listening on the hw_proxy/scanner remote interface
         disconnect_from_proxy: function () {
             console.log('RKSV disconnect from proxy got called !');
-        }
+        },
+        rksv_wait: function() {
+            console.log('RKSV - Do pause the complete interface for the RKSV Operation');
+            $('#rksv_waiting').removeClass('oe_hidden');
+            window.onbeforeunload = function() {
+                return "Signatur wird gerade erstellt - Bitte NICHT neuladen !";
+            };
+        },
+        rksv_done: function() {
+            console.log('RKSV - Done');
+            $('#rksv_waiting').addClass('oe_hidden');
+            window.onbeforeunload = null;
+        },
     });
     module.RKSV = RKSV;
 }
