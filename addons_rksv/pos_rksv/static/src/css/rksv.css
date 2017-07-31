@@ -108,7 +108,26 @@
     padding: 15px;
     margin-top:30px;
 }
+.rksv-version {
+    min-width: 760px;
+    width: 50%;
+    margin: 40px auto;
+    background: white;
+    border: solid 3px black;
+    padding: 15px;
+    margin-top:30px;
+    font-size: 12px;
+}
+.rksv-version table {
 
+}
+.rksv-version tr:nth-child(even) {
+    background-color: #f2f2f2
+}
+.rksv-version table tr td {
+    padding: 15px;
+    text-align: left;
+}
 .cashbox-status-container {
     width: 50%;
     margin: 0 auto;
