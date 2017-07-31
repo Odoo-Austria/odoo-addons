@@ -90,7 +90,9 @@ function openerp_rksv_chrome(instance, module){
                 self.pos.rksv.fa_first_report();
             });
             this.$('.button.rksv_status').click(function(){
-                self.pos.gui.show_screen('rksv_status');
+                self.pos.gui.show_screen('rksv_status', {
+                    'stay_open': true,
+                });
             });
             this.$('.button.rksv_kasse_registrieren').click(function(){
                 self.pos.rksv.bmf_kasse_registrieren();
