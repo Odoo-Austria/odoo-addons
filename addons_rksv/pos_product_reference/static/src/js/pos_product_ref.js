@@ -64,7 +64,7 @@ openerp.pos_product_reference = function(instance) {
                 var order = self.pos.get('selectedOrder');
                 order.getSelectedLine().set_product_reference(ref_text);
             };
-            this.bind_order_events();
+            this.numpad_state = this.pos_widget.numpad.state;
         },
         render_orderline: function(orderline){
             var el_node = this._super(orderline);
