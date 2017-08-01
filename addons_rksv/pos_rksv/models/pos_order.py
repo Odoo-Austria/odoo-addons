@@ -48,6 +48,12 @@ class POSOrder(models.Model):
         string="Seriennummer (Signatur)", size=16,
         readonly=True
     )
+    provider_id = fields.Many2one(
+        comodel_name='signature.provider',
+        string="Related provider",
+        compute='_compute_provider',
+        readonly=True, store=True,
+    )
     encryptedTurnOverValue = fields.Char(
         string="Kodierter Summenspeicher", size=128,
         readonly=True
@@ -57,7 +63,7 @@ class POSOrder(models.Model):
         readonly=True
     )
     signedJWSCompactRep = fields.Char(
-        string="JWS", size=256,
+        string="JWS", size=512,
         readonly=True
     )
     taxSetNormal = fields.Integer(
@@ -84,6 +90,17 @@ class POSOrder(models.Model):
         string="Summenspeicher",
         readonly=True
     )
+
+    @api.multi
+    @api.depends('signatureSerial')
+    def _compute_provider(self):
+        for order in self:
+            provider = False
+            if order.signatureSerial:
+                provider = self.env['signature.provider'].search([
+                    ('serial', '=', str(int(order.signatureSerial, 16)))
+                ])
+            order.provider_id = provider
 
     @api.model
     def _order_fields(self, ui_order):

@@ -104,7 +104,9 @@ odoo.define('pos_rksv.chrome', function (require) {
                 self.pos.rksv.fa_first_report();
             });
             this.$('.button.rksv_status').click(function(){
-                self.pos.gui.show_screen('rksv_status');
+                self.pos.gui.show_screen('rksv_status', {
+                    'stay_open': true,
+                });
             });
             this.$('.button.rksv_kasse_registrieren').click(function(){
                 self.pos.rksv.bmf_kasse_registrieren();

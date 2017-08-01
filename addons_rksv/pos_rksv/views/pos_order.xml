@@ -18,6 +18,7 @@
                             <group string="Signatur">
                                  <field name="cashbox_mode"/>
                                  <field name="signatureSerial"/>
+                                 <field name="provider_id" attrs="{'invisible': [('provider_id', '=', False)]}" />
                             </group>
                         </group>
                         <group>

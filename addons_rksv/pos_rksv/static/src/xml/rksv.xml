@@ -42,6 +42,23 @@
                     </p>
                     <button class="close_pos">Session beenden</button>
                 </div>
+                
+                <div class="rksv-version">
+                    <table width="100%">
+                        <tr>
+                            <td width="30%">Uhrzeit auf der PosBox:</td>
+                            <td width="20%" id="rksv_posbox_datetime"></td>
+                            <td width="30%">BMF Bibliothek Version:</td>
+                            <td width="20%" id="rksv_bmf_version"></td>
+                        </tr>
+                        <tr>
+                            <td width="30%">RKSV Bibliothek Version:</td>
+                            <td width="20%" id="rksv_rksv_version"></td>
+                            <td width="30%">RKSV PosBox Version:</td>
+                            <td width="20%" id="rksv_addon_version"></td>
+                        </tr>
+                    </table>
+                </div>
                 <div class='posbox-status-container'>
                     <div class="posbox-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>

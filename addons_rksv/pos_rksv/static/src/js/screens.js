@@ -383,6 +383,24 @@ odoo.define('pos_rksv.screens', function (require) {
         posbox_status_handler: function () {
             var self = this;
             this.pos.proxy.on('change:status', this, function (eh, status) {
+                // Do update the datetime and status here
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_vienna_datetime) {
+                    self.$('#rksv_posbox_datetime').html(status.newValue.drivers.rksv.posbox_vienna_datetime);
+                }
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_rksv_lib_version) {
+                    self.$('#rksv_rksv_version').html(status.newValue.drivers.rksv.posbox_rksv_lib_version.version);
+                }
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_rksv_mod_version) {
+                    self.$('#rksv_addon_version').html(status.newValue.drivers.rksv.posbox_rksv_mod_version.version);
+                }
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_bmf_mod_version) {
+                    self.$('#rksv_bmf_version').html(status.newValue.drivers.rksv.posbox_bmf_mod_version.version);
+                }
+                // Also check current bmf_status_rk
+                if ((status.newValue.status == "connected") && (!this.pos.get('bmf_status_rk').success)) {
+                    // BMF Status RK is false - so do recheck the status here
+                    self.pos.rksv.update_bmf_rk_status();
+                }
                 // Also check current bmf_status_rk
                 if ((status.newValue.status == "connected") && (!this.pos.get('bmf_status_rk').success)) {
                     // BMF Status RK is false - so do recheck the status here

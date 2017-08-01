@@ -826,6 +826,19 @@ odoo.define('pos_rksv.rksv', function (require) {
                             if (response.success == false) {
                                 sprovider_popup.failure(response.message);
                             } else {
+                                var config = new Model('pos.config');
+                                config.call('sync_jws', [response.jws_sync, self.pos.config.id]).then(
+                                    function done(result) {
+                                        if (!result['success']) {
+                                            console.error(result.message)
+                                        } else {
+                                            console.log(result.message)
+                                        }
+                                    },
+                                    function failed(message) {
+                                        console.error(message)
+                                    }
+                                );
                                 sprovider_popup.success(response.message);
                             }
                         },
