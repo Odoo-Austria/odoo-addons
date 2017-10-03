@@ -40,7 +40,7 @@ odoo.define('pos_product_reference.pos_product_reference', function (require) {
         }
     });
 
-    screens.OrderWidget = screens.OrderWidget.extend({
+    screens.OrderWidget.include({
         template:'OrderWidget',
         init: function(parent, options) {
             var self = this;
@@ -48,7 +48,7 @@ odoo.define('pos_product_reference.pos_product_reference', function (require) {
             this.line_keyup_handler = function(event){
                 var ref_text = this.value;
                 var order = self.pos.get('selectedOrder');
-                order.getSelectedLine().set_product_reference(ref_text);
+                order.get_selected_orderline().set_product_reference(ref_text);
             };
             this.bind_order_events();
         },
