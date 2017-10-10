@@ -50,7 +50,6 @@ odoo.define('pos_product_reference.pos_product_reference', function (require) {
                 var order = self.pos.get('selectedOrder');
                 order.get_selected_orderline().set_product_reference(ref_text);
             };
-            this.bind_order_events();
         },
         render_orderline: function(orderline){
             var el_node = this._super(orderline);
