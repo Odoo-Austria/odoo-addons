@@ -57,6 +57,7 @@ odoo.define('pos_rksv.screens', function (require) {
                 this.pos.proxy.open_cashbox();
             }
             order.initialize_validation_date();
+            self.pos.rksv.rksv_wait();
 
             if (order.is_to_invoice()) {
                 var invoiced = this.pos.push_and_invoice_order(order);
@@ -73,6 +74,8 @@ odoo.define('pos_rksv.screens', function (require) {
                             confirm: function(){
                                 self.gui.show_screen('clientlist');
                             },
+		                    // Set the push to rksv flag back
+		                    self.pos.rksv.rksv_done();
                         });
                     } else if (error.code < 0) {        // XmlHttpRequest Errors
                         self.gui.show_popup('error',{
@@ -95,15 +98,17 @@ odoo.define('pos_rksv.screens', function (require) {
                 invoiced.done(function(){
                     self.invoicing = false;
                     self.gui.show_screen('receipt');
+                    self.pos.rksv.rksv_done();
                 });
             } else {
                 this.pos.push_order(order).then(
                     function done(){
                         self.gui.show_screen('receipt');
+                        self.pos.rksv.rksv_done();
+                        console.log('RKSV has done its job - we have signed the order');
                     },
                     function failed(message){
-                        // Reset the push to rksv flag
-                        order.push_to_rksv = false;
+                        self.pos.rksv.rksv_done();
                         self.pos.gui.show_popup('error',{
                             'title': _t("RKSV Fehler"),
                             'body':  message
@@ -111,6 +116,18 @@ odoo.define('pos_rksv.screens', function (require) {
                     }
                 );
             }
+        },
+        start: function() {
+			var self = this;
+			this._super();
+			// do bind on proxy status change - disable action bar when we lose proxy connection
+			this.pos.proxy.on('change:status', this, function (eh, status) {
+				if (!self.pos.rksv.all_ok()) {
+					this.$('.next').hide();
+				} else {
+				    this.$('.next').show();
+				}
+			});
         }
     });
 
@@ -194,13 +211,16 @@ odoo.define('pos_rksv.screens', function (require) {
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').hide();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').hide();
 
-            // Do request the current RK Status
-            self.pos.rksv.update_bmf_rk_status();
-            // Do request new status from BMF on show
-            var signature = self.pos.get('signature');
-            // This will signal us the new status as soon as we get it
-            if (signature)
-                signature.try_refresh_status(self.pos);
+            // Only request current status if there is an connection available
+            if (self.pos.rksv.check_proxy_connection()) {
+                // Do request the current RK Status
+                self.pos.rksv.update_bmf_rk_status();
+                // Do request new status from BMF on show
+                var signature = self.pos.get('signature');
+                // This will signal us the new status as soon as we get it
+                if (signature)
+                    signature.try_refresh_status(self.pos);
+            }
             // Do render month product status
             self.render_month_product();
             // Do rerender signature providers
@@ -252,7 +272,12 @@ odoo.define('pos_rksv.screens', function (require) {
             if (!this.pos.config.iface_rksv) return;
             // Do not open when rksv is not intitialized
             if (this.pos.rksv === undefined) return;
-            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
+            // Open Status widget on:
+            // - Not already active
+            // - Not all is ok - or we need a automatic receipt
+            // - Not in emergency mode
+            // - Do not open on only WLAN lost
+            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode()) && (!this.pos.rksv.lost_wlan())) {
                 this.pos.gui.show_screen('rksv_status');
             } else if ((this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
                 // Already active - ok - stay active
@@ -395,11 +420,6 @@ odoo.define('pos_rksv.screens', function (require) {
                 }
                 if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_bmf_mod_version) {
                     self.$('#rksv_bmf_version').html(status.newValue.drivers.rksv.posbox_bmf_mod_version.version);
-                }
-                // Also check current bmf_status_rk
-                if ((status.newValue.status == "connected") && (!this.pos.get('bmf_status_rk').success)) {
-                    // BMF Status RK is false - so do recheck the status here
-                    self.pos.rksv.update_bmf_rk_status();
                 }
                 // Also check current bmf_status_rk
                 if ((status.newValue.status == "connected") && (!this.pos.get('bmf_status_rk').success)) {

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<openerp>
     <data>
         <record id="product_template_form_view" model="ir.ui.view">
-            <field name="name">Point of Sale Product Form (RKSV)</field>
+            <field name="name">Point of Sale Product Form (Invisible Product)</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="point_of_sale.product_template_form_view" />
             <field name="arch" type="xml">
-                 <group name="sale" position="inside">
-                     <field string="Referenz in POS" name="product_ref"></field>
-                 </group>
+                <field name="available_in_pos" position="after">
+                    <field name="pos_product_invisible"/>
+                </field>
             </field>
         </record>
     </data>
-</odoo>
+</openerp>

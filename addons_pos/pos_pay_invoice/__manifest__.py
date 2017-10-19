@@ -10,9 +10,9 @@
     'license': "Other proprietary",
     'description': """
 PoS Pay Invoice
-================
+===============
 
-Pay invoice directly on in PoS session
+Pay invoice directly on in pos session
 """,
     'depends': ['point_of_sale', 'pos_product_reference'],
     'test': [

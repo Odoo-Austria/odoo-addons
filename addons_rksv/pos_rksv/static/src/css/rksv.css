@@ -1,3 +1,28 @@
+.overlay {
+    background: #d0d0d0;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.8;
+}
+.rksv-progress-img {
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    font-family: "palatino linotype", palatino, serif;
+    font-size: 18px;
+    color: #000000;
+    font-style: italic;
+    font-weight: bold;
+    font-variant: normal;
+    text-align: left;
+    letter-spacing: 0px;
+    line-height: 20px;
+}
 @media print {
     .o_loading {
         display: none !important;
@@ -114,8 +139,9 @@
     margin-top:30px;
     font-size: 12px;
 }
-.rksv-version table {
-
+.rksv-version table tr td {
+    padding: 15px;
+    text-align: left;
 }
 .rksv-version tr:nth-child(even) {
     background-color: #f2f2f2
@@ -124,7 +150,6 @@
     padding: 15px;
     text-align: left;
 }
-
 .cashbox-status-container {
     width: 50%;
     margin: 0 auto;
