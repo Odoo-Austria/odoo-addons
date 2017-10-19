@@ -42,6 +42,22 @@
                     </p>
                     <button class="close_pos">Session beenden</button>
                 </div>
+                <div class="rksv-version">
+                    <table width="100%">
+                        <tr>
+                            <td width="30%">Uhrzeit auf der PosBox:</td>
+                            <td width="20%" id="rksv_posbox_datetime"></td>
+                            <td width="30%">BMF Bibliothek Version:</td>
+                            <td width="20%" id="rksv_bmf_version"></td>
+                        </tr>
+                        <tr>
+                            <td width="30%">RKSV Bibliothek Version:</td>
+                            <td width="20%" id="rksv_rksv_version"></td>
+                            <td width="30%">RKSV PosBox Version:</td>
+                            <td width="20%" id="rksv_addon_version"></td>
+                        </tr>
+                    </table>
+                </div>
                 <div class='posbox-status-container'>
                     <div class="posbox-status-indicator clearfix">
                         <div class="indicator" style="background: red;"/>
@@ -143,8 +159,8 @@
 
     <t t-extend="DebugWidget" >
         <t t-jquery=".content" t-operation="append">
-            <p class="category">RKSV</p>
-            <ul>
+            <p class="category rksvdebug">RKSV</p>
+            <ul class="rksvdebug">
                 <li class="button rksv_firstreport">Daten für FA</li>
                 <li class="button rksv_status">RKSV Status</li>
                 <li class="button rksv_kasse_registrieren">BMF RK Anmeldung</li>
@@ -157,6 +173,17 @@
                 <li class="button rksv_reprint_month_receipt">Monatsbeleg nochmals drucken</li>
                 <li class="button rksv_create_null_receipt">Nullbeleg erzeugen</li>
             </ul>
+        </t>
+    </t>
+
+    <t t-extend="PosWidget">
+        <t t-jquery=".pos" t-operation="append">
+            <div class="overlay oe_hidden" id="rksv_waiting">
+                <div class="rksv-progress-img">
+                    <img src="/pos_rksv/static/src/img/qrcode.png"/>
+                    <p >Bitte Warten - Signatur wird erstellt...</p>
+                </div>
+            </div>
         </t>
     </t>
 

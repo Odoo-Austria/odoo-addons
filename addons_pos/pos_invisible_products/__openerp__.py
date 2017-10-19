@@ -1,28 +1,24 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'POS Pay Invoice',
-    'version': '1.0',
+    'name': 'POS Invisible Products',
+    'version': '9.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
-    'summary': 'Pay invoice directly on in pos session',
+    'summary': 'Products can be set invisible while still be loaded to POS properly.',
     'website': 'https://github.com/Odoo-Austria/odoo-addons',
     'description': """
-PoS Pay Invoice
+PoS Invisible Products
 ===============
 
-Pay invoice directly on in pos session
+Products can be set invisible while still be loaded to PoS properly
 """,
-    'author': 'Wolfgang Pichler (Callino)',
-    'depends': ['point_of_sale', 'pos_product_reference'],
+    'author': 'Gerhard Baumgartner (Callino)',
+    'depends': ['point_of_sale'],
     'test': [
     ],
     'data': [
         'views/templates.xml',
-        'views/pos_config.xml',
-        'views/pos_order.xml',
-    ],
-    'qweb': [
-        'static/src/xml/invoice.xml'
+        'views/product.xml',
     ],
     'installable': True,
     'auto_install': False,

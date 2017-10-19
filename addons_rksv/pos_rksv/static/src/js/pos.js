@@ -26,6 +26,7 @@ odoo.define('pos_rksv.pos', function (require) {
             this.signatures = new models.Signatures(null, {
                 pos: this
             });
+            this.signature_update = false;
             // pos backbone attributes
             this.set({
                 'bmf_status_rk': 'unknown',
@@ -52,7 +53,12 @@ odoo.define('pos_rksv.pos', function (require) {
                 signatures.each(function (signature) {
                     cardinfos.push(signature.attributes);
                 });
-                provider_obj.call('set_providers', [cardinfos, {'pos_config_id': self.config.id}]);
+                signature.pos.signature_update = true;
+                provider_obj.call('set_providers', [cardinfos, {'pos_config_id': self.config.id}]).always(
+                    function finish(result) {
+                        signature.pos.signature_update = false;
+                    }
+                );
             });
             this.bind('change:bmf_status_rk', function (pos, status) {
                 // Save current state
@@ -64,10 +70,16 @@ odoo.define('pos_rksv.pos', function (require) {
                 }]);
             });
             this.signatures.bind('change:bmf_status change:bmf_message', function (signature) {
-                console.log('Write status change back to odoo');
-                // Write back new status to odoo
+                console.log('Try to fire an update for status in backend');
                 var signaturemodel = new Model('signature.provider');
-                signaturemodel.call('update_status', [signature.attributes]);
+                if (!signature.pos.signature_update){
+                    signature.pos.signature_update = true;
+                    signaturemodel.call('update_status', [signature.attributes]).always(
+                        function finish(result) {
+                            signature.pos.signature_update = false;
+                        }
+                    );
+                }
             });
             // Bind on cashbox_mode flag
             this.bind('change:cashbox_mode', function (pos, state) {
@@ -83,12 +95,16 @@ odoo.define('pos_rksv.pos', function (require) {
             this.ready.done(function () {
                 console.log('All data is loaded - so do my work...');
                 // Check state from config - set it as my own state
-                self.set('cashbox_mode', self.config.state);
+                if (self.config.iface_rksv)
+                    self.set('cashbox_mode', self.config.state);
             });
         },
         push_order: function (order, type) {
             var self = this;
-            if (!order) return PosModelSuper.prototype.push_order.call(this, order);
+            // Handle the dummy case - this can happen
+            // Handle no rksv case
+            if ((!order) || (!self.config.iface_rksv))
+                return PosModelSuper.prototype.push_order.call(this, order);
             // This is my all - and really all deferred object
             var alldeferred = new $.Deferred(); // holds the global mutex
             var deferred = this.proxy.message('rksv_order', order.export_for_printing());
@@ -115,8 +131,9 @@ odoo.define('pos_rksv.pos', function (require) {
         },
         push_and_invoice_order: function (order) {
             var self = this;
-            // Handly the dummy case - this can happen
-            if (!order)
+            // Handle the dummy case - this can happen
+            // Handle no rksv case
+            if ((!order) || (!self.config.iface_rksv))
                 return PosModelSuper.prototype.push_order.call(this, order);
             if(!order.get_client()){
                 return PosModelSuper.prototype.push_and_invoice_order.call(self, order);

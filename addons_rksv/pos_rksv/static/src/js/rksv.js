@@ -62,9 +62,12 @@ odoo.define('pos_rksv.rksv', function (require) {
 
             if (this.proxy){
                 this.proxy.on('change:status', this, function (eh, status) {
+                    // Ignore the status change when rksv is not enabled
+                    if (!self.pos.config.iface_rksv)
+                        return;
                     self.last_proxy_status = status.newValue;
-                    // Do check posbox and rksv status
-                    if (status.newValue.status == "connected") {
+                    // Do check posbox and rksv status - and rksv module must be preset
+                    if ((status.newValue.status == "connected") && (status.newValue.drivers.rksv)) {
                         self.statuses['posbox'] = true;
                     } else {
                         self.statuses['posbox'] = false;
@@ -236,6 +239,9 @@ odoo.define('pos_rksv.rksv', function (require) {
             });
             return combined_status;
         },
+        lost_wlan: function() {
+            return (!this.statuses['posbox']);
+        },
         can_sign: function() {
             return  this.statuses['posbox'] &&
                     this.statuses['kasse'] &&
@@ -258,6 +264,11 @@ odoo.define('pos_rksv.rksv', function (require) {
         },
         rksv_reprint_special_receipt: function(type, title) {
             var self = this;
+            // Make sure the current order is closed
+            var order = self.pos.get_order();
+            if (order && order.screen_data && order.screen_data.screen == 'receipt'){
+                order.finalize();
+            }
             if (!self.check_proxy_connection()) {
                 self.pos.gui.show_popup('error',{
                     'title': _t("Fehler"),
@@ -349,6 +360,9 @@ odoo.define('pos_rksv.rksv', function (require) {
         create_year_receipt: function() {
             var self = this;
             self.pos.chrome.$el.find('div.button.cancel.close_button').click();
+            if ((self.pos.get_order()) && (self.pos.get_order().start_receipt)) {
+                self.pos.get_order().finalize();
+            }
             this.year_receipt_in_progress = true;
             var year = moment().subtract(1, 'years').format('YYYY');
             // Create a new dummy order with the year product
@@ -371,6 +385,9 @@ odoo.define('pos_rksv.rksv', function (require) {
         create_month_receipt: function() {
             var self = this;
             self.pos.chrome.$el.find('div.button.cancel.close_button').click();
+            if ((self.pos.get_order()) && (self.pos.get_order().year_receipt)) {
+                self.pos.get_order().finalize();
+            }
             this.month_receipt_in_progress = true;
             // Create a new order
             var year_month = moment().subtract(1, 'month').format('YYYY-MM');
@@ -1087,7 +1104,19 @@ odoo.define('pos_rksv.rksv', function (require) {
         // the barcode scanner will stop listening on the hw_proxy/scanner remote interface
         disconnect_from_proxy: function () {
             console.log('RKSV disconnect from proxy got called !');
-        }
+        },
+        rksv_wait: function() {
+            console.log('RKSV - Do pause the complete interface for the RKSV Operation');
+            $('#rksv_waiting').removeClass('oe_hidden');
+            window.onbeforeunload = function() {
+                return "Signatur wird gerade erstellt - Bitte NICHT neuladen !";
+            };
+        },
+        rksv_done: function() {
+            console.log('RKSV - Done');
+            $('#rksv_waiting').addClass('oe_hidden');
+            window.onbeforeunload = null;
+        },
     });
 
     return {

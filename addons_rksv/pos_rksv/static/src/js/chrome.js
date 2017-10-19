@@ -49,6 +49,9 @@ odoo.define('pos_rksv.chrome', function (require) {
         },
         start: function () {
             var self = this;
+            if (!self.pos.config.iface_rksv) {
+                return this._super();
+            }
             this.set_smart_status(this.pos.proxy.get('status'));
             this.pos.proxy.on('change:status', this, function (eh, status) {
                 self.set_smart_status(status.newValue);
@@ -59,7 +62,13 @@ odoo.define('pos_rksv.chrome', function (require) {
                     'stay_open': true
                 });
             });
+        },
+        renderElement: function() {
+            if (this.pos.config.iface_rksv) {
+                return this._super();
+            }
         }
+
     });
 
     /*
@@ -78,13 +87,25 @@ odoo.define('pos_rksv.chrome', function (require) {
         start: function () {
             // Supercall using prototype
             this._super();
+            if (!this.pos.config.iface_rksv) {
+                this.disable_rksv();
+            } else {
+                this.install_rksv_eventhandler();
+            }
+        },
+        disable_rksv: function() {
+            this.$('.rksvdebug').hide();
+        },
+        install_rksv_eventhandler: function() {
             var self = this;
             // Now do register our own events
             this.$('.button.rksv_firstreport').click(function(){
                 self.pos.rksv.fa_first_report();
             });
             this.$('.button.rksv_status').click(function(){
-                self.pos.gui.show_screen('rksv_status');
+                self.pos.gui.show_screen('rksv_status', {
+                    'stay_open': true,
+                });
             });
             this.$('.button.rksv_kasse_registrieren').click(function(){
                 self.pos.rksv.bmf_kasse_registrieren();

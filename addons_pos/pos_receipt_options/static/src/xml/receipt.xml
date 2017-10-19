@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Extend the PosTicket -->
+    <t t-extend="PosTicket">
+    </t>
+
+    <!-- Extend the XmlReceipt -->
+    <t t-extend="XmlReceipt" >
+        <!-- Shop Name -->
+        <t t-jquery="t[t-if='receipt.shop.name']" t-operation="replace">
+            <t t-if='receipt.shop.name &amp;&amp; receipt.config.print_shop_name'>
+                <div><t t-esc='receipt.shop.name' /></div>
+            </t>
+        </t>
+
+        <!-- Company Logo -->
+        <t t-jquery="t[t-if='receipt.company.logo']" t-operation="replace">
+            <t t-if='receipt.company.logo &amp;&amp; receipt.config.print_shop_logo'>
+                <img t-att-src='receipt.company.logo' />
+                <br/>
+            </t>
+        </t>
+
+        <!-- Shop Address -->
+        <t t-jquery="t[t-if='receipt.company.contact_address']" t-operation="replace">
+            <t t-if='receipt.company.contact_address &amp;&amp; receipt.config.print_shop_address'>
+                <div><t t-esc='receipt.company.contact_address' /></div>
+            </t>
+        </t>
+
+        <!-- Shop Phone -->
+        <t t-jquery="t[t-if='receipt.company.phone']" t-operation="replace">
+            <t t-if='receipt.company.phone &amp;&amp; receipt.config.print_shop_phone'>
+                <div>Tel:<t t-esc='receipt.company.phone' /></div>
+            </t>
+        </t>
+
+        <!-- Shop VAT -->
+        <t t-jquery="t[t-if='receipt.company.vat']" t-operation="replace">
+            <t t-if='receipt.company.vat &amp;&amp; receipt.config.print_shop_vat'>
+                <div>VAT:<t t-esc='receipt.company.vat' /></div>
+            </t>
+        </t>
+
+        <!-- Shop EMail -->
+        <t t-jquery="t[t-if='receipt.company.email']" t-operation="replace">
+            <t t-if='receipt.company.email &amp;&amp; receipt.config.print_shop_email'>
+                <div><t t-esc='receipt.company.email' /></div>
+            </t>
+        </t>
+
+        <!-- Shop website -->
+        <t t-jquery="t[t-if='receipt.company.website']" t-operation="replace">
+            <t t-if='receipt.company.website &amp;&amp; receipt.config.print_shop_website'>
+                <div><t t-esc='receipt.company.website' /></div>
+            </t>
+        </t>
+
+        <!-- Shop cashier -->
+        <t t-jquery="t[t-if='receipt.cashier']" t-operation="replace">
+            <t t-if='receipt.cashier &amp; receipt.config.print_shop_cashier'>
+                <div>--------------------------------</div>
+                <div>Served by <t t-esc='receipt.cashier' /></div>
+            </t>
+        </t>
+    </t>
+</templates>

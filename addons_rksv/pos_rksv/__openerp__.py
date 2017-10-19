@@ -5,7 +5,7 @@
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Registrierkassenpflicht Modul für Österreich',
-    'website': 'https://www.callino.at/page/rksv',
+    'website': 'https://github.com/Odoo-Austria/odoo-addons',
     "license": 'Other proprietary',
     'description': """
 Registrierkasse Österreich

@@ -76,7 +76,7 @@ odoo.define('pos_pay_invoice.screens', function (require) {
                 this.chrome.widget.keyboard.connect(this.$('.searchbox input'));
             }
 
-            this.$('.searchbox input').on('keypress',function(event){
+            this.$('.searchbox input').on('input',function(event){
                 clearTimeout(search_timeout);
 
                 var query = this.value;

@@ -7,9 +7,8 @@
             <field name="model">pos.order</field>
             <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
             <field name="arch" type="xml">
-
                 <xpath expr="//page[@name='extra']" position="after">
-                    <page name="signature" string="Signature">
+                    <page name="signature" string="Signature"  attrs="{'invisible': [('receipt_id', '=', 0)]}">
                         <group name="receipt_data">
                             <group string="Beleg">
                                 <field name="typeOfReceipt"/>
@@ -48,6 +47,5 @@
                 </xpath>
             </field>
         </record>
-
     </data>
 </openerp>

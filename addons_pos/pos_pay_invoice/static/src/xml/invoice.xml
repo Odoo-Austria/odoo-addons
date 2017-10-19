@@ -22,7 +22,7 @@
             <td><t t-esc='invoice.get("date_invoice")' /></td>
             <td><t t-esc='invoice.get_partner().name' /></td>
             <td><t t-esc='invoice.get("name")?invoice.get("name"):""' /></td>
-            <td><t t-esc='invoice.get("amount_total")' /></td>
+            <td><t t-esc='widget.format_currency(invoice.get("amount_total"))' /></td>
             <td><t t-esc='invoice.get("date_due")' /></td>
         </tr>
     </t>

@@ -1,28 +1,34 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'POS Pay Invoice',
-    'version': '1.0',
+    'name': 'POS receipt options',
+    'version': '9.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
-    'summary': 'Pay invoice directly on in pos session',
+    'summary': 'Add more receipt printing options',
     'website': 'https://github.com/Odoo-Austria/odoo-addons',
     'description': """
-PoS Pay Invoice
-===============
+POS Receipt Printing
+====================
+* Option for "Print Stock Name"
+* Option for "Print Logo"
+* Option for "Print Address"
+* Option for "Print Phone"
+* Option for "Print VAT"
+* Option for "Print EMail"
+* Option for "Print Website"
+* Option for "Print Cashier"
 
-Pay invoice directly on in pos session
 """,
     'author': 'Wolfgang Pichler (Callino)',
-    'depends': ['point_of_sale', 'pos_product_reference'],
+    'depends': ['point_of_sale'],
     'test': [
     ],
     'data': [
         'views/templates.xml',
         'views/pos_config.xml',
-        'views/pos_order.xml',
     ],
     'qweb': [
-        'static/src/xml/invoice.xml'
+        'static/src/xml/receipt.xml'
     ],
     'installable': True,
     'auto_install': False,

@@ -37,6 +37,8 @@ odoo.define('pos_rksv.screens', function (require) {
     screens.PaymentScreenWidget.include({
         // TODO: Implement this by splitting up and contributing to Odoo Core
         validate_order: function(force_validation) {
+            if (!this.pos.config.iface_rksv)
+                return this._super();
             var self = this;
             var order = this.pos.get_order();
 
@@ -106,6 +108,7 @@ odoo.define('pos_rksv.screens', function (require) {
             }
 
             order.initialize_validation_date();
+            self.pos.rksv.rksv_wait();
 
             if (order.is_to_invoice()) {
                 var invoiced = this.pos.push_and_invoice_order(order);
@@ -120,6 +123,8 @@ odoo.define('pos_rksv.screens', function (require) {
                             confirm: function(){
                                 self.gui.show_screen('clientlist');
                             },
+		                    // Set the push to rksv flag back
+		                    self.pos.rksv.rksv_done();
                         });
                     } else if (error.code < 0) {        // XmlHttpRequest Errors
                         self.gui.show_popup('error',{
@@ -142,13 +147,17 @@ odoo.define('pos_rksv.screens', function (require) {
                 invoiced.done(function(){
                     self.invoicing = false;
                     self.gui.show_screen('receipt');
+                    self.pos.rksv.rksv_done();
                 });
             } else {
                 this.pos.push_order(order).then(
                     function done(){
                         self.gui.show_screen('receipt');
+                        self.pos.rksv.rksv_done();
+                        console.log('RKSV has done its job - we have signed the order');
                     },
                     function failed(message){
+                        self.pos.rksv.rksv_done();
                         self.pos.gui.show_popup('error',{
                             'message': _t("RKSV Fehler"),
                             'comment':  message
@@ -156,6 +165,18 @@ odoo.define('pos_rksv.screens', function (require) {
                     }
                 );
             }
+        },
+        start: function() {
+			var self = this;
+			this._super();
+			// do bind on proxy status change - disable action bar when we lose proxy connection
+			this.pos.proxy.on('change:status', this, function (eh, status) {
+				if (!self.pos.rksv.all_ok()) {
+					this.$('.next').hide();
+				} else {
+				    this.$('.next').show();
+				}
+			});
         }
     });
 
@@ -178,6 +199,8 @@ odoo.define('pos_rksv.screens', function (require) {
             }, 1000);
         },
         should_auto_print: function() {
+            if (!this.pos.config.iface_rksv)
+                return this._super();
             console.log("We always must print the receipt");
             return true && !this.pos.get_order()._printed;
         }
@@ -206,7 +229,17 @@ odoo.define('pos_rksv.screens', function (require) {
             this.events['click .export_crypt'] = 'export_crypt';
             this.events['click .start_receipt_set_valid'] = 'start_receipt_set_valid';
         },
+        willStart: function() {
+            if (this.pos.config.iface_rksv)
+                return $.when();
+            else
+                // We do provide a deferred which will never fire
+                return $.Deferred();
+        },
         start: function() {
+            if (!this.pos.config.iface_rksv)
+                // Do nothing if rksv is not enabled
+                return;
             var self = this;
             console.log('RKSV: do install proxy status change handler');
             self.posbox_status_handler();
@@ -234,13 +267,16 @@ odoo.define('pos_rksv.screens', function (require) {
             this.pos.gui.chrome.widget.order_selector.$('.neworder-button').hide();
             this.pos.gui.chrome.widget.order_selector.$('.deleteorder-button').hide();
 
-            // Do request the current RK Status
-            self.pos.rksv.update_bmf_rk_status();
-            // Do request new status from BMF on show
-            var signature = self.pos.get('signature');
-            // This will signal us the new status as soon as we get it
-            if (signature)
-                signature.try_refresh_status(self.pos);
+            // Only request current status if there is an connection available
+            if (self.pos.rksv.check_proxy_connection()) {
+                // Do request the current RK Status
+                self.pos.rksv.update_bmf_rk_status();
+                // Do request new status from BMF on show
+                var signature = self.pos.get('signature');
+                // This will signal us the new status as soon as we get it
+                if (signature)
+                    signature.try_refresh_status(self.pos);
+            }
             // Do render month product status
             self.render_month_product();
             // Do rerender signature providers
@@ -288,8 +324,16 @@ odoo.define('pos_rksv.screens', function (require) {
             return (mode=='signature_failed' || mode=='posbox_failed');
         },
         auto_open_close: function() {
+            // Do not open when rksv is not enabled
+            if (!this.pos.config.iface_rksv) return;
+            // Do not open when rksv is not intitialized
             if (this.pos.rksv === undefined) return;
-            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode())) {
+            // Open Status widget on:
+            // - Not already active
+            // - Not all is ok - or we need a automatic receipt
+            // - Not in emergency mode
+            // - Do not open on only WLAN lost
+            if ((!this.active) && ((!this.pos.rksv.all_ok()) || (this.pos.rksv.auto_receipt_needed())) && (!this.emergency_mode()) && (!this.pos.rksv.lost_wlan())) {
                 this.pos.gui.show_screen('rksv_status');
             } else if ((this.active) && (!this.pos.rksv.all_ok()) && (!this.emergency_mode())) {
                 // Already active - ok - stay active
@@ -420,6 +464,19 @@ odoo.define('pos_rksv.screens', function (require) {
         posbox_status_handler: function () {
             var self = this;
             this.pos.proxy.on('change:status', this, function (eh, status) {
+                // Do update the datetime and status here
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_vienna_datetime) {
+                    self.$('#rksv_posbox_datetime').html(status.newValue.drivers.rksv.posbox_vienna_datetime);
+                }
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_rksv_lib_version) {
+                    self.$('#rksv_rksv_version').html(status.newValue.drivers.rksv.posbox_rksv_lib_version.version);
+                }
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_rksv_mod_version) {
+                    self.$('#rksv_addon_version').html(status.newValue.drivers.rksv.posbox_rksv_mod_version.version);
+                }
+                if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_bmf_mod_version) {
+                    self.$('#rksv_bmf_version').html(status.newValue.drivers.rksv.posbox_bmf_mod_version.version);
+                }
                 // Also check current bmf_status_rk
                 if ((status.newValue.status == "connected") && (!this.pos.get('bmf_status_rk').success)) {
                     // BMF Status RK is false - so do recheck the status here
@@ -516,9 +573,15 @@ odoo.define('pos_rksv.screens', function (require) {
         },
         render_card: function (card) {
             var valid_vat = false;
-            var company_vat = this.pos.company.vat;
+            var company_vat = this.pos.company.bmf_vat_number;
             if (card.matchVAT(company_vat)) {
                 valid_vat = true;
+            }
+            if (!valid_vat) {
+                // Try to match against Steuernummer
+                if (card.matchTaxNumber(this.pos.company.bmf_tax_number)) {
+                    valid_vat = true;
+                }
             }
             var sprovider_html = QWeb.render('SignatureProvider', {
                 widget: this,
