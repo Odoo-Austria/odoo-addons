@@ -34,4 +34,4 @@ odoo.define('pos_invisible_products.db', function (require) {
             return this.invisible_filtered(products);
         }
     });
-}
+});
