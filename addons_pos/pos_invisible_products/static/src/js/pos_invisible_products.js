@@ -2,7 +2,7 @@ odoo.define('pos_invisible_products.db', function (require) {
     "use strict";
 
     var PosDB = require("point_of_sale.DB");
-    var models = require('pos_rksv.models');
+    var models = require('point_of_sale.models');
 
     models.load_fields("product.product", ['pos_product_invisible']);
 

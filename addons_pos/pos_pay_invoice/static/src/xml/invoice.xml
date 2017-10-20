@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
+    <!-- PosTicket -->
+    <t t-extend="PosTicket">
+        <t t-jquery="tr[t-foreach*='orderlines']" t-operation="append">
+            <t t-if="orderline.invoice.attributes.number">
+                <tr>
+                    <td>
+                        Ref.: <t t-esc="orderline.invoice.attributes.number"/>
+                    </td>
+                </tr>
+            </t>
+        </t>
+    </t>
+
     <t t-extend="Orderline">
         <t t-jquery=".info-list" t-operation="append">
             <t t-if="line.get_invoice()">

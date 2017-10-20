@@ -1,14 +1,14 @@
 odoo.define('pos_receipt_options.pos', function (require) {
     "use strict";
 
-    var models = require('pos_rksv.models');
+    var models = require('point_of_sale.models');
     
     models.load_fields("res.company", ["street", "street2", "zip", "city"]);
     /*
     No Rocket Sience here - just add the pos config record to the receipt
      */
     var OrderModelSuper = models.Order.prototype;
-    Order = models.Order.extend({
+    var Order = models.Order.extend({
         export_for_printing: function () {
             var company = this.pos.company;
             var data = OrderModelSuper.export_for_printing.call(this);
@@ -21,4 +21,4 @@ odoo.define('pos_receipt_options.pos', function (require) {
             return data;
         },
     });
-};
+});
