@@ -3,7 +3,7 @@
     <!-- PosTicket -->
     <t t-extend="PosTicket">
         <t t-jquery="tr[t-foreach*='orderlines']" t-operation="append">
-            <t t-if="orderline.invoice.attributes.number">
+            <t t-if="orderline.invoice and orderline.invoice.attributes.number">
                 <tr>
                     <td>
                         Ref.: <t t-esc="orderline.invoice.attributes.number"/>
