@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Registrierkasse Österreich Restaurant',
-    'version': '1.0',
+    'version': '10.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Registrierkassenpflicht Modul für Österreich, Restaurant Erweiterung',

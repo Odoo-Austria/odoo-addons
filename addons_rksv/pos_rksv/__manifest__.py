@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Registrierkasse Österreich',
-    'version': '1.0',
+    'version': '10.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Registrierkassenpflicht Modul für Österreich',
@@ -14,7 +14,11 @@ Registrierkasse Österreich
 
 Registrierkassen Modul für die Anforderungen der Österreichischen Registrierkassenpflicht
 """,
-    'depends': ['point_of_sale', 'pos_product_reference'],
+    'depends': [
+        'point_of_sale',
+        'pos_product_reference',
+        'pos_invisible_products',
+    ],
     'test': [
     ],
     'data': [

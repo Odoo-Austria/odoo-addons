@@ -74,9 +74,9 @@ odoo.define('pos_rksv.screens', function (require) {
                             confirm: function(){
                                 self.gui.show_screen('clientlist');
                             },
-		                    // Set the push to rksv flag back
-		                    self.pos.rksv.rksv_done();
                         });
+                        // Set the push to rksv flag back
+                        self.pos.rksv.rksv_done();
                     } else if (error.code < 0) {        // XmlHttpRequest Errors
                         self.gui.show_popup('error',{
                             'title': _t('The order could not be sent'),
@@ -118,16 +118,16 @@ odoo.define('pos_rksv.screens', function (require) {
             }
         },
         start: function() {
-			var self = this;
-			this._super();
-			// do bind on proxy status change - disable action bar when we lose proxy connection
-			this.pos.proxy.on('change:status', this, function (eh, status) {
-				if (!self.pos.rksv.all_ok()) {
-					this.$('.next').hide();
-				} else {
-				    this.$('.next').show();
-				}
-			});
+            var self = this;
+            this._super();
+            // do bind on proxy status change - disable action bar when we lose proxy connection
+            this.pos.proxy.on('change:status', this, function (eh, status) {
+                if (!self.pos.rksv.all_ok()) {
+                    this.$('.next').hide();
+                } else {
+                    this.$('.next').show();
+                }
+            });
         }
     });
 

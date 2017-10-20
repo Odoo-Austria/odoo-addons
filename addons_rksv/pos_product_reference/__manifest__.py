@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 {
     "name": "POS Product Reference",
-    "version": "1.0",
+    'version': '10.0.0.1',
+    'category': 'Point of Sale',
+    'sequence': 6,
+    "summary": "Druckt einen Referenz Text zum Produkt",
     'website': 'https://github.com/Odoo-Austria',
     'author': 'Wolfgang Pichler (Callino), WT-IO-IT GmbH, Wolfgang Taferner',
     'license': "Other proprietary",
     "category": "Point of Sale",
     "depends": ["base", 'point_of_sale'],
-    "summary": "Druckt einen Referenz Text zum Produkt",
     'description': """
 POS Product Reference
 =============================

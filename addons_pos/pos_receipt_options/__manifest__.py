@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'POS receipt options',
-    'version': '9.0.0.1',
+    'version': '10.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Add more receipt printing options',
-    'website': 'https://github.com/Odoo-Austria/odoo-addons',
+    'website': 'https://github.com/Odoo-Austria',
+    'author': 'Wolfgang Pichler (Callino)',
+    'license': "Other proprietary",
     'description': """
 POS Receipt Printing
 ====================
@@ -19,7 +21,6 @@ POS Receipt Printing
 * Option for "Print Cashier"
 
 """,
-    'author': 'Wolfgang Pichler (Callino)',
     'depends': ['point_of_sale'],
     'test': [
     ],

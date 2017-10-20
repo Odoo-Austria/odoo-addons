@@ -182,7 +182,7 @@ odoo.define('pos_six.pos', function (require) {
             return this.transaction_amount;
         },
         get_transaction_amount_str: function(){
-            return openerp.instances.instance0.web.format_value(this.transaction_amount, {
+            return odoo.instances.instance0.web.format_value(this.transaction_amount, {
                 type: 'float', digits: [69, this.pos.currency.decimals]
             });
         },
