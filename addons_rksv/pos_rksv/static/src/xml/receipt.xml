@@ -4,7 +4,7 @@
     <!-- Extend the PosTicket - include QRCode - and for testing the OCR Representation -->
     <t t-extend="PosTicket">
         <t t-jquery="t[t-esc='order.get('name')']" t-operation="after">
-            <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Kassen Nr.: <t t-esc="order.pos.config.cashregisterid" /></p>
+            <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Kassen Nr.: <t t-esc="widget.pos.config.cashregisterid" /></p>
             <p t-if="widget.pos.config.rksv_at and widget.pos.config.iface_rksv">Bon Nr.: <t t-esc="order.formatted_receipt_id" /></p>
             <p t-if="widget.pos.config.rksv_at and !widget.pos.config.iface_rksv">NICHT GESETZTESKONFORMER BELEG!</p>
         </t>
