@@ -86,6 +86,7 @@ function openerp_rksv_screens(instance, module) {
                     this.pos.proxy.open_cashbox();
             }
 
+            var deferred = jQuery.Deferred();
             // Set the push to rksv flag
             currentOrder.push_to_rksv = true;
             // deactivate the validation button while we try to send the order
@@ -115,6 +116,7 @@ function openerp_rksv_screens(instance, module) {
                     }
                     self.pos_widget.action_bar.set_button_disabled('validation',false);
                     self.pos_widget.action_bar.set_button_disabled('invoice',false);
+                    deferred.reject();
                 });
 
                 invoiced.done(function(){
@@ -131,6 +133,7 @@ function openerp_rksv_screens(instance, module) {
                     }else{
                         self.pos_widget.screen_selector.set_current_screen(self.next_screen);
                     }
+                    deferred.resolve();
                 });
             }else{
                 var self = this;
@@ -145,10 +148,11 @@ function openerp_rksv_screens(instance, module) {
                                 receipt: receipt,
                                 widget: self
                             }));
-                            self.pos.get('selectedOrder').destroy();    //finish order and go back to scan screen
+                            self.pos_widget.screen_selector.set_current_screen(self.next_screen);
                         }else{
                             self.pos_widget.screen_selector.set_current_screen(self.next_screen);
                         }
+                        deferred.resolve();
                     },
                     function failed(message){
                         self.pos.rksv.rksv_done();
@@ -156,6 +160,7 @@ function openerp_rksv_screens(instance, module) {
                             'message': _t("RKSV Fehler"),
                             'comment':  message
                         });
+                        deferred.reject();
                     }
                 );
             }
@@ -165,7 +170,8 @@ function openerp_rksv_screens(instance, module) {
                 document.activeElement.blur();
                 $("input").blur();
             },250);
-            
+
+            return deferred;
         },
         start: function() {
             var self = this;
