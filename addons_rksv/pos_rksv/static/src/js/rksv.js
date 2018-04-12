@@ -255,6 +255,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     widget:  this,
                     order: order,
                     receipt: order.export_for_printing(),
+                    pos: self.pos,
                     paymentlines: order.get_paymentlines()
                 };
                 self.pos.proxy.print_receipt(QWeb.render('XmlReceipt',env));
