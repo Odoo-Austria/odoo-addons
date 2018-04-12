@@ -60,7 +60,6 @@
     </t>
     <t t-name="RKSVTicket">
         <div class="pos-sale-ticket">
-            <t t-set="company" t-value="order.get_company()"/>
             <img class="company_logo" style="width: 100%; margin: 0; border: 0;" crossorigin="anonymous" t-att-src="company.logo_url" /><br /><br />
             <t t-esc="company.name"/><br />
             <t t-esc="company.street" /><br />

@@ -9,6 +9,9 @@
             <field name="arch" type="xml">
                 <notebook position="inside">
                     <page string="BMF" attrs="{'invisible': [('rksv_at', '=', False)]}">
+                        <group>
+                            <field name="rksv_at"/>
+                        </group>
                         <group string="Finanzonline (Unternehmen)">
                             <field name="bmf_tid"/>
                         </group>
@@ -23,10 +26,21 @@
                         </group>
                     </page>
                 </notebook>
+            </field>
+        </record>
+
+        <!-- TODO -->
+        <!--<record id="base_vat_rksv_at" model="ir.ui.view">
+            <field name="name">VAT RKSV</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base_vat.company_form_vat"/>
+            <field name="arch" type="xml">
+
                 <field name="vat_check_vies" position="before">
                     <field name="rksv_at"/>
                 </field>
+
             </field>
-        </record>
+        </record>-->
     </data>
 </odoo>

@@ -7,7 +7,7 @@ odoo.define('pos_pay_invoice.screens', function (require) {
     var core = require('web.core');
     var QWeb = core.qweb;
     var _t = core._t;
-    var Model = require('web.DataModel');
+    var rpc = require('web.rpc');
     var models = require('point_of_sale.models');
 
     var SearchInvoicesButton = screens.ActionButtonWidget.extend({
@@ -130,25 +130,26 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             var self = this;
             var def  = new $.Deferred();
             var fields = _.find(this.pos.models,function(model){ return model.model === 'account.invoice'; }).fields;
-            new Model('account.invoice')
-                .query(fields)
-                .filter(['&', ['state', '=', 'open'], ['pos_order_id', '=', false]])
-                .all({'timeout':3000, 'shadow': true})
-                .then(function(invoices){
-                    // Add the new invoices
-                    var model_invoices = new Array;
-                    _.each(invoices, function(invoicedata) {
-                        var invoice = new models.Invoice(invoicedata, {
-                            pos: this.pos,
-                        });
-                        model_invoices.push(invoice);
-                    }, self);
-                    self.pos.invoices.reset(model_invoices);
-                    def.resolve();
-                }, function(err,event){
-                    event.preventDefault();
-                    def.reject();
-                });
+            rpc.query({
+                'model': 'account.invoice',
+                'method': 'search_read',
+                'domain': ['&', ['state', '=', 'open'], ['pos_order_id', '=', false]],
+                'fields': fields,
+            }).then(
+                function(invoices){
+                // Add the new invoices
+                var model_invoices = new Array;
+                _.each(invoices, function(invoicedata) {
+                    var invoice = new models.Invoice(invoicedata, {
+                        pos: this.pos,
+                    });
+                    model_invoices.push(invoice);
+                }, self);
+                self.pos.invoices.reset(model_invoices);
+                def.resolve();
+            }, function(err,event){
+                def.reject();
+            });
             return def;
         },
         clear_search: function(){

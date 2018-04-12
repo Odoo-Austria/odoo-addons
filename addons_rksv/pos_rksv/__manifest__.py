@@ -18,6 +18,7 @@ Registrierkassen Modul für die Anforderungen der Österreichischen Registrierka
         'point_of_sale',
         'pos_product_reference',
         'pos_invisible_products',
+        'base_vat',
     ],
     'test': [
     ],

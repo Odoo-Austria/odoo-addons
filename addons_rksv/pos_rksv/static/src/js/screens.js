@@ -731,6 +731,7 @@ odoo.define('pos_rksv.screens', function (require) {
            this.$('.pos-receipt-container').html(QWeb.render('RKSVTicket',{
                widget: this,
                order: order,
+               company: pos.company,
                title: pos.rksv_print.title,
                receipt: pos.rksv_print.receipt,
            }));

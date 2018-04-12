@@ -10,7 +10,7 @@ odoo.define('pos_rksv.pos', function (require) {
     require('pos_rksv.models');
     // Get reference to my RKSV Popup Widgets - you get the reference by using the gui popup handler functions !
     require('pos_rksv.popups');
-    var Model = require('web.DataModel');
+    var rpc = require('web.rpc');
     var rksv = require('pos_rksv.rksv');
 
     var core = require('web.core');
@@ -48,13 +48,18 @@ odoo.define('pos_rksv.pos', function (require) {
             this.signatures.on('add remove', function (signature, signatures) {
                 console.log('do write back signature cards info to odoo');
                 // Inform odoo about the current cards
-                var provider_obj = new Model('signature.provider');
                 var cardinfos = new Array();
                 signatures.each(function (signature) {
                     cardinfos.push(signature.attributes);
                 });
                 signature.pos.signature_update = true;
-                provider_obj.call('set_providers', [cardinfos, {'pos_config_id': self.config.id}]).always(
+                rpc.query({
+                    model: 'signature.provider',
+                    method: 'set_providers',
+                    args: [cardinfos, {
+                        'pos_config_id': self.config.id,
+                    }]
+                }).always(
                     function finish(result) {
                         signature.pos.signature_update = false;
                     }
@@ -64,17 +69,23 @@ odoo.define('pos_rksv.pos', function (require) {
                 // Save current state
                 self.config.bmf_gemeldet = status.success;
                 // Write back new status to odoo
-                var configmodel = new Model('pos.config');
-                configmodel.call('write', [[self.config.id], {
-                    'bmf_gemeldet': status.success
-                }]);
+                rpc.query({
+                    model: 'pos.config',
+                    method: 'write',
+                    args: [self.config.id, {
+                        'bmf_gemeldet': status.success,
+                    }]
+                });
             });
             this.signatures.bind('change:bmf_status change:bmf_message', function (signature) {
                 console.log('Try to fire an update for status in backend');
-                var signaturemodel = new Model('signature.provider');
                 if (!signature.pos.signature_update){
                     signature.pos.signature_update = true;
-                    signaturemodel.call('update_status', [signature.attributes]).always(
+                    rpc.query({
+                        model: 'signature.provider',
+                        method: 'update_status',
+                        args: [signature.attributes]
+                    }).always(
                         function finish(result) {
                             signature.pos.signature_update = false;
                         }
@@ -84,10 +95,13 @@ odoo.define('pos_rksv.pos', function (require) {
             // Bind on cashbox_mode flag
             this.bind('change:cashbox_mode', function (pos, state) {
                 // Write back new status to odoo
-                var configmodel = new Model('pos.config');
-                configmodel.call('write', [[self.config.id], {
+                rpc.query({
+                    model: 'pos.config',
+                    method: 'write',
+                    args: [pos.config.id, {
                     'state': state
-                }]);
+                }]
+                });
                 // And store it locally
                 self.config.state = state;
             });
