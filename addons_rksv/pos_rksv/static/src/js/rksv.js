@@ -6,7 +6,7 @@ odoo.define('pos_rksv.rksv', function (require) {
     require('pos_rksv.models');
     var models = require('point_of_sale.models');
     var QWeb = core.qweb;
-    var Model = require('web.DataModel');
+    var rpc = require('web.rpc');
     var _t = core._t;
 
     /* RKSV Core Extension */
@@ -452,8 +452,14 @@ odoo.define('pos_rksv.rksv', function (require) {
                         // Set and signal active mode
                         self.pos.set('cashbox_mode', 'active');
                     }
-                    var config = new Model('pos.config');
-                    config.call('set_provider', [serial, self.pos.config.id]).then(
+                    rpc.query({
+                        model: 'pos.config',
+                        method: 'set_provider',
+                        args: [
+                            serial,
+                            self.pos.config.id,
+                        ]
+                    }).then(
                         function done(result) {
                             if (!result['success']) {
                                 self.pos.gui.show_popup('error',{
@@ -835,8 +841,14 @@ odoo.define('pos_rksv.rksv', function (require) {
                             if (response.success == false) {
                                 sprovider_popup.failure(response.message);
                             } else {
-                                var config = new Model('pos.config');
-                                config.call('sync_jws', [response.jws_sync, self.pos.config.id]).then(
+                                rpc.query({
+                                    model: 'pos.config',
+                                    method: 'sync_jws',
+                                    args: [self.pos.config.id, {
+                                        'jws_sync': response.jws_sync,
+                                        'config_id': self.pos.config.id,
+                                    }]
+                                }).then(
                                     function done(result) {
                                         if (!result['success']) {
                                             console.error(result.message)

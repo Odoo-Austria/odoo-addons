@@ -7,7 +7,6 @@ odoo.define('pos_pay_invoice.pos', function (require) {
     var models = require('point_of_sale.models');
     // We do require the signature model and collection
     require('pos_pay_invoice.models');
-    var Model = require('web.DataModel');
 
     /*
      PosModel ist the main pos Model - which does get referenced everywhere with pos

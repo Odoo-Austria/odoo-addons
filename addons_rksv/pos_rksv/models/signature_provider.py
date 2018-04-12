@@ -10,7 +10,7 @@ class signature_provider(models.Model):
     _name = "signature.provider"
     _description = "Signature Providers"
     _order = 'name'
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _inherit = ['mail.thread']
 
     name = fields.Char(string='Signature Name')
     serial = fields.Char(string='Serial')
