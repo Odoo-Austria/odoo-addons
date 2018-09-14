@@ -291,18 +291,10 @@ odoo.define('pos_rksv.rksv', function (require) {
                         });
                     } else {
                         // in response we should have the needed data to reprint - we assume to have a pos printer here
-                        var env = {
-                            'title': title,
-                            'receipt': response.receipt,
-                            'company': self.pos.company,
-                            'widget': self.pos.chrome.widget
-                        };
-                        if(self.pos.config.iface_print_via_proxy){
-                            self.pos.proxy.print_receipt(QWeb.render('RKSVReceipt', env));
-                        } else {
-                            self.pos.gui.show_screen('receipt');
-                            self.pos.chrome.$('.pos-receipt-container').html(QWeb.render('RKSVTicket', env));
-                        }
+                        self.print_rksv_order({
+                            title: title,
+                            receipt: response.receipt,
+                        });
                     }
                 },
                 function failed() {
