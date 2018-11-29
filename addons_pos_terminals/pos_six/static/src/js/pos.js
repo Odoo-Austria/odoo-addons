@@ -114,12 +114,12 @@ odoo.define('pos_six.pos', function (require) {
             // Check - if this is a sixx payment terminal payment line - then set amount to 0 !
             if (cashregister.journal.is_sixx_terminal) {
                 if (this.is_return_order) {
-                    this.selected_paymentline.set_transaction_amount(this.getDueLeft());
+                    this.selected_paymentline.set_transaction_amount(open_amount);
                     this.selected_paymentline.set_amount(0);
                     this.selected_paymentline.set_is_return_line(true);
                     this.pos.gui.screen_instances.payment.render_paymentlines();
                 } else {
-                    this.selected_paymentline.set_transaction_amount(this.getDueLeft());  // this.selected_paymentline.get_amount()
+                    this.selected_paymentline.set_transaction_amount(open_amount);  // this.selected_paymentline.get_amount()
                     this.selected_paymentline.set_amount(0);
                     this.selected_paymentline.set_is_return_line(false);
                     this.pos.gui.screen_instances.payment.render_paymentlines();
@@ -332,7 +332,7 @@ odoo.define('pos_six.pos', function (require) {
         payment_terminal_transaction_start: function(line_cid, currency_iso, ref){
             var self = this;
             var order = this.pos.get_order();
-            var line = order.get_paymentlines()._byId[line_cid];
+            var line = order.paymentlines._byId[line_cid];
             var data = {};
             if (line.is_return_line==true) {
                 if (!ref) {
@@ -419,7 +419,7 @@ odoo.define('pos_six.pos', function (require) {
 
         payment_terminal_transaction_reversal: function(line_cid, currency_iso){
             var order = this.pos.get_order();
-            var line = order.get('paymentLines')._byId[line_cid];
+            var line = order.paymentlines._byId[line_cid];
 
             var data = {'amount' : (-1) * line.get_amount(),
                         'currency_iso' : currency_iso,

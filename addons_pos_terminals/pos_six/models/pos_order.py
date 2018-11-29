@@ -21,13 +21,13 @@ class PosOrder(models.Model):
         return values
 
     @api.model
-    def add_payment(self, data):
+    def add_payment(self, order_id, data, context=None):
         _logger.info("add payment got called with data %r", data)
         orig_payment_name = None
         if 'six_ref_number' in data and data['six_ref_number'] > '':
             orig_payment_name = (data['payment_name'] if 'payment_name' in data else None)
             data['payment_name'] = data['six_ref_number']
-        statement_id = super(PosOrder, self).add_payment(data)
+        statement_id = super(PosOrder, self).add_payment(order_id, data, context=context)
         # Here do update the statement - include six data
         if 'six_ref_number' in data and data['six_ref_number'] > '':
             name = self.name + ': ' + (data.get('payment_name', '') or '')
