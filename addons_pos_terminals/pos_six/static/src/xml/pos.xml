@@ -41,7 +41,7 @@
                         Schließen
                     </div>
                     <div class="button mpd_balance_button">
-                        Abschluss
+                        Tagesabschluss
                     </div>
                 </div>
             </div>
@@ -194,6 +194,8 @@
                 <li class="button terminal_reboot">Neustarten</li>
                 <li class="button terminal_reconnect">Neu Verbinden</li>
                 <li class="button terminal_status">Status Abfrage</li>
+                <li class="button terminal_open_shift">Schicht öffnen</li>
+                <li class="button terminal_close_shift">Schicht schließen</li>
             </ul>
         </t>
     </t>
