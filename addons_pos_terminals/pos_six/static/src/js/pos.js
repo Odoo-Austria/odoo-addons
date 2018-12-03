@@ -96,7 +96,16 @@ odoo.define('pos_six.pos', function (require) {
                 this._super.apply(this, arguments);
             }
         },
-
+        
+        renderElement: function() {
+            this._super.apply(this, arguments);
+            // Disable original handler - install own handler
+            var self = this;
+            this.$('.js_cashdrawer').off();
+            this.$('.js_cashdrawer').click(function(){
+                self.pos.proxy.open_cashbox(true);
+            });
+        }
     });
 
     // Extend Order Model
