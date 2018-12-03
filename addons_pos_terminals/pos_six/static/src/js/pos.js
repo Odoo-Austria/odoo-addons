@@ -858,6 +858,9 @@ odoo.define('pos_six.pos', function (require) {
             // Here - get current order - check payment statements - if there is any statement with open_cashdrawer - then open it - else - let it closed
             var currentOrder = this.pos.get('selectedOrder');
             var plines = currentOrder.paymentlines.models;
+            if (plines.length == 0) {
+                return ProxyDeviceSuper.prototype.open_cashbox.apply(this, arguments);
+            }
             var open_cashdrawer = false;
             for (var i = 0; i < plines.length; i++) {
                 if (plines[i].cashregister.journal.open_cashdrawer) {
