@@ -231,7 +231,24 @@ odoo.define('pos_rksv.screens', function (require) {
                 return this._super();
             console.log("We always must print the receipt");
             return true && !this.pos.get_order()._printed;
-        }
+        },
+        print_proxy: function() {
+            var order = this.pos.get_order();
+            var env = {
+                widget:  this,
+                order: order,
+                receipt: order.export_for_printing(),
+                paymentlines: order.get_paymentlines()
+            };
+            this.pos.proxy.print_receipt(QWeb.render('XmlReceipt',env));
+        },
+        print: function() {
+           var self = this;
+           self.print_web_delayed = this._super;
+           setTimeout(function() {
+               self.print_web_delayed();
+           }, 1000);
+        },
     });
 
 
