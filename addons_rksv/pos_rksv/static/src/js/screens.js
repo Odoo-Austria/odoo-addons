@@ -834,4 +834,4 @@ odoo.define('pos_rksv.screens', function (require) {
         },
     });
    gui.define_screen({name:'receipt_rksv', widget: ReceiptRKSVScreenWidget});
-};
+});
