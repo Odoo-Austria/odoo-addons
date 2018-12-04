@@ -56,7 +56,7 @@ odoo.define('pos_rksv.screens', function (require) {
             var plines = order.get_paymentlines();
             for (var i = 0; i < plines.length; i++) {
                 if (plines[i].get_type() === 'bank' && plines[i].get_amount() < 0) {
-                    this.pos_widget.screen_selector.show_popup('error',{
+                    this.gui.show_popup('error',{
                         'message': _t('Negative Bank Payment'),
                         'comment': _t('You cannot have a negative amount in a Bank payment. Use a cash payment method to return money to the customer.'),
                     });
@@ -153,8 +153,6 @@ odoo.define('pos_rksv.screens', function (require) {
                     self.invoicing = false;
                     self.gui.show_screen('receipt');
                     self.pos.rksv.rksv_done();
-
-                    self.pos_widget.screen_selector.set_current_screen(self.next_screen);
                     deferred.resolve();
                 });
             } else {
@@ -163,8 +161,6 @@ odoo.define('pos_rksv.screens', function (require) {
                         self.gui.show_screen('receipt');
                         self.pos.rksv.rksv_done();
                         console.log('RKSV has done its job - we have signed the order');
-
-                        self.pos_widget.screen_selector.set_current_screen(self.next_screen);
                         deferred.resolve();
 
                     },
