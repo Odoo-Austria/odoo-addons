@@ -109,8 +109,6 @@ odoo.define('pos_rksv.screens', function (require) {
 
             order.initialize_validation_date();
             var deferred = jQuery.Deferred();
-            // deactivate the validation button while we try to send the order
-            this.hide_action_bar();
             self.pos.rksv.rksv_wait();
 
             if (order.is_to_invoice()) {
