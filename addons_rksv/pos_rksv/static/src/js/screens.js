@@ -109,8 +109,6 @@ odoo.define('pos_rksv.screens', function (require) {
 
             order.initialize_validation_date();
             var deferred = jQuery.Deferred();
-            // Set the push to rksv flag
-            currentOrder.push_to_rksv = true;
             // deactivate the validation button while we try to send the order
             this.hide_action_bar();
             self.pos.rksv.rksv_wait();
