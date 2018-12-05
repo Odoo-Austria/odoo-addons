@@ -202,8 +202,7 @@ odoo.define('pos_rksv.screens', function (require) {
      */
     screens.ReceiptScreenWidget.include({
         handle_auto_print: function() {
-           console.log('I WANT TO PRINT LATER')
-           var self = this
+           var self = this;
            setTimeout(function(){
                 if (self.should_auto_print()) {
                     self.print();
@@ -215,36 +214,11 @@ odoo.define('pos_rksv.screens', function (require) {
                 }
             }, 1000);
         },
-        show: function() {
-            var self = this;
-            if(self.pos.config.iface_print_via_proxy){
-                self.print_proxy();
-            }
-            this._super();
-        },
         should_auto_print: function() {
             if (!this.pos.config.iface_rksv)
                 return this._super();
-            console.log("We always must print the receipt");
             return true && !this.pos.get_order()._printed;
-        },
-        print_proxy: function() {
-            var order = this.pos.get_order();
-            var env = {
-                widget:  this,
-                order: order,
-                receipt: order.export_for_printing(),
-                paymentlines: order.get_paymentlines()
-            };
-            this.pos.proxy.print_receipt(QWeb.render('XmlReceipt',env));
-        },
-        print: function() {
-           var self = this;
-           self.print_web_delayed = this._super;
-           setTimeout(function() {
-               self.print_web_delayed();
-           }, 1000);
-        },
+        }
     });
 
 
