@@ -41,7 +41,7 @@
                         Schließen
                     </div>
                     <div class="button mpd_balance_button">
-                        Abschluss
+                        Tagesabschluss
                     </div>
                 </div>
             </div>
@@ -133,9 +133,7 @@
                     <t t-if='line.selected'>
                         <tr class='paymentline selected'>
                             <td class='col-due'> <t t-esc='widget.format_currency_no_symbol(order.get_due(line))' /> </td>
-                            <td class='col-tendered'>
-                                <t t-esc='line.get_amount()' />
-                            </td>
+                            <td class='col-tendered'><t t-esc='widget.format_currency_no_symbol(line.get_amount())' /></td>
                             <td class='col-change' colspan="2">
                                 <button class="payment-terminal-transaction-start"  t-att-data-cid='line.cid' style="float:right;">Terminal</button>
                                 <button class="payment-terminal-transaction-abort oe_hidden"  t-att-data-cid='line.cid' style="float:right;">Abbrechen</button>
@@ -194,6 +192,8 @@
                 <li class="button terminal_reboot">Neustarten</li>
                 <li class="button terminal_reconnect">Neu Verbinden</li>
                 <li class="button terminal_status">Status Abfrage</li>
+                <li class="button terminal_open_shift">Schicht öffnen</li>
+                <li class="button terminal_close_shift">Schicht schließen</li>
             </ul>
         </t>
     </t>

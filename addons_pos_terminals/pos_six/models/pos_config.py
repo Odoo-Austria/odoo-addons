@@ -11,3 +11,4 @@ class pos_config(models.Model):
     _inherit = 'pos.config'
 
     auto_terminal_shift = fields.Boolean(string="Automatische Schicht", default=True)
+    auto_terminal_payment = fields.Boolean(string="Transaktion automatisch", default=True)
