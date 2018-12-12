@@ -24,12 +24,12 @@ class PosOrder(models.Model):
     def add_payment(self, data):
         _logger.info("add payment got called with data %r", data)
         orig_payment_name = None
-        if 'six_ref_number' in data and data['six_ref_number'] > '':
+        if 'six_ref_number' in data and data['six_ref_number']:
             orig_payment_name = (data['payment_name'] if 'payment_name' in data else None)
             data['payment_name'] = data['six_ref_number']
         statement_id = super(PosOrder, self).add_payment(data)
         # Here do update the statement - include six data
-        if 'six_ref_number' in data and data['six_ref_number'] > '':
+        if 'six_ref_number' in data and data['six_ref_number']:
             name = self.name + ': ' + (data.get('payment_name', '') or '')
             statement_line_obj = self.env['account.bank.statement.line']
             line_statement_id = statement_line_obj.search([('name', '=', name),('statement_id','=',statement_id)])
