@@ -11,8 +11,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für den Startbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -28,8 +28,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für den Monatsbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -45,8 +45,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für den Jahresbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -62,8 +62,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für den Nullbeleg</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -79,8 +79,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für Umsätze zu 20%</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -95,8 +95,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für Umsätze zu 10%</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -111,8 +111,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für Umsätze zu 13%</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -127,8 +127,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt für Umsätze zu 0%</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
@@ -143,8 +143,8 @@
             <field name="standard_price" eval="0.0"/>
             <field name="list_price" eval="0.0"/>
             <field name="type">service</field>
-            <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Produkt Rechnung die am POS bezahlt wird</field>
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="False"/>
