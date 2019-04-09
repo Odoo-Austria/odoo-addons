@@ -42,7 +42,7 @@ odoo.define('pos_pay_invoice.models', function (require) {
         model: 'account.invoice',
         fields: ['name', 'number', 'partner_id', 'date_invoice', 'amount_total', 'date_due', 'id', 'pos_order_id'],
         domain: function (self) {
-            return [['state', '=', 'open']];   // Do load open invoices
+            return [['state', '=', 'open'], ['pos_order_id', '=', false], ['type', '=', 'out_invoice']];   // Do load open out invoices
         },
         loaded: function (self, invoices) {
             if ((invoices) && (invoices.length > 0)) {

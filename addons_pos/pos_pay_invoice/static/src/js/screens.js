@@ -133,7 +133,7 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             rpc.query({
                 'model': 'account.invoice',
                 'method': 'search_read',
-                'domain': ['&', ['state', '=', 'open'], ['pos_order_id', '=', false]],
+                'domain': ['&', ['state', '=', 'open'], ['pos_order_id', '=', false], ['type', '=', 'out_invoice']],
                 'fields': fields,
             }).then(
                 function(invoices){
