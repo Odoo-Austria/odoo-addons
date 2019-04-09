@@ -562,7 +562,7 @@ odoo.define('pos_six.pos', function (require) {
                 },
                 function failed() {
                     console.log('balance operation failed');
-                    self.gui.show_popup('error',{
+                    self.pos.gui.show_popup('error',{
                         'title': _t('Fehler'),
                         'body': _t('Fehler bei der Balance Operation'),
                     });
@@ -617,13 +617,37 @@ odoo.define('pos_six.pos', function (require) {
                 }
             });
         },
-        destroy: function() {
-            if (this.config.auto_terminal_shift) {
-                this.mpd.balance();
+    });
+
+    // Overwrite close function to close shift when configured to do so
+    var GuiSuper = gui.Gui;
+    gui.Gui = gui.Gui.extend({
+        _close: function() {
+            var self = this;
+            if (this.pos.config.auto_terminal_shift) {
+                this.pos.mpd.shutdown = true;
+                this.pos.mpd.balance().then(
+                    function done(result) {
+                        self.show_popup('confirm', {
+                            'title': _t('Close shift'),
+                            'body':  _t(['Terminal shift got closed !\n',
+                                         'You should get a shift receipt.\n',
+                                         'Please do not close the session before !'].join(' ')),
+                            'confirm': function() {
+                                GuiSuper.prototype._close.apply(self, arguments);
+                            },
+                        });
+                    },
+                    function failed(result) {
+                        console.log('Do not close session');
+                    }
+                );
+            } else {
+                // Make super call
+                GuiSuper.prototype._close.apply(self, arguments);
             }
-            // Make super call
-            PosModelSuper.prototype.initialize.apply(this, arguments);
-        },
+        }
+
     });
 
     // This is the Sixx Status Popup
