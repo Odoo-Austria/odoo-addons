@@ -55,7 +55,7 @@ class POSConfig(models.Model):
                 })
 
             utc_now = datetime.now()
-            datas = base64.encodestring(json.dumps(DEP_EXPORT))
+            datas = base64.encodestring(json.dumps(DEP_EXPORT, ensure_ascii=False).encode('utf-8'))
             datas_fname = '%s_%s_DEP_EXPORT.dep' % (utc_now.strftime('%Y-%m-%d'), config.cashregisterid)
 
             # Attachment for Report
