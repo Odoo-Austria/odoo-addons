@@ -47,7 +47,7 @@ class POSConfig(models.Model):
 
             public_key = ''
             provider_keys = []
-            for signature, receipts_compact in sorted_receipts.iteritems():
+            for signature, receipts_compact in sorted_receipts.items():
                 DEP_EXPORT['Belege-Gruppe'].append({
                     'Signaturzertifikat': public_key,
                     'Zertifizierungsstellen': provider_keys,
