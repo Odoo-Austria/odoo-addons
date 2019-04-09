@@ -1,0 +1,201 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* pos_pay_invoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-09 16:13+0000\n"
+"PO-Revision-Date: 2019-04-09 16:13+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/js/screens.js:219
+#, python-format
+msgid "Add Invoice"
+msgstr "Rechnung hinzufügen"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:77
+#, python-format
+msgid "Amount"
+msgstr "Betrag"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:48
+#, python-format
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:74
+#, python-format
+msgid "Date"
+msgstr "Datum"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:78
+#, python-format
+msgid "Due"
+msgstr "Fällig"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/js/models.js:95
+#: code:addons/pos_pay_invoice/static/src/js/models.js:105
+#, python-format
+msgid "Error"
+msgstr "Fehler"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/js/screens.js:123
+#, python-format
+msgid "Fehler"
+msgstr "Fehler"
+
+#. module: pos_pay_invoice
+#: model:ir.model,name:pos_pay_invoice.model_account_invoice
+#: model:ir.model.fields,field_description:pos_pay_invoice.field_pos_order_line_invoice_id
+msgid "Invoice"
+msgstr "Rechnung"
+
+#. module: pos_pay_invoice
+#: model:ir.model.fields,field_description:pos_pay_invoice.field_pos_config_invoice_product_id
+msgid "Invoice (Product)"
+msgstr "Rechnungsprodukt"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:28
+#, python-format
+msgid "Invoices"
+msgstr "Rechnungen"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/js/screens.js:124
+#, python-format
+msgid "Konnte Rechnungen nicht neu laden"
+msgstr "Konnte Rechnungen nicht neu laden"
+
+#. module: pos_pay_invoice
+#: model:ir.model,name:pos_pay_invoice.model_pos_order_line
+msgid "Lines of Point of Sale Orders"
+msgstr "Positionen von PoS-Aufträgen"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:73
+#, python-format
+msgid "Number"
+msgstr "Nummer"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:75
+#, python-format
+msgid "Partner"
+msgstr "Kunde"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:60
+#, python-format
+msgid "Pay Invoice"
+msgstr "Zahle Rechnung"
+
+#. module: pos_pay_invoice
+#: model:ir.ui.view,arch_db:pos_pay_invoice.pos_config_view_form
+msgid "Pay Invoices"
+msgstr "Zahle Rechnungen"
+
+#. module: pos_pay_invoice
+#: model:ir.model.fields,help:pos_pay_invoice.field_pos_config_search_invoices
+msgid "Pay open invoices on POS"
+msgstr "Zahlen offene Rechnungen an der Kasse"
+
+#. module: pos_pay_invoice
+#: model:ir.model,name:pos_pay_invoice.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "Point Of Sale Verkäufe"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:8
+#, python-format
+msgid "Ref.:"
+msgstr "Ref.:"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:76
+#, python-format
+msgid "Reference"
+msgstr "Reference"
+
+#. module: pos_pay_invoice
+#: model:ir.model.fields,field_description:pos_pay_invoice.field_account_invoice_pos_order_id
+msgid "Related PoS Order"
+msgstr "Zugehörige POS Bestellung"
+
+#. module: pos_pay_invoice
+#: model:ir.model.fields,field_description:pos_pay_invoice.field_account_invoice_pos_order_ids
+msgid "Related PoS Orders"
+msgstr "Zugehörige POS Bestellungen"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:56
+#, python-format
+msgid "Reload"
+msgstr "Neu laden"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/xml/invoice.xml:52
+#, python-format
+msgid "Search Invoices"
+msgstr "Suche in Rechnungen"
+
+#. module: pos_pay_invoice
+#: model:ir.model.fields,field_description:pos_pay_invoice.field_pos_config_search_invoices
+msgid "Search for open Invoices"
+msgstr "Suche nach offenen Rechnungen"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/js/models.js:27
+#, python-format
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/js/models.js:96
+#, python-format
+msgid "You can not enter a higher price than the total amount of the invoice !"
+msgstr "Sie können keinen höheren Betrag als den Rechnungsbetrag angeben !"
+
+#. module: pos_pay_invoice
+#. openerp-web
+#: code:addons/pos_pay_invoice/static/src/js/models.js:106
+#, python-format
+msgid "You can not pay the invoice more than 1 time !"
+msgstr "Sie können die Rechnung nicht öfters als einmal bezahlen !"
+
+#. module: pos_pay_invoice
+#: model:ir.model,name:pos_pay_invoice.model_pos_config
+msgid "pos.config"
+msgstr "pos.config"
