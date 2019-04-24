@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "POS Product Reference",
-    'version': '10.0.0.1',
+    'version': '12.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
     "summary": "Druckt einen Referenz Text zum Produkt",

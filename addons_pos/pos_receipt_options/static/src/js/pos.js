@@ -4,11 +4,12 @@ odoo.define('pos_receipt_options.pos', function (require) {
     var models = require('point_of_sale.models');
     
     models.load_fields("res.company", ["street", "street2", "zip", "city"]);
+
     /*
     No Rocket Sience here - just add the pos config record to the receipt
      */
     var OrderModelSuper = models.Order.prototype;
-    var Order = models.Order.extend({
+    models.Order = models.Order.extend({
         export_for_printing: function () {
             var company = this.pos.company;
             var data = OrderModelSuper.export_for_printing.call(this);

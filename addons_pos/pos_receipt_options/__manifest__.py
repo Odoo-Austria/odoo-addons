@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'POS receipt options',
-    'version': '10.0.0.1',
+    'version': '12.0.0.1',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Add more receipt printing options',

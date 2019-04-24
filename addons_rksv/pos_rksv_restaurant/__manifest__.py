@@ -23,7 +23,7 @@ Erweiterung zum Basis RKSV Modul für die Restaurant Erweiterung
     ],
     'qweb': [
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': True,
     "external_dependencies": {
         "python": [],
