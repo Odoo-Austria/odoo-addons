@@ -20,6 +20,8 @@
                             <field name="print_shop_email"/>
                             <field name="print_shop_website"/>
                             <field name="print_shop_cashier"/>
+                            <field name="print_shop_customer"/>
+                            <field name="print_shop_customer_address"/>
                         </group>
                     </group>
                 </sheet>

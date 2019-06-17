@@ -59,9 +59,17 @@
 
         <!-- Shop cashier -->
         <t t-jquery="t[t-if='receipt.cashier']" t-operation="replace">
-            <t t-if='receipt.cashier &amp; receipt.config.print_shop_cashier'>
+            <div t-if='receipt.cashier &amp;&amp; receipt.config.print_shop_cashier' class='cashier'>
                 <div>--------------------------------</div>
                 <div>Served by <t t-esc='receipt.cashier' /></div>
+            </div>
+            <t t-if='receipt.config.print_shop_customer &amp;&amp; receipt.client'>
+                <div class="customer">
+                    <div>--------------------------------</div>
+                    <div name="customer_name"><t t-esc='receipt.customer.name' /></div>
+                    <div><t t-esc='receipt.customer.street' /></div>
+                    <div><t t-esc='receipt.customer.zip' />-<t t-esc='receipt.customer.city' /></div>
+                </div>
             </t>
         </t>
     </t>

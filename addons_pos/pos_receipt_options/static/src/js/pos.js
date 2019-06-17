@@ -19,6 +19,24 @@ odoo.define('pos_receipt_options.pos', function (require) {
             data.company.street2 = company.street2;
             data.company.zip = company.zip;
             data.company.city = company.city;
+
+            var client  = this.get('client');
+            if (client) {
+                data.customer = {
+                    'name': client.name,
+                    'street': client.street,
+                    'city': client.city,
+                    'zip': client.zip,
+                };
+            } else {
+                data.customer = {};
+            }
+            data.customer.contact_address = company.street + " in " + company.zip + "-" + company.city;
+            data.company.street = company.street;
+            data.company.street2 = company.street2;
+            data.company.zip = company.zip;
+            data.company.city = company.city;
+
             return data;
         },
     });

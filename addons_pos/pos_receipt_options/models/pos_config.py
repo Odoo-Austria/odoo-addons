@@ -14,3 +14,5 @@ class PosConfig(models.Model):
     print_shop_email = fields.Boolean(string='EMail', default=True)
     print_shop_website = fields.Boolean(string='Website', default=True)
     print_shop_cashier = fields.Boolean(string='Cashier', default=True)
+    print_shop_customer = fields.Boolean(string='Customer', default=True)
+    print_shop_customer_address = fields.Boolean(string='Customer Address', default=True)
