@@ -9,7 +9,7 @@ odoo.define('pos_product_reference.pos_product_reference', function (require) {
     Here we do add the fields and the models we need to load from the server
      */
     // BMF Fields we do need to communicate directly with the BMF SOAP Service
-    models.load_fields("product.product", [ "product_ref" ]);
+    models.load_fields("product.product", [ "product_ref", "product_ref_textarea" ]);
 
     var OrderlineSuper = models.Orderline;
     models.Orderline = models.Orderline.extend({
@@ -53,9 +53,9 @@ odoo.define('pos_product_reference.pos_product_reference', function (require) {
         },
         render_orderline: function(orderline){
             var el_node = this._super(orderline);
-            var input_ref = $(el_node).find('li input');
+            var input_ref = $(el_node).find('li .pro_ref');
             if (input_ref.length > 0)
-                $(el_node).find('input')[0].addEventListener('keyup',this.line_keyup_handler);
+                $(el_node).find('.pro_ref')[0].addEventListener('keyup',this.line_keyup_handler);
 
             orderline.node = el_node;
             return el_node;

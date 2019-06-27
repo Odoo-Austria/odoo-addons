@@ -8,7 +8,8 @@
             <field name="arch" type="xml">
                  <group name="pos" position="inside">
                      <group name="product_reference">
-                        <field string="Referenz in POS" name="product_ref"/>
+                         <field name="product_ref"/>
+                         <field name="product_ref_textarea"/>
                      </group>
                  </group>
             </field>

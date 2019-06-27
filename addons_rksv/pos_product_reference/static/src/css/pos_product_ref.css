@@ -1,0 +1,10 @@
+li.ref em {
+    vertical-align: top;
+}
+
+textarea.pro_ref{
+    font-size:12px;
+    padding:1px;
+    width: 66%;
+    height: 38px;
+}

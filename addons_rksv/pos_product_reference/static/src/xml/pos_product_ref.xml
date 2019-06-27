@@ -2,10 +2,16 @@
 <templates id="template" xml:space="preserve">
 
     <t t-extend="Orderline">
-        <t t-jquery=".info-list>" t-operation="append">
+        <t t-jquery=".info-list:first-of-type" t-operation="append">
             <t t-if="line.get_product().product_ref">
                 <li class="ref">
-                    <em>Reference: </em><input class="pro_ref" type="text" name="pro_ref" t-att-value="line.get_product_reference()"/>
+                    <em>Reference: </em>
+                    <t t-if="line.get_product().product_ref_textarea">
+                        <textarea class="pro_ref" type="text" name="pro_ref"><t t-raw="line.get_product_reference() or ''"/></textarea>
+                    </t>
+                    <t t-else="">
+                        <input class="pro_ref" type="text" name="pro_ref" t-att-value="line.get_product_reference()"/>
+                    </t>
                 </li>
             </t>
             <t t-if="!line.get_product().product_ref &amp;&amp; line.get_product_reference()">
