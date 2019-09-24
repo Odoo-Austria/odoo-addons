@@ -10,7 +10,7 @@
                     <header>
                         <button string="Failure" name="set_failure" type="object" states="active,inactive" />
                         <button string="ID erzeugen" name="create_cashregisterid" type="object" attrs="{'invisible': [('cashregisterid', '>', '')]}"/>
-                        <button string="Set to Active" name="set_active" type="object" states="inactive,deprecated,setup,failure"/>
+                        <button string="Set to Active" name="set_active" type="object" states="inactive,deprecated,setup,failure,posbox_failed"/>
                         <button string="Set to Inactive" name="set_inactive" type="object" states="active" />
                         <button string="Export DEP/Crypt Export" name="action_dep_export" type="object" groups="base.group_no_one" />
                         <field name="state" widget="statusbar" statusbar_visible="setup,active,inactive,deprecated,failure" statusbar_colors='{"failure" : "red"}' nolabel="1"/>
