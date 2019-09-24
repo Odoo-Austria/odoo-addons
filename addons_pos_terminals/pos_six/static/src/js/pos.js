@@ -538,13 +538,12 @@ odoo.define('pos_six.pos', function (require) {
         balance: function() {
             var mpd_popup = this.pos.gui.popup_instances.mpd_popup;
             mpd_popup.loading(_t('Terminal Abrechnung wird übertragen. Dieser Vorgang kann etwas Zeit in Anspruch nehmen. Bitte um Geduld !'));
-
-            console.log('get balance got called');
             var self = this;
             var dfd = $.Deferred();
             if (!this.connected()) {
                 mpd_popup.loading_done();
-                return false;
+                dfd.resolve();
+                return dfd;
             }
             this.proxy.message('mpd/balance', {}, {'timeout': 60000}).then(
                 function done(result) {
